@@ -1,204 +1,102 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
-import { X } from "lucide-react";
-import { Header, Footer, Marquee } from "@/components/site-chrome";
-import { products, type Product } from "@/lib/products";
+import { useState, useEffect } from "react";
+
+const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
+
+interface Product {
+  id: string;
+  name: string;
+  size?: string;
+  price?: number;
+  priceLabel?: string;
+  status: string;
+  emoji?: string;
+  tag?: string;
+  imageUrl?: string;
+}
 
 export const Route = createFileRoute("/shop")({
-  head: () => ({
-    meta: [
-      { title: "Shop — Mr. Pizza Steve Finds" },
-      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more." },
-      { property: "og:title", content: "Shop — Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "The current drop, fresh off the Zamalek rack." },
-    ],
-  }),
-  component: Shop,
+  component: ShopPage,
 });
 
-function Shop() {
-  const [selected, setSelected] = useState<Product | null>(null);
-
-  return (
-    <div className="min-h-screen">
-      <Header />
-      <Marquee text="NEW DROP AVAILABLE 🍕" />
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="border-b border-border pb-8">
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
-          <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            DM <a className="text-primary underline" href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer">@mr.pizzastevefinds</a> to reserve, or come grab it at the shop.
-          </p>
-        </div>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Card key={p.id} p={p} onSelect={() => setSelected(p)} />
-          ))}
-        </div>
-      </section>
-      <Footer />
-
-      {selected && (
-        <QuickViewModal product={selected} onClose={() => setSelected(null)} />
-      )}
-    </div>
-  );
-}
-
-/* ─── Product Card ─── */
-
-function Card({ p, onSelect }: { p: Product; onSelect: () => void }) {
-  const sold = p.status === "sold";
-  return (
-    <article
-      onClick={onSelect}
-      className={`group relative cursor-pointer overflow-hidden rounded-sm border border-border bg-card transition ${sold ? "opacity-80" : "hover:-translate-y-1 hover:border-primary"}`}
-    >
-      <div className="absolute left-3 top-3 z-10">
-        <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-widest ${sold ? "bg-destructive text-destructive-foreground" : "bg-success text-success-foreground"}`}>
-          {sold ? "Sold" : "Available"}
-        </span>
-      </div>
-      <div className="absolute right-3 top-3 z-10 rounded-sm border border-border bg-background/60 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground backdrop-blur">
-        {p.tag}
-      </div>
-      <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-        <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale" : ""}`}>{p.emoji}</span>
-        {sold && (
-          <div className="absolute inset-0 grid place-items-center">
-            <span className="rotate-[-12deg] border-4 border-destructive px-4 py-1 font-display text-3xl text-destructive">SOLD</span>
-          </div>
-        )}
-      </div>
-      <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">{p.name}</h3>
-        <div className="flex items-center justify-between border-t border-border pt-3">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">
-            {p.size ? `Size ${p.size}` : "One size"}
-          </span>
-          <span className={`font-display text-lg ${sold ? "text-muted-foreground line-through" : "text-primary"}`}>
-            {p.price ? `${p.price} EGP` : p.priceLabel}
-          </span>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* ─── Quick-View Modal ─── */
-
-function QuickViewModal({ product, onClose }: { product: Product; onClose: () => void }) {
-  const sold = product.status === "sold";
-
-  // Close on Escape
-  const handleKey = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose],
-  );
+function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL");
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [handleKey]);
-
-  // Lock body scroll
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    fetch(`${API}/api/products`)
+      .then(r => r.json())
+      .then(data => { setProducts(data); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="relative mx-4 w-full max-w-lg animate-in fade-in zoom-in-95 overflow-hidden rounded-sm border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute right-3 top-3 z-20 rounded-sm border border-border bg-background/60 p-1.5 text-muted-foreground backdrop-blur transition hover:border-primary hover:text-primary"
-          aria-label="Close quick view"
-        >
-          <X className="size-4" />
-        </button>
+  const tags = ["ALL", ...Array.from(new Set(products.map(p => p.tag).filter(Boolean)))];
+  const filtered = filter === "ALL" ? products : products.filter(p => p.tag === filter);
 
-        {/* Emoji hero */}
-        <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-          <span className={`text-[10rem] leading-none ${sold ? "grayscale" : ""}`}>
-            {product.emoji}
-          </span>
-          {sold && (
-            <div className="absolute inset-0 grid place-items-center">
-              <span className="rotate-[-12deg] border-4 border-destructive px-6 py-2 font-display text-5xl text-destructive">
-                SOLD
-              </span>
-            </div>
-          )}
-          {/* Status badge */}
-          <div className="absolute left-4 top-4">
-            <span
-              className={`rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-widest ${
-                sold
-                  ? "bg-destructive text-destructive-foreground"
-                  : "bg-success text-success-foreground"
-              }`}
-            >
-              {sold ? "Sold" : "Available"}
-            </span>
-          </div>
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-black tracking-widest mb-2 text-center">THE FINDS</h1>
+        <p className="text-zinc-500 text-center mb-8 text-sm tracking-widest">CURATED VINTAGE & THRIFT — ZAMALEK</p>
+
+        {/* Filter tabs */}
+        <div className="flex gap-2 flex-wrap justify-center mb-10">
+          {tags.map(t => (
+            <button key={t} onClick={() => setFilter(t)}
+              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${filter === t ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400"}`}>
+              {t}
+            </button>
+          ))}
         </div>
 
-        {/* Details */}
-        <div className="space-y-4 p-6">
-          {/* Tag */}
-          <div className="inline-block rounded-sm border border-border bg-background/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground backdrop-blur">
-            {product.tag}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-zinc-900 rounded-xl aspect-square animate-pulse" />
+            ))}
           </div>
-
-          {/* Name */}
-          <h2 className="font-display text-2xl uppercase leading-tight sm:text-3xl">
-            {product.name}
-          </h2>
-
-          {/* Size & Price row */}
-          <div className="flex items-center justify-between border-t border-border pt-4">
-            <span className="text-sm uppercase tracking-widest text-muted-foreground">
-              {product.size ? `Size ${product.size}` : "One size"}
-            </span>
-            <span
-              className={`font-display text-2xl ${
-                sold ? "text-muted-foreground line-through" : "text-primary"
-              }`}
-            >
-              {product.price ? `${product.price} EGP` : product.priceLabel}
-            </span>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {filtered.map(p => (
+              <div key={p.id} className={`group bg-zinc-900 rounded-xl overflow-hidden border transition-colors ${p.status === "sold" ? "border-zinc-800 opacity-50" : "border-zinc-800 hover:border-orange-500"}`}>
+                {/* Image area */}
+                <div className="aspect-square bg-zinc-800 relative flex items-center justify-center overflow-hidden">
+                  {p.imageUrl
+                    ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    : <span className="text-6xl">{p.emoji}</span>
+                  }
+                  {p.status === "sold" && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <span className="text-white font-black text-xl tracking-widest rotate-[-20deg] border-2 border-white px-3 py-1">SOLD</span>
+                    </div>
+                  )}
+                  {p.tag && (
+                    <span className="absolute top-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">
+                      {p.tag}
+                    </span>
+                  )}
+                </div>
+                {/* Info */}
+                <div className="p-3">
+                  <p className="text-white font-bold text-sm leading-tight mb-1">{p.name}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-zinc-500 text-xs">{p.size || "One size"}</span>
+                    <span className={`text-sm font-black ${p.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
+                      {p.status === "sold" ? "SOLD" : p.price ? `${p.price} EGP` : p.priceLabel || "—"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+        )}
 
-          {/* CTA */}
-          {sold ? (
-            <p className="text-center text-sm text-muted-foreground">
-              This piece has been sold — follow for the next drop.
-            </p>
-          ) : (
-            <a
-              href="https://instagram.com/mr.pizzastevefinds"
-              target="_blank"
-              rel="noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary"
-            >
-              DM to Reserve →
-            </a>
-          )}
+        <div className="mt-12 text-center">
+          <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white font-bold px-6 py-3 rounded-full transition-colors tracking-widest text-sm">
+            📸 @mr.pizzastevefinds
+          </a>
         </div>
       </div>
     </div>

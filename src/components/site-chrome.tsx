@@ -1,11 +1,14 @@
 import { Link } from "@tanstack/react-router";
+import logo from "../assets/logo.png";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-          <span className="text-2xl">🍕</span>
+          <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
+  <img src={logo} alt="Mr. Pizza Steve" className="h-10 w-auto" />
+</Link>🍕</span>
           <span className="leading-none">
             Mr. Pizza Steve
             <span className="block text-[10px] tracking-[0.3em] text-muted-foreground">FINDS · ZAMALEK</span>

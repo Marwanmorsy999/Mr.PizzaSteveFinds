@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header, Footer, Marquee } from "@/components/site-chrome";
-import { InstagramFeed } from "@/components/instagram-feed";
+import { InstagramFeed } from "@/components/ui/instagram-feed";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

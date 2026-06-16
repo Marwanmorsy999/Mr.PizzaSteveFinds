@@ -1,8 +1,10 @@
 
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
+import { useCart } from "../context/CartContext";
 
 export function Header() {
+  const { count } = useCart();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
@@ -14,6 +16,7 @@ export function Header() {
             { to: "/", label: "Home" },
             { to: "/shop", label: "Shop" },
             { to: "/about", label: "About" },
+            { to: "/cart", label: `Cart${count > 0 ? ` (${count})` : ""}` },
           ].map((l) => (
             <Link
               key={l.to}

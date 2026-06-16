@@ -10,7 +10,7 @@ interface Product {
   images?: string[]; condition?: string; description?: string;
 }
 
-export const Route = createFileRoute("/product/$id")({ component: ProductPage });
+export const Route = createFileRoute("/product/")({ component: ProductPage });
 
 function ProductPage() {
   const { id } = Route.useParams();

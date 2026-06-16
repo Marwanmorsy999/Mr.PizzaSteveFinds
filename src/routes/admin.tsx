@@ -22,7 +22,10 @@ function AdminPage() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const [savedAnnouncement, setSavedAnnouncement] = useState("");
-  const [activeTab, setActiveTab] = useState<"products" | "settings">("products");
+  const [orders, setOrders] = useState<any[]>([]);
+  const [whatsappInput, setWhatsappInput] = useState("");
+  const [savedWhatsapp, setSavedWhatsapp] = useState("");
+  const [activeTab, setActiveTab] = useState<"products" | "orders" | "settings">("products");
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
   const [reorderMode, setReorderMode] = useState(false);
@@ -48,6 +51,50 @@ function AdminPage() {
       const a = await fetch(`${API}/api/announcement`);
       if (a.ok) { const d = await a.json(); setAnnouncement(d.text || ""); setSavedAnnouncement(d.text || ""); }
     } catch {}
+    try {
+      const oRes = await fetch(`${API}/api/orders`, { headers });
+      if (oRes.ok) { const oData = await oRes.json(); setOrders(oData); }
+    } catch {}
+    try {
+      const sRes = await fetch(`${API}/api/settings`);
+      if (sRes.ok) {
+        const sData = await sRes.json();
+        setWhatsappInput(sData.whatsapp || "");
+        setSavedWhatsapp(sData.whatsapp || "");
+      }
+    } catch {}
+  }
+
+  async function saveWhatsapp() {
+    await fetch(`${API}/api/settings`, {
+      method: "POST", headers,
+      body: JSON.stringify({ key: "whatsapp", value: whatsappInput })
+    });
+    setSavedWhatsapp(whatsappInput); showMsg("WhatsApp number saved");
+  }
+
+  async function updateOrderStatus(orderId: string, nextStatus: string) {
+    const r = await fetch(`${API}/api/orders/${orderId}`, {
+      method: "PATCH", headers,
+      body: JSON.stringify({ status: nextStatus })
+    });
+    if (r.ok) {
+      showMsg(`Order status updated to ${nextStatus}`);
+      load();
+    } else {
+      showMsg("Failed to update order", "err");
+    }
+  }
+
+  async function deleteOrder(orderId: string) {
+    if (!confirm("Delete this order completely?")) return;
+    const r = await fetch(`${API}/api/orders/${orderId}`, { method: "DELETE", headers });
+    if (r.ok) {
+      showMsg("Order deleted");
+      load();
+    } else {
+      showMsg("Failed to delete order", "err");
+    }
   }
 
   async function uploadImg(file: File): Promise<string> {
@@ -217,7 +264,7 @@ function AdminPage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8">
-          {(["products", "settings"] as const).map(t => (
+          {(["products", "orders", "settings"] as const).map(t => (
             <button key={t} onClick={() => setActiveTab(t)}
               className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${activeTab === t ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-orange-500"}`}>
               {t.toUpperCase()}
@@ -225,25 +272,169 @@ function AdminPage() {
           ))}
         </div>
 
+        {/* ORDERS TAB */}
+        {activeTab === "orders" && (
+          <div className="space-y-4 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-orange-400 font-bold tracking-widest text-sm">CUSTOMER RESERVATIONS ({orders.length})</span>
+            </div>
+            
+            <div className="space-y-4">
+              {orders.map((order: any) => {
+                const itemNames = order.items.map((i: any) => `${i.name}${i.size ? ` (${i.size})` : ""}`).join(", ");
+                const waChatMsg = encodeURIComponent(`Hi ${order.customerName}! This is Steve from Mr. Pizza Steve Finds. Confirming your reservation #${order.id} for: ${itemNames}.`);
+                const customerWaLink = `https://wa.me/${order.customerPhone.startsWith("0") ? `2${order.customerPhone}` : order.customerPhone}?text=${waChatMsg}`;
+
+                return (
+                  <div key={order.id} className={`bg-zinc-900 border rounded-2xl p-6 space-y-4 transition-colors ${
+                    order.status === "completed" ? "border-zinc-800 bg-zinc-900/40 opacity-75" : 
+                    order.status === "cancelled" ? "border-red-950/40 bg-zinc-900/20 opacity-50" : 
+                    "border-orange-500/35 shadow-lg shadow-orange-500/5"
+                  }`}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-orange-400 font-black text-sm">{order.id}</span>
+                        <span className="text-zinc-500 text-xs">{new Date(order.createdAt).toLocaleString()}</span>
+                      </div>
+                      <span className={`text-xs font-black tracking-widest px-3 py-1 rounded-full border ${
+                        order.status === "completed" ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
+                        order.status === "cancelled" ? "text-red-400 bg-red-500/10 border-red-500/20" :
+                        "text-amber-400 bg-amber-500/10 border-amber-500/20"
+                      }`}>
+                        {order.status.toUpperCase()}
+                      </span>
+                    </div>
+
+                    {/* Customer details */}
+                    <div className="grid md:grid-cols-2 gap-4 bg-zinc-950/50 p-4 rounded-xl border border-zinc-800/60 text-sm">
+                      <div>
+                        <p className="text-zinc-500 text-xs tracking-wider uppercase mb-1">CUSTOMER DETAILS</p>
+                        <p className="font-bold text-white text-base">{order.customerName}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <a href={`tel:${order.customerPhone}`} className="text-zinc-400 hover:text-white underline">{order.customerPhone}</a>
+                          <a href={customerWaLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:text-emerald-300 font-bold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-colors">
+                            💬 Message
+                          </a>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-zinc-500 text-xs tracking-wider uppercase mb-1">FULFILLMENT</p>
+                        <p className="text-zinc-300">{order.pickup ? "📍 Zamalek Pickup" : `🚚 Delivery: ${order.address}`}</p>
+                        {order.notes && (
+                          <p className="text-zinc-400 text-xs italic mt-1.5"><span className="text-zinc-500 not-italic">Notes:</span> "{order.notes}"</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Items */}
+                    <div>
+                      <p className="text-zinc-500 text-xs tracking-wider uppercase mb-2">RESERVED ITEMS</p>
+                      <div className="divide-y divide-zinc-800 bg-zinc-950/30 rounded-xl border border-zinc-800/40 overflow-hidden">
+                        {order.items.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between items-center px-4 py-3 text-sm">
+                            <div>
+                              <p className="font-bold text-zinc-100">{item.name}</p>
+                              {item.size && <p className="text-zinc-500 text-xs">Size: {item.size}</p>}
+                            </div>
+                            <span className="text-orange-400 font-mono font-bold">
+                              {item.price ? `${item.price} EGP` : item.priceLabel || "DM price"}
+                            </span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between items-center px-4 py-3 bg-zinc-950/70 border-t border-zinc-800">
+                          <span className="text-zinc-400 font-bold">Total</span>
+                          <span className="text-orange-400 font-black text-base font-mono">
+                            {order.total > 0 ? `${order.total} EGP` : "TBC"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2 flex-wrap justify-between items-center border-t border-zinc-800 pt-4">
+                      <div className="flex gap-2">
+                        {order.status === "pending" && (
+                          <>
+                            <button onClick={() => updateOrderStatus(order.id, "completed")}
+                              className="text-xs px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors">
+                              ✓ Completed
+                            </button>
+                            <button onClick={() => updateOrderStatus(order.id, "cancelled")}
+                              className="text-xs px-4 py-2 border border-red-900/60 text-red-400 hover:bg-red-950/20 font-bold rounded-lg transition-colors">
+                              ✕ Cancel Reservation
+                            </button>
+                          </>
+                        )}
+                        {order.status === "completed" && (
+                          <>
+                            <button onClick={() => updateOrderStatus(order.id, "pending")}
+                              className="text-xs px-4 py-2 border border-zinc-700 text-zinc-400 hover:bg-zinc-800 font-bold rounded-lg transition-colors">
+                              Restore to Pending
+                            </button>
+                            <button onClick={() => updateOrderStatus(order.id, "cancelled")}
+                              className="text-xs px-4 py-2 border border-red-900/60 text-red-400 hover:bg-red-950/20 font-bold rounded-lg transition-colors">
+                              ✕ Cancel Reservation
+                            </button>
+                          </>
+                        )}
+                        {order.status === "cancelled" && (
+                          <button onClick={() => updateOrderStatus(order.id, "pending")}
+                            className="text-xs px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-lg transition-colors">
+                            Restore to Pending
+                          </button>
+                        )}
+                      </div>
+                      
+                      <button onClick={() => deleteOrder(order.id)}
+                        className="text-xs px-3 py-2 border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 font-bold rounded-lg transition-colors">
+                        Delete Order
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {orders.length === 0 && (
+                <p className="text-zinc-600 text-sm text-center py-12">No reservations placed yet.</p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* SETTINGS TAB */}
         {activeTab === "settings" && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
-            <h2 className="text-orange-400 font-bold tracking-widest mb-1">ANNOUNCEMENT BANNER</h2>
-            <p className="text-zinc-500 text-xs mb-4">Shows at the top of the homepage. Leave empty to hide.</p>
-            <input value={announcement} onChange={e => setAnnouncement(e.target.value)}
-              placeholder="e.g. New drop this Friday — come through!"
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-500 mb-3" />
-            {savedAnnouncement && (
-              <p className="text-zinc-600 text-xs mb-3">Live: "{savedAnnouncement}"</p>
-            )}
-            <div className="flex gap-3">
-              <button onClick={saveAnnouncement} className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2 rounded-xl transition-colors">Save Banner</button>
+          <div className="space-y-6 mb-8">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+              <h2 className="text-orange-400 font-bold tracking-widest mb-1">ANNOUNCEMENT BANNER</h2>
+              <p className="text-zinc-500 text-xs mb-4">Shows at the top of the homepage. Leave empty to hide.</p>
+              <input value={announcement} onChange={e => setAnnouncement(e.target.value)}
+                placeholder="e.g. New drop this Friday — come through!"
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-500 mb-3" />
               {savedAnnouncement && (
-                <button onClick={() => { setAnnouncement(""); saveAnnouncement(); }}
-                  className="border border-zinc-700 hover:border-red-700 text-zinc-400 hover:text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm">
-                  Clear
-                </button>
+                <p className="text-zinc-600 text-xs mb-3">Live: "{savedAnnouncement}"</p>
               )}
+              <div className="flex gap-3">
+                <button onClick={saveAnnouncement} className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2 rounded-xl transition-colors">Save Banner</button>
+                {savedAnnouncement && (
+                  <button onClick={() => { setAnnouncement(""); saveAnnouncement(); }}
+                    className="border border-zinc-700 hover:border-red-700 text-zinc-400 hover:text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm">
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+              <h2 className="text-orange-400 font-bold tracking-widest mb-1">WHATSAPP RECEIVER NUMBER</h2>
+              <p className="text-zinc-500 text-xs mb-4">The WhatsApp number (including country code, e.g. 201012345678) where reservation notifications will be sent.</p>
+              <input value={whatsappInput} onChange={e => setWhatsappInput(e.target.value)}
+                placeholder="e.g. 201012345678"
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-500 mb-3" />
+              {savedWhatsapp && (
+                <p className="text-zinc-600 text-xs mb-3">Currently active: {savedWhatsapp}</p>
+              )}
+              <button onClick={saveWhatsapp} className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2 rounded-xl transition-colors">Save Number</button>
             </div>
           </div>
         )}

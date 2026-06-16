@@ -1,11 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer, RotatingBanner } from "@/components/site-chrome";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { products } from "@/lib/products";
 import type { Product } from "@/lib/products";
 import { memo, useMemo } from "react";
 
 const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
-const SITE_TITLE = "Shop — Mr. Pizza Steve Finds";
+const SITE_TITLE = "Shop â€” Mr. Pizza Steve Finds";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -40,7 +39,6 @@ function Shop() {
   return (
     <div className="min-h-screen">
       <Header />
-      <RotatingBanner />
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="border-b border-border pb-8">
           <div className="flex items-center gap-3">
@@ -51,7 +49,7 @@ function Shop() {
               role="status"
               className="tilt-r rounded-xs bg-primary px-2 py-0.5 text-[9px] font-black text-primary-foreground"
             >
-              just dropped 🔥
+              just dropped ًں”¥
             </span>
           </div>
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
@@ -65,7 +63,7 @@ function Shop() {
             >
               @mr.pizzastevefinds
             </a>{" "}
-            to reserve before some other guy takes it. or just show up, idc 🏃
+            to reserve before some other guy takes it. or just show up, idc ًںڈƒ
           </p>
         </div>
 
@@ -82,20 +80,20 @@ function Shop() {
   );
 }
 
-/* ── empty state ──────────────────────────────────────────── */
+/* â”€â”€ empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 function EmptyState() {
   return (
     <div className="mt-16 grid place-items-center text-center">
-      <span className="text-6xl">🧃</span>
+      <span className="text-6xl">ًں§ƒ</span>
       <p className="mt-4 text-muted-foreground">
-        The rack's empty right now. Check back soon — fresh drops land weekly.
+        The rack's empty right now. Check back soon â€” fresh drops land weekly.
       </p>
     </div>
   );
 }
 
-/* ── product card ─────────────────────────────────────────── */
+/* â”€â”€ product card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const Card = memo(function Card({ p }: { p: Product }) {
   const sold = p.status === "sold";
@@ -106,8 +104,8 @@ const Card = memo(function Card({ p }: { p: Product }) {
       params={{ id: p.id }}
       aria-label={
         sold
-          ? `${p.name} — sold`
-          : `${p.name} — ${p.price ? `${p.price} EGP` : p.priceLabel ?? "price TBD"}`
+          ? `${p.name} â€” sold`
+          : `${p.name} â€” ${p.price ? `${p.price} EGP` : p.priceLabel ?? "price TBD"}`
       }
       className={`group relative overflow-hidden border border-border bg-card transition ${
         sold ? "opacity-75" : "hover:-translate-y-1 hover:border-primary"
@@ -123,7 +121,7 @@ const Card = memo(function Card({ p }: { p: Product }) {
               : "bg-success text-success-foreground"
           }`}
         >
-          {sold ? "gone 💀" : "available ✅"}
+          {sold ? "gone ًں’€" : "available âœ…"}
         </span>
       </div>
 

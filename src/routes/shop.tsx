@@ -18,6 +18,18 @@ export const Route = createFileRoute("/shop")({
   component: ShopPage,
 });
 
+function SkeletonCard() {
+  return (
+    <div className="bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 animate-pulse">
+      <div className="aspect-square bg-zinc-800" />
+      <div className="p-3 space-y-2">
+        <div className="h-3 bg-zinc-800 rounded w-3/4" />
+        <div className="h-3 bg-zinc-800 rounded w-1/2" />
+      </div>
+    </div>
+  );
+}
+
 function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +38,10 @@ function ShopPage() {
   const [sizeFilter, setSizeFilter] = useState("ALL");
 
   useEffect(() => {
-    fetch(`${API}/api/products`).then(r => r.json()).then(d => { setProducts(d); setLoading(false); }).catch(() => setLoading(false));
+    fetch(`${API}/api/products`)
+      .then(r => r.json())
+      .then(d => { setProducts(d); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const tags = ["ALL", ...Array.from(new Set(products.map(p => p.tag).filter(Boolean))) as string[]];
@@ -49,8 +64,12 @@ function ShopPage() {
         <p className="text-zinc-500 text-center mb-8 text-sm tracking-widest">CURATED VINTAGE — ZAMALEK, CAIRO</p>
 
         <div className="max-w-md mx-auto mb-6">
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search items..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:border-orange-500 outline-none text-sm" />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search items..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:border-orange-500 outline-none text-sm"
+          />
         </div>
 
         <div className="flex gap-2 flex-wrap justify-center mb-3">
@@ -73,7 +92,7 @@ function ShopPage() {
 
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(6)].map((_, i) => <div key={i} className="bg-zinc-900 rounded-xl aspect-square animate-pulse" />)}
+            {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : (
           <>
@@ -83,12 +102,18 @@ function ShopPage() {
             {sold.length > 0 && (
               <>
                 <p className="text-zinc-600 text-xs tracking-widest font-bold mt-10 mb-4">SOLD</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-50">
                   {sold.map(p => <ProductCard key={p.id} product={p} />)}
                 </div>
               </>
             )}
-            {filtered.length === 0 && <p className="text-center text-zinc-600 py-20">No items found</p>}
+            {filtered.length === 0 && (
+              <div className="text-center py-20">
+                <p className="text-zinc-600 text-sm tracking-widest">NO ITEMS FOUND</p>
+                <button onClick={() => { setSearch(""); setTag("ALL"); setSizeFilter("ALL"); }}
+                  className="mt-4 text-orange-400 text-xs hover:underline">Clear filters</button>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -96,21 +121,36 @@ function ShopPage() {
   );
 }
 
+const CONDITION_COLORS: Record<string, string> = {
+  "Deadstock": "text-emerald-400 bg-emerald-900/40",
+  "Excellent": "text-sky-400 bg-sky-900/40",
+  "Good": "text-zinc-300 bg-zinc-800",
+  "Fair": "text-yellow-400 bg-yellow-900/40",
+};
+
 function ProductCard({ product: p }: { product: Product }) {
   return (
     <Link to="/product/$id" params={{ id: p.id }}
-      className={`group block bg-zinc-900 rounded-xl overflow-hidden border transition-all ${p.status === "sold" ? "border-zinc-800 opacity-50" : "border-zinc-800 hover:border-orange-500 hover:-translate-y-1"}`}>
+      className={`group block bg-zinc-900 rounded-xl overflow-hidden border transition-all duration-200 ${p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-orange-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10"}`}>
       <div className="aspect-square bg-zinc-800 relative flex items-center justify-center overflow-hidden">
         {p.imageUrl
-          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
           : <span className="text-6xl">{p.emoji}</span>}
         {p.status === "sold" && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <span className="text-white font-black text-xl tracking-widest border-2 border-white px-3 py-1 rotate-[-20deg]">SOLD</span>
           </div>
         )}
-        {p.tag && <span className="absolute top-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">{p.tag}</span>}
-        {p.condition && <span className="absolute top-2 right-2 text-xs bg-black/70 text-zinc-300 px-2 py-0.5 rounded">{p.condition}</span>}
+        {p.tag && (
+          <span className="absolute top-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">
+            {p.tag}
+          </span>
+        )}
+        {p.condition && p.condition !== "Good" && (
+          <span className={`absolute top-2 right-2 text-xs font-bold px-2 py-0.5 rounded ${CONDITION_COLORS[p.condition] || "bg-zinc-800 text-zinc-300"}`}>
+            {p.condition}
+          </span>
+        )}
       </div>
       <div className="p-3">
         <p className="text-white font-bold text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>

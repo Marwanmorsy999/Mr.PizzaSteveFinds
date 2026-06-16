@@ -1,22 +1,42 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer } from "@/components/site-chrome";
-import { RotatingBanner } from "@/components/site-chrome";
-import { products, type Product } from "@/lib/products";
+import { Header, Footer, RotatingBanner } from "@/components/site-chrome";
+import { products } from "@/lib/products";
+import type { Product } from "@/lib/products";
+import { memo, useMemo } from "react";
+
+const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
+const SITE_TITLE = "Shop — Mr. Pizza Steve Finds";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
-      { title: "Shop — Mr. Pizza Steve Finds" },
-      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more vintage finds in Zamalek, Cairo." },
-      { name: "keywords", content: "shop vintage, vintage tees, jorts, eyewear, Harley Davidson vintage, curated thrift, Cairo streetwear, Mr Pizza Steve shop" },
-      { property: "og:title", content: "Shop — Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "The current drop, fresh off the Zamalek rack. Tees, jorts, eyewear, grails." },
+      { title: SITE_TITLE },
+      {
+        name: "description",
+        content:
+          "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more vintage finds in Zamalek, Cairo.",
+      },
+      {
+        name: "keywords",
+        content:
+          "shop vintage, vintage tees, jorts, eyewear, Harley Davidson vintage, curated thrift, Cairo streetwear, Mr Pizza Steve shop",
+      },
+      { property: "og:title", content: SITE_TITLE },
+      {
+        property: "og:description",
+        content: "The current drop, fresh off the Zamalek rack. Tees, jorts, eyewear, grails.",
+      },
     ],
   }),
   component: Shop,
 });
 
 function Shop() {
+  const productCards = useMemo(
+    () => products.map((p) => <Card key={p.id} p={p} />),
+    [],
+  );
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -24,60 +44,102 @@ function Shop() {
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="border-b border-border pb-8">
           <div className="flex items-center gap-3">
-            <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
-            <div className="tilt-r bg-primary px-2 py-0.5 text-[9px] font-black text-primary-foreground" style={{ borderRadius: "2px" }}>
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
+              The Shop
+            </span>
+            <span
+              role="status"
+              className="tilt-r rounded-xs bg-primary px-2 py-0.5 text-[9px] font-black text-primary-foreground"
+            >
               just dropped 🔥
-            </div>
+            </span>
           </div>
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
             dm{" "}
-            <a className="text-primary underline" href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer">
+            <a
+              className="text-primary underline"
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
               @mr.pizzastevefinds
             </a>{" "}
             to reserve before some other guy takes it. or just show up, idc 🏃
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => <Card key={p.id} p={p} />)}
-        </div>
+        {productCards.length > 0 ? (
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {productCards}
+          </div>
+        ) : (
+          <EmptyState />
+        )}
       </section>
       <Footer />
     </div>
   );
 }
 
-function Card({ p }: { p: Product }) {
+/* ── empty state ──────────────────────────────────────────── */
+
+function EmptyState() {
+  return (
+    <div className="mt-16 grid place-items-center text-center">
+      <span className="text-6xl">🧃</span>
+      <p className="mt-4 text-muted-foreground">
+        The rack's empty right now. Check back soon — fresh drops land weekly.
+      </p>
+    </div>
+  );
+}
+
+/* ── product card ─────────────────────────────────────────── */
+
+const Card = memo(function Card({ p }: { p: Product }) {
   const sold = p.status === "sold";
+
   return (
     <Link
       to="/product/$id"
       params={{ id: p.id }}
-      className={`group relative overflow-hidden border border-border bg-card transition ${sold ? "opacity-75" : "hover:-translate-y-1 hover:border-primary"}`}
+      aria-label={
+        sold
+          ? `${p.name} — sold`
+          : `${p.name} — ${p.price ? `${p.price} EGP` : p.priceLabel ?? "price TBD"}`
+      }
+      className={`group relative overflow-hidden border border-border bg-card transition ${
+        sold ? "opacity-75" : "hover:-translate-y-1 hover:border-primary"
+      }`}
     >
-      {/* Available/Sold sticker */}
+      {/* Available / sold sticker (top-left) */}
       <div className="absolute left-3 top-3 z-10">
         <span
-          className={`tilt-l px-2 py-1 text-[10px] font-black uppercase tracking-widest shadow ${
+          role="status"
+          className={`rounded-xs tilt-l px-2 py-1 text-[10px] font-black uppercase tracking-widest shadow ${
             sold
               ? "bg-zinc-800 text-zinc-400"
               : "bg-success text-success-foreground"
           }`}
-          style={{ borderRadius: "2px" }}
         >
           {sold ? "gone 💀" : "available ✅"}
         </span>
       </div>
 
-      {/* Tag sticker top-right */}
-      <div className="absolute right-3 top-3 z-10 tilt-r bg-secondary px-2 py-1 text-[10px] font-black text-secondary-foreground shadow" style={{ borderRadius: "2px" }}>
+      {/* Tag sticker (top-right) */}
+      <div className="absolute right-3 top-3 z-10 rounded-xs tilt-r bg-secondary px-2 py-1 text-[10px] font-black text-secondary-foreground shadow">
         {p.tag}
       </div>
 
       {/* Image / emoji area */}
       <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-        <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale opacity-40" : ""}`}>
+        <span
+          className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${
+            sold ? "grayscale opacity-40" : ""
+          }`}
+          aria-hidden={true}
+        >
           {p.emoji}
         </span>
         {sold && (
@@ -94,16 +156,22 @@ function Card({ p }: { p: Product }) {
 
       {/* Card body */}
       <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">{p.name}</h3>
+        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">
+          {p.name}
+        </h3>
         <div className="flex items-center justify-between border-t border-border pt-3">
           <span className="text-xs text-muted-foreground">
             {p.size ? `size ${p.size}` : "one size"}
           </span>
-          <span className={`font-display text-lg ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
+          <span
+            className={`font-display text-lg ${
+              sold ? "text-zinc-600 line-through" : "text-primary"
+            }`}
+          >
             {p.price ? `${p.price} EGP` : p.priceLabel}
           </span>
         </div>
       </div>
     </Link>
   );
-}
+});

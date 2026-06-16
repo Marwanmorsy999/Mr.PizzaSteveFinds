@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "npm run build && wrangler dev",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",
@@ -32,6 +33,7 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "vite": "^6.0.0",
-    "vite-tsconfig-paths": "^6.0.2"
+    "vite-tsconfig-paths": "^6.0.2",
+    "wrangler": "^4.100.0"
   }
 }

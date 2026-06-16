@@ -7,8 +7,6 @@ export const Route = createFileRoute("/about")({
     meta: [
       { title: "About - Mr. Pizza Steve Finds" },
       { name: "description", content: "The story behind Mr. Pizza Steve Finds - Steve dos Santos vintage shop in Zamalek, Cairo." },
-      { property: "og:title", content: "About - Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "Steve dos Santos vintage shop in Zamalek, Cairo. Loud vintage, bolder thrift." },
     ],
   }),
   component: About,
@@ -20,13 +18,8 @@ function About() {
       <Header />
       <Marquee text="ZAMALEK · CAIRO · 3PM - 11PM · COME THRU ·" />
 
-      {/* Hero market photo */}
-      <div className="relative w-full h-[60vh] overflow-hidden">
-        <img
-          src="/market.jpg"
-          alt="Steve sourcing at Cairo market"
-          className="w-full h-full object-cover object-center"
-        />
+      <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
+        <img src="/market.jpg" alt="Steve sourcing at Cairo market" className="w-full h-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
         <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">on the hunt</p>
@@ -46,17 +39,13 @@ function About() {
               <span className="text-foreground">Mr. Pizza Steve Finds</span> is the vintage and thrift project of Steve dos Santos - a tiny shop in Zamalek with a loud personality and a sharper eye. No, seriously, this place slaps.
             </p>
             <p>
-              Every single piece is hand-picked: heavyweight tees, embroidered jorts, eyewear that has no business looking this good, and the occasional grail (RIP that Ed Hardy zip-up, gone too soon). Streetwear sensibility, thrift store prices, Pizza Steve energy only.
+              Every single piece is hand-picked: heavyweight tees, embroidered jorts, eyewear that has no business looking this good, and the occasional grail. Streetwear sensibility, thrift store prices, Pizza Steve energy only.
             </p>
             <p>
               Pop in between 3PM and 11PM, or slide into the DMs. New drops post first on Instagram - follow or miss out, honestly.
             </p>
-            
-              href="https://instagram.com/mr.pizzastevefinds"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
-            >
+            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary">
               follow @mr.pizzastevefinds or else
             </a>
           </div>
@@ -98,12 +87,8 @@ function About() {
             <p className="mt-3 text-sm text-muted-foreground">
               got a question about a piece? wanna hold something before someone else snatches it? just dm us, we are not scary.
             </p>
-            
-              href="https://ig.me/m/mr.pizzastevefinds"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
-            >
+            <a href="https://ig.me/m/mr.pizzastevefinds" target="_blank" rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary">
               instagram dm
             </a>
           </div>

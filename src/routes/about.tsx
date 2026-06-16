@@ -23,14 +23,14 @@ function About() {
         <img src="/market.jpg" alt="Steve sourcing at Cairo market" loading="lazy" className="w-full h-full object-cover object-center grayscale" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
         <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-          <p className="text-xs font-black uppercase tracking-[0.4em] text-white">Out in the wild</p>
-          <p className="mt-1 text-sm text-zinc-300">Market days · Cairo sun · Mr. Pizza Steve</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">Out in the wild</p>
+          <p className="mt-2 text-xs uppercase tracking-[0.25em] text-zinc-400 font-medium">Market days · Cairo sun · Mr. Pizza Steve</p>
         </div>
       </div>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
-        <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Story</div>
-        <h1 className="mt-2 text-5xl sm:text-7xl">
+        <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary pt-2">The Story</div>
+        <h1 className="mt-2 text-4xl sm:text-6xl lg:text-7xl leading-none">
           One <span className="text-primary">slice</span> of Cairo street culture.
         </h1>
 
@@ -40,7 +40,7 @@ function About() {
               <span className="text-foreground">Mr. Pizza Steve Finds</span> is the vintage and thrift project of Steve dos Santos - a tiny shop in Zamalek with a loud personality and a sharper eye. No, seriously, this place slaps.
             </p>
             <p>
-              Every single piece is hand-picked: heavyweight tees, embroidered jorts, eyewear that has no business looking this good, and the occasional grail. Streetwear sensibility, thrift store prices, Pizza Steve energy only.
+              Every single piece is hand-picked: eyewear that has no business looking this good, and the occasional grail. Streetwear sensibility, thrift store prices, Pizza Steve energy only.
             </p>
             <p>
               Pop in between 3PM and 11PM, or slide into the DMs. New drops post first on Instagram - follow or miss out, honestly.

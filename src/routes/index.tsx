@@ -1,112 +1,127 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
-import { RotatingBanner } from "@/components/site-chrome";
-import { InstagramFeed } from "@/components/ui/instagram-feed";
 import { products } from "@/lib/products";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Mr. Pizza Steve Finds — Loud Vintage & Thrift | Zamalek, Cairo" },
-      { name: "description", content: "Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo. Hand-picked tees, jorts, eyewear, grails. New drops post first on Instagram." },
-      { name: "keywords", content: "vintage clothing, thrift, Zamalek, Cairo, streetwear, vintage tees, embroidered jorts, eyewear, grail, secondhand, curated vintage, Steve dos Santos, Mr Pizza Steve Finds, mens vintage, street style, unique clothing Egypt, sustainable fashion, rare finds" },
-      { name: "author", content: "Steve dos Santos" },
-      { property: "og:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift | Zamalek, Cairo" },
-      { property: "og:description", content: "Hand-picked vintage and thrift in Zamalek, Cairo. New drop available — tees, jorts, eyewear, grails. Shop the drop or DM @mr.pizzastevefinds." },
-      { property: "og:url", content: "https://mr.pizzastevefinds.com/" },
-      { property: "og:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@mr.pizzastevefinds" },
-      { name: "twitter:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift" },
-      { name: "twitter:description", content: "Zamalek's worst-kept secret. Hand-picked vintage and thrift, new drops every week. DM to reserve." },
-      { name: "twitter:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
+      { name: "description", content: "Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo." },
     ],
   }),
   component: Home,
 });
 
 function Home() {
-  const featured = products.filter((p) => p.status === "available").slice(0, 3);
+  const available = products.filter((p) => p.status === "available").slice(0, 4);
+
   return (
     <div className="min-h-screen">
       <Header />
-      <RotatingBanner />
 
-      <section className="noise-bg relative overflow-hidden border-b border-border">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-            Open today · 3PM – 11PM
+      {/* Hero */}
+      <section className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:pt-24 sm:pb-20">
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex-1">
+            <h1 className="font-display italic leading-[0.88] text-foreground"
+              style={{ fontSize: "clamp(3.5rem, 10vw, 8rem)" }}>
+              Mr. Pizza<br />
+              <span className="text-primary not-italic">Steve</span><br />
+              Finds.
+            </h1>
           </div>
-          <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
-            Mr. Pizza<br />
-            <span className="text-primary">Steve</span><br />
-            Finds<span className="text-secondary">.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-            Loud vintage. Bolder thrift. Curated by Steve dos Santos out of a tiny shop on Hassan Assem — Zamalek's worst-kept secret.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/shop"
-              className="inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary"
-            >
-              Shop the drop →
-            </Link>
-            <a
-              href="https://instagram.com/mr.pizzastevefinds"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-sm border border-border px-6 py-3 font-display text-sm uppercase tracking-widest text-foreground transition hover:border-primary hover:text-primary"
-            >
-              @mr.pizzastevefinds
-            </a>
+          <div className="sm:max-w-xs sm:pt-4 sm:text-right">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Loud vintage. Bolder thrift.<br />
+              Curated by Steve dos Santos out of a<br />
+              tiny shop on Hassan Assem —<br />
+              Zamalek's worst-kept secret.
+            </p>
+            <div className="mt-6 flex flex-col gap-2 sm:items-end">
+              <Link
+                to="/shop"
+                className="inline-block border border-primary px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-primary transition hover:bg-primary hover:text-primary-foreground"
+              >
+                Shop the drop
+              </Link>
+              <a
+                href="https://instagram.com/mr.pizzastevefinds"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-muted-foreground transition hover:text-foreground"
+              >
+                @mr.pizzastevefinds ↗
+              </a>
+            </div>
           </div>
+        </div>
 
-          <div className="mt-16 grid gap-4 border-t border-border pt-8 text-sm sm:grid-cols-3">
-            <Stat label="Location" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
-            <Stat label="Hours" value="3PM – 11PM" sub="Every damn day" />
-            <Stat label="Vibe" value="Streetwear × Thrift" sub="Pizza Steve energy" />
-          </div>
+        <div className="mt-12 border-t border-border pt-6 flex flex-wrap gap-x-10 gap-y-2 text-xs text-muted-foreground uppercase tracking-widest">
+          <span>30 Hassan Assem St, Zamalek</span>
+          <span>Daily 3PM – 11PM</span>
+          <span>Streetwear × Thrift</span>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <div className="flex items-end justify-between">
-          <h2 className="text-3xl sm:text-5xl">Fresh on the rack</h2>
-          <Link to="/shop" className="text-sm font-bold uppercase tracking-widest text-primary hover:underline">
+      {/* Now in the shop — inventory list */}
+      <section className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="flex items-baseline justify-between mb-1">
+          <h2 className="font-display text-xl italic text-muted-foreground">Now in the shop</h2>
+          <Link to="/shop" className="text-xs uppercase tracking-widest text-primary hover:underline underline-offset-4">
             See all →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {featured.map((p) => (
-            <div key={p.id} className="group relative overflow-hidden rounded-sm border border-border bg-card transition hover:-translate-y-1 hover:border-primary">
-              <div className="grid aspect-square place-items-center bg-gradient-to-br from-muted to-card text-7xl">
-                {p.emoji}
-              </div>
-              <div className="p-4">
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">{p.tag}</div>
-                <div className="mt-1 line-clamp-2 font-display text-sm uppercase">{p.name}</div>
-              </div>
+        <div className="border-t border-border">
+          {available.map((p, i) => (
+            <div
+              key={p.id}
+              className="flex items-center gap-4 border-b border-border py-4 group"
+            >
+              <span className="w-6 shrink-0 text-xs text-muted-foreground tabular-nums">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span className="w-20 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                {p.tag}
+              </span>
+              <span className="flex-1 font-display italic text-foreground group-hover:text-primary transition-colors">
+                {p.name}
+              </span>
+              {p.size && (
+                <span className="hidden sm:block text-xs text-muted-foreground shrink-0">
+                  {p.size}
+                </span>
+              )}
+              <span className="text-xs text-primary tabular-nums shrink-0">
+                {p.price ? `${p.price} EGP` : p.priceLabel}
+              </span>
             </div>
           ))}
         </div>
       </section>
 
-      <InstagramFeed />
-      <Footer />
-    </div>
-  );
-}
+      {/* Instagram CTA */}
+      <section className="border-t border-border">
+        <div className="mx-auto max-w-6xl px-4 py-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div>
+            <h2 className="font-display text-3xl italic text-foreground">
+              New drops on Instagram first.
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Follow along. DM to hold something.
+            </p>
+          </div>
+          <a
+            href="https://instagram.com/mr.pizzastevefinds"
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 border border-primary px-6 py-3 text-xs font-medium uppercase tracking-widest text-primary transition hover:bg-primary hover:text-primary-foreground"
+          >
+            @mr.pizzastevefinds ↗
+          </a>
+        </div>
+      </section>
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div>
-      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-display text-xl uppercase">{value}</div>
-      <div className="text-xs text-muted-foreground">{sub}</div>
+      <Footer />
     </div>
   );
 }

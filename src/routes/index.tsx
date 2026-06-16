@@ -134,7 +134,7 @@ function HomePage() {
       )}
 
       {/* Hero */}
-      <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12 overflow-hidden bg-white">
+      <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12 overflow-hidden bg-zinc-950">
         <div className="relative z-10 max-w-4xl">
           <p className="text-orange-600 text-xs font-bold tracking-[0.4em] mb-8">ZAMALEK, CAIRO · ESTABLISHED 2024</p>
           <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-black">

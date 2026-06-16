@@ -1,4 +1,5 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { Header, Footer } from "@/components/site-chrome";
 import { products } from "@/lib/products";
 import type { Product } from "@/lib/products";
 import { memo, useMemo } from "react";

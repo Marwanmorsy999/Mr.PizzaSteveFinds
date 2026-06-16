@@ -49,14 +49,7 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-sm">Follow the Drops</h4>
-          
-            href="https://instagram.com/mr.pizzastevefinds"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 inline-flex items-center gap-2 rounded-sm bg-primary px-3 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition hover:bg-secondary"
-          >
-            @mr.pizzastevefinds
-          </a>
+          <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-2 rounded-sm bg-primary px-3 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition hover:bg-secondary">@mr.pizzastevefinds</a>
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-[10px] uppercase tracking-[0.4em] text-muted-foreground">

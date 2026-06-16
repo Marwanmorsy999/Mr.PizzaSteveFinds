@@ -3,12 +3,12 @@ import { Link } from "@tanstack/react-router";
 
 export function Header() {
   return (
-   <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-     <div className="flex w-full items-center justify-between px-0 py-0">
-        <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-        <img src={logo} alt="Mr. Pizza Steve" className="h-40 w-auto" />
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+      <div className="flex w-full items-center justify-between px-6 py-2">
+        <Link to="/">
+          <img src={logo} alt="Mr. Pizza Steve" className="h-20 w-auto" />
         </Link>
-        <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
+        <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-6 sm:text-sm">
           {[
             { to: "/", label: "Home" },
             { to: "/shop", label: "Shop" },
@@ -30,7 +30,6 @@ export function Header() {
     </header>
   );
 }
-
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-border bg-card">

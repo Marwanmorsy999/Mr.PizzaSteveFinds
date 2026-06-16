@@ -1,15 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-
-import appCss from "../style.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -22,10 +13,7 @@ function NotFoundComponent() {
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
+          <Link to="/" className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
             Go home
           </Link>
         </div>
@@ -44,26 +32,18 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
+            onClick={() => { router.invalidate(); reset(); }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Try again
           </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
+          <a href="/" className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
             Go home
           </a>
         </div>
@@ -73,64 +53,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mr. Pizza Steve Finds" },
-      { name: "description", content: "Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo. Hand-picked tees, jorts, eyewear, grails. New drops post first on Instagram." },
-      { name: "keywords", content: "vintage clothing, thrift, Zamalek, Cairo, streetwear, vintage tees, embroidered jorts, eyewear, grail, secondhand, curated vintage, Steve dos Santos, Mr Pizza Steve Finds, mens vintage, street style, unique clothing Egypt, sustainable fashion, rare finds" },
-      { name: "author", content: "Steve dos Santos" },
-      { property: "og:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift | Zamalek, Cairo" },
-      { property: "og:description", content: "Hand-picked vintage and thrift in Zamalek, Cairo. New drop available — tees, jorts, eyewear, grails. Shop the drop or DM @mr.pizzastevefinds." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mr.pizzastevefinds.com/" },
-      { property: "og:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:site_name", content: "Mr. Pizza Steve Finds" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@mr.pizzastevefinds" },
-      { name: "twitter:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift" },
-      { name: "twitter:description", content: "Zamalek's worst-kept secret. Hand-picked vintage and thrift, new drops every week." },
-      { name: "twitter:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap",
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );

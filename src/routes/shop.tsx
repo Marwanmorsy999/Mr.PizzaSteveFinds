@@ -8,7 +8,15 @@ interface Product {
   status: string; emoji?: string; tag?: string; imageUrl?: string; condition?: string;
 }
 
-export const Route = createFileRoute("/shop")({ component: ShopPage });
+export const Route = createFileRoute("/shop")({
+  head: () => ({
+    meta: [
+      { title: "Shop — Mr. Pizza Steve Finds" },
+      { name: "description", content: "Browse vintage and thrift clothing curated by Steve dos Santos. Zamalek, Cairo." },
+    ],
+  }),
+  component: ShopPage,
+});
 
 function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -40,13 +48,11 @@ function ShopPage() {
         <h1 className="text-4xl font-black tracking-widest mb-2 text-center">THE FINDS</h1>
         <p className="text-zinc-500 text-center mb-8 text-sm tracking-widest">CURATED VINTAGE — ZAMALEK, CAIRO</p>
 
-        {/* Search */}
         <div className="max-w-md mx-auto mb-6">
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search items..."
             className="w-full bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:border-orange-500 outline-none text-sm" />
         </div>
 
-        {/* Tag filters */}
         <div className="flex gap-2 flex-wrap justify-center mb-3">
           {tags.map(t => (
             <button key={t} onClick={() => setTag(t)}
@@ -56,7 +62,6 @@ function ShopPage() {
           ))}
         </div>
 
-        {/* Size filters */}
         <div className="flex gap-2 flex-wrap justify-center mb-10">
           {sizes.map(s => (
             <button key={s} onClick={() => setSizeFilter(s)}
@@ -105,7 +110,7 @@ function ProductCard({ product: p }: { product: Product }) {
           </div>
         )}
         {p.tag && <span className="absolute top-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">{p.tag}</span>}
-        {p.condition && <span className="absolute top-2 right-2 text-xs bg-zinc-900/80 text-zinc-300 px-2 py-0.5 rounded">{p.condition}</span>}
+        {p.condition && <span className="absolute top-2 right-2 text-xs bg-black/70 text-zinc-300 px-2 py-0.5 rounded">{p.condition}</span>}
       </div>
       <div className="p-3">
         <p className="text-white font-bold text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>

@@ -4,14 +4,27 @@ import { useCart } from "../context/CartContext";
 import { useEffect, useRef, useState } from "react";
 
 const BANNERS = [
-  { label: "omg new drop just dropped 🫶" },
-  { label: "fresh off the rack fr fr 🔥" },
-  { label: "zamalek's worst kept secret 🤫" },
-  { label: "dm to hold pls or someone else will snatch it 😤" },
-  { label: "no returns but it's worth it trust 🍕" },
+  { label: "omg new drop just dropped" },
+  { label: "fresh off the rack fr fr" },
+  { label: "zamalek's worst kept secret" },
+  { label: "dm to hold pls or someone else will snatch it" },
+  { label: "no returns but it's worth it trust" },
   { label: "these pieces are too good to be sitting here wtf" },
-  { label: "buy it before ur friend does 💀" },
+  { label: "buy it before ur friend does" },
 ];
+
+// Singleton audio — persists across route changes
+let globalAudio: HTMLAudioElement | null = null;
+let audioStarted = false;
+
+function getAudio() {
+  if (!globalAudio) {
+    globalAudio = new Audio("/site.mp3");
+    globalAudio.loop = true;
+    globalAudio.volume = 0.5;
+  }
+  return globalAudio;
+}
 
 export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
   const [idx, setIdx] = useState(0);
@@ -20,11 +33,10 @@ export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
     return () => clearInterval(t);
   }, [interval]);
 
-  const b = BANNERS[idx];
   return (
     <div className="overflow-hidden border-y border-zinc-700 bg-zinc-900">
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 py-2 text-sm font-bold text-white">
-        <span>{b.label}</span>
+        <span>{BANNERS[idx].label}</span>
       </div>
     </div>
   );
@@ -32,19 +44,15 @@ export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
 
 export function Header() {
   const { count } = useCart();
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [volume, setVolume] = useState(0.5);
-  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audio = getAudio();
 
     const play = () => {
-      if (started) return;
-      audio.volume = volume;
+      if (audioStarted) return;
       audio.play().catch(() => {});
-      setStarted(true);
+      audioStarted = true;
     };
 
     document.addEventListener("click", play, { once: true });
@@ -56,13 +64,11 @@ export function Header() {
     };
   }, []);
 
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume;
-  }, [volume]);
-
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    setVolume(parseFloat(e.target.value));
+    const v = parseFloat(e.target.value);
+    setVolume(v);
+    getAudio().volume = v;
   };
 
   return (
@@ -75,9 +81,9 @@ export function Header() {
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[
             { to: "/", label: "home" },
-            { to: "/shop", label: "shop 🛍️" },
+            { to: "/shop", label: "shop" },
             { to: "/about", label: "about" },
-            { to: "/cart", label: count > 0 ? `cart (${count}) 🛒` : "cart" },
+            { to: "/cart", label: count > 0 ? `cart (${count})` : "cart" },
           ].map((l) => (
             <Link
               key={l.to}
@@ -92,7 +98,7 @@ export function Header() {
           ))}
 
           <div className="hidden sm:flex items-center gap-2 ml-2">
-            <span className="text-muted-foreground">🔈</span>
+            <span className="text-muted-foreground text-xs">vol</span>
             <input
               type="range"
               min={0}
@@ -103,12 +109,9 @@ export function Header() {
               onClick={(e) => e.stopPropagation()}
               className="w-20 accent-primary cursor-pointer"
             />
-            <span className="text-muted-foreground">🔊</span>
           </div>
         </nav>
       </div>
-
-      <audio ref={audioRef} src="/site.mp3" loop preload="none" />
     </header>
   );
 }
@@ -123,7 +126,7 @@ export function Footer() {
             <span className="text-primary">STEVE</span> FINDS.
           </p>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
-            curated vintage & thrift by steve dos santos. cairo 🍕
+            curated vintage & thrift by steve dos santos. cairo
           </p>
           <p className="mt-2 text-xs text-zinc-600">not our fault ur obsessed</p>
         </div>
@@ -131,24 +134,24 @@ export function Footer() {
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">come visit</h4>
           <p className="text-sm text-zinc-300 leading-relaxed">
             30 Hassan Assem St<br />Zamalek, Cairo<br />
-            <span className="text-zinc-500">daily 3pm – 11pm</span>
+            <span className="text-zinc-500">daily 3pm - 11pm</span>
           </p>
         </div>
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">the gram</h4>
-          <a
+          
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-primary hover:bg-secondary px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground transition-colors"
           >
-            @mr.pizzastevefinds ↗
+            @mr.pizzastevefinds
           </a>
           <p className="mt-2 text-xs text-zinc-600">drops post here first, always</p>
         </div>
       </div>
       <div className="border-t border-zinc-800 py-4 text-center text-[10px] tracking-[0.3em] text-zinc-600">
-        © {new Date().getFullYear()} pizza steve energy ✌️
+        © {new Date().getFullYear()} pizza steve energy
       </div>
     </footer>
   );

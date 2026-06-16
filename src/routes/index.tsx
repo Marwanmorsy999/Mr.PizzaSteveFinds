@@ -1,6 +1,5 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer, RotatingBanner } from "@/components/site-chrome";
-import { InstagramFeed } from "@/components/ui/instagram-feed";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Header, Footer } from "@/components/site-chrome";
 import { products } from "@/lib/products";
 
 export const Route = createFileRoute("/")({
@@ -23,7 +22,6 @@ function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <RotatingBanner />
 
       {/* Hero with video background */}
       <section className="relative overflow-hidden border-b border-border" style={{ minHeight: "90vh" }}>
@@ -100,13 +98,13 @@ function Home() {
         </div>
       </section>
 
-      {/* Rack photo full-bleed */}
+      {/* Rack photo — vibe only */}
       <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
-        <img src="/rack.jpg" alt="on the rack now" className="w-full h-full object-cover object-center" />
+        <img src="/rack.jpg" alt="the rack" className="w-full h-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
         <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-          <p className="text-xs font-black uppercase tracking-[0.4em] text-white">On the rack now</p>
-          <p className="mt-1 text-sm text-zinc-300">Evisu · Tommy · Camo · Varsity</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">the finds</p>
+          <p className="mt-1 text-xs uppercase tracking-[0.25em] text-zinc-400">zamalek · cairo · hand-picked</p>
         </div>
       </div>
 
@@ -124,7 +122,6 @@ function Home() {
         </p>
       </div>
 
-      <InstagramFeed />
       <Footer />
     </div>
   );

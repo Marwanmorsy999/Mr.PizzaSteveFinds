@@ -5,7 +5,7 @@ import type { Product } from "@/lib/products";
 import { memo, useMemo } from "react";
 
 const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
-const SITE_TITLE = "Shop â€” Mr. Pizza Steve Finds";
+const SITE_TITLE = "Shop - Mr. Pizza Steve Finds";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -42,17 +42,7 @@ function Shop() {
       <Header />
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="border-b border-border pb-8">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
-              The Shop
-            </span>
-            <span
-              role="status"
-              className="tilt-r rounded-xs bg-primary px-2 py-0.5 text-[9px] font-black text-primary-foreground"
-            >
-              just dropped ًں”¥
-            </span>
-          </div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
             dm{" "}

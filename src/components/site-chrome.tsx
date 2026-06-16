@@ -34,24 +34,36 @@ export function Header() {
   const { count } = useCart();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [volume, setVolume] = useState(0.5);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.volume = volume;
-    const play = () => audio.play().catch(() => {});
+
+    const play = () => {
+      if (started) return;
+      audio.volume = volume;
+      audio.play().catch(() => {});
+      setStarted(true);
+    };
+
     document.addEventListener("click", play, { once: true });
-    document.addEventListener("touchstart", play, { once: true });
-    audio.play().catch(() => {});
+    document.addEventListener("touchend", play, { once: true });
+
     return () => {
       document.removeEventListener("click", play);
-      document.removeEventListener("touchstart", play);
+      document.removeEventListener("touchend", play);
     };
   }, []);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    setVolume(parseFloat(e.target.value));
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
@@ -87,7 +99,8 @@ export function Header() {
               max={1}
               step={0.01}
               value={volume}
-              onChange={(e) => setVolume(parseFloat(e.target.value))}
+              onChange={handleVolumeChange}
+              onClick={(e) => e.stopPropagation()}
               className="w-20 accent-primary cursor-pointer"
             />
             <span className="text-muted-foreground">🔊</span>
@@ -95,7 +108,7 @@ export function Header() {
         </nav>
       </div>
 
-      <audio ref={audioRef} src="/site.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/site.mp3" loop preload="none" />
     </header>
   );
 }

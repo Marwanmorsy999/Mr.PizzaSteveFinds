@@ -26,29 +26,29 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-display: "Archivo Black", "Impact", sans-serif;
-  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "GT America", "Helvetica Neue", "Akzidenz Grotesk", sans-serif;
+  --font-sans: "GT America", "Helvetica Neue", "Akzidenz Grotesk", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.25rem;
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --card: #18181b;
-  --card-foreground: #ffffff;
-  --primary: #f97316;
-  --primary-foreground: #0a0a0a;
-  --secondary: #facc15;
-  --secondary-foreground: #0a0a0a;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #fb923c;
-  --accent-foreground: #ffffff;
+  --background: #111827; /* bg-zinc-900 */
+  --foreground: #f4f4f5; /* text-zinc-100 */
+  --card: #0f1720; /* slightly lighter card */
+  --card-foreground: #f4f4f5;
+  --primary: #e6e7eb; /* accents -> zinc-200 */
+  --primary-foreground: #0b0b0b;
+  --secondary: #27272a; /* muted zinc */
+  --secondary-foreground: #f4f4f5;
+  --muted: #18181b;
+  --muted-foreground: #9ca3af;
+  --accent: #e6e7eb;
+  --accent-foreground: #0b0b0b;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #27272a;
+  --border: #e6e7eb; /* border-zinc-200 */
   --input: #27272a;
-  --ring: #f97316;
+  --ring: #374151; /* zinc-700 */
 }
 
 @layer base {
@@ -85,4 +85,21 @@
   background-image:
     radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--color-primary) 25%, transparent), transparent 40%),
     radial-gradient(circle at 80% 60%, rgba(251, 146, 60, 0.2), transparent 45%);
+}
+
+/* Remap legacy orange/amber Tailwind utilities to zinc palette for a neutral collectible aesthetic */
+.bg-orange-500, .bg-orange-600, .bg-amber-500, .bg-amber-600 {
+  background-color: var(--muted) !important; /* hover/secondary use muted zinc */
+}
+.text-orange-400, .text-orange-500, .text-amber-400, .text-amber-500 {
+  color: var(--foreground) !important; /* neutral text */
+}
+.border-orange-500, .border-amber-500 {
+  border-color: var(--border) !important;
+}
+.hover\:bg-orange-500:hover, .hover\:bg-amber-500:hover {
+  background-color: #27272a !important; /* hover:bg-zinc-800 */
+}
+.hover\:text-orange-400:hover, .hover\:text-amber-400:hover {
+  color: var(--foreground) !important;
 }

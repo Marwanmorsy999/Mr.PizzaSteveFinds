@@ -7,7 +7,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         <Link to="/">
-          <img src={logo} alt="Mr. Pizza Steve" className="h-8 w-auto sm:h-14" />
+         <img src={logo} alt="Mr. Pizza Steve" className="h-16 w-auto sm:h-20" />
         </Link>
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[

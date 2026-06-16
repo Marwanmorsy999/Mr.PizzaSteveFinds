@@ -38,7 +38,7 @@ export function Footer() {
         <div>
           <h3 className="text-xl">Mr. Pizza Steve Finds</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Vintage &amp; thrift curated by Steve dos Santos. Loud, bold, Cairo.
+            Vintage and thrift curated by Steve dos Santos. Loud, bold, Cairo.
           </p>
         </div>
         <div>
@@ -49,7 +49,7 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-sm">Follow the Drops</h4>
-          <a
+          
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"

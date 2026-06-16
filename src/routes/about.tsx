@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { InstagramFeed } from "@/components/ui/instagram-feed";
 
 export const Route = createFileRoute("/about")({
   component: About,
@@ -28,6 +29,7 @@ function About() {
           <iframe title="location" src="https://www.google.com/maps?q=30+Hassan+Assem+St,+Zamalek,+Cairo&output=embed" width="100%" height="400" loading="lazy" className="block w-full grayscale" />
         </div>
       </section>
+      <InstagramFeed />
     </div>
   );
 }

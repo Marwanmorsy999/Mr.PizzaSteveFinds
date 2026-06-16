@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
-import { useCart } from "../context/CartContext";
+import { useState, useEffect } from "react";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const IG = "https://ig.me/m/mr.pizzastevefinds";
-const SITE_URL = "https://mrpizzastevefinds.com";
 
 interface Product {
   id: string; name: string; size?: string; price?: number; priceLabel?: string;
@@ -12,67 +10,76 @@ interface Product {
   images?: string[]; condition?: string; description?: string;
 }
 
-export const Route = createFileRoute("/product/$id")({
-  // Loader fetches product server-side so head() can use real data
-  loader: async ({ params }) => {
-    try {
-      const res = await fetch(`${API}/api/products/${params.id}`);
-      if (!res.ok) return null;
-      return (await res.json()) as Product;
-    } catch {
-      return null;
-    }
-  },
-  head: ({ loaderData: product }) => {
-    if (!product) return { meta: [{ title: "Item Not Found – Mr. Pizza Steve Finds" }] };
-    const title = `${product.name} – Mr. Pizza Steve Finds`;
-    const description = product.description
-      ? product.description
-      : `${product.name}${product.size ? ` · Size ${product.size}` : ""}${product.condition ? ` · ${product.condition}` : ""} · Curated vintage & thrift by Steve dos Santos, Zamalek Cairo.`;
-    const image = product.imageUrl || `${SITE_URL}/og-default.jpg`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:image", content: image },
-        { property: "og:type", content: "product" },
-        { property: "og:url", content: `${SITE_URL}/product/${product.id}` },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description },
-        { name: "twitter:image", content: image },
-      ],
-    };
-  },
-  component: ProductPage,
-});
+// ── Size guide data ─────────────────────────────────────────────────────────
+const SIZE_GUIDE = [
+  { label: "XS", chest: "32–34″", shoulder: "16″", length: "26″" },
+  { label: "S",  chest: "35–37″", shoulder: "17″", length: "27″" },
+  { label: "M",  chest: "38–40″", shoulder: "18″", length: "28″" },
+  { label: "L",  chest: "41–43″", shoulder: "19″", length: "29″" },
+  { label: "XL", chest: "44–46″", shoulder: "20″", length: "30″" },
+  { label: "XXL",chest: "47–50″", shoulder: "21″", length: "31″" },
+];
 
+// ── Static testimonials ──────────────────────────────────────────────────────
+const REVIEWS = [
+  { name: "Ahmed K.", text: "Got a crazy vintage Nike tee, exactly as described. Steve packed it super carefully.", stars: 5 },
+  { name: "Nour M.", text: "Fast DM reply, piece was even better in person. Will be back for sure.", stars: 5 },
+  { name: "Omar S.", text: "Sizing was perfect — the measurements listed saved me from guessing.", stars: 5 },
+];
+
+// ── Condition badge colors ───────────────────────────────────────────────────
 const CONDITION_COLORS: Record<string, string> = {
-  "Deadstock": "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
-  "Excellent": "bg-blue-500/20 text-blue-400 border-blue-500/40",
-  "Great":     "bg-cyan-500/20 text-cyan-400 border-cyan-500/40",
-  "Good":      "bg-zinc-700/50 text-zinc-300 border-zinc-600",
-  "Fair":      "bg-orange-500/20 text-orange-400 border-orange-500/40",
+  "Deadstock": "text-emerald-400 bg-emerald-900/40 border-emerald-700",
+  "Excellent": "text-sky-400 bg-sky-900/40 border-sky-700",
+  "Great":     "text-cyan-400 bg-cyan-900/40 border-cyan-700",
+  "Good":      "text-zinc-300 bg-zinc-800 border-zinc-600",
+  "Fair":      "text-yellow-400 bg-yellow-900/40 border-yellow-700",
 };
 
-function ProductSkeleton() {
+export const Route = createFileRoute("/product/$id")({ component: ProductPage });
+
+function Stars({ n }: { n: number }) {
   return (
-    <div className="min-h-screen bg-white px-4 py-12">
-      <div className="max-w-5xl mx-auto animate-pulse">
-        <div className="h-4 w-24 bg-zinc-300 mb-8" />
-        <div className="grid md:grid-cols-2 gap-12">
-          <div className="aspect-square bg-zinc-200 border border-zinc-300" />
-          <div className="space-y-4 pt-4">
-            <div className="h-4 w-20 bg-zinc-300" />
-            <div className="h-8 w-3/4 bg-zinc-300" />
-            <div className="h-10 w-1/3 bg-zinc-300" />
-            <div className="h-4 w-1/2 bg-zinc-300" />
-            <div className="h-4 w-1/3 bg-zinc-300" />
-            <div className="mt-8 h-14 bg-zinc-300" />
-          </div>
+    <span className="text-orange-400 text-sm">
+      {"★".repeat(n)}{"☆".repeat(5 - n)}
+    </span>
+  );
+}
+
+function SizeGuideModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4" onClick={onClose}>
+      <div className="bg-zinc-900 border border-zinc-700 max-w-lg w-full p-6 rounded-xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-white font-black tracking-widest text-sm">VINTAGE SIZE GUIDE</h2>
+          <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl leading-none">×</button>
         </div>
+        <p className="text-zinc-400 text-xs mb-4 leading-relaxed">
+          Vintage sizing runs differently from modern tags. Always trust the measurements below over the label — a vintage "L" often fits like a modern "M".
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-700">
+                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">SIZE</th>
+                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">CHEST</th>
+                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">SHOULDER</th>
+                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2">LENGTH</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SIZE_GUIDE.map(row => (
+                <tr key={row.label} className="border-b border-zinc-800">
+                  <td className="py-2 pr-4 font-black text-white">{row.label}</td>
+                  <td className="py-2 pr-4 text-zinc-300">{row.chest}</td>
+                  <td className="py-2 pr-4 text-zinc-300">{row.shoulder}</td>
+                  <td className="py-2 text-zinc-300">{row.length}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-zinc-500 text-xs mt-4">Measurements in inches. DM Steve if you need exact measurements on a specific piece.</p>
       </div>
     </div>
   );
@@ -80,126 +87,99 @@ function ProductSkeleton() {
 
 function ProductPage() {
   const { id } = Route.useParams();
-  const loaderProduct = Route.useLoaderData();
-  const [product, setProduct] = useState<Product | null>(loaderProduct);
-  const [loading, setLoading] = useState(!loaderProduct);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
-  const [shared, setShared] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const cart = useCart();
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [zoom, setZoom] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (loaderProduct) { setProduct(loaderProduct); setLoading(false); return; }
+    setLoading(true);
+    setActiveImg(0);
     fetch(`${API}/api/products/${id}`)
       .then(r => r.json())
-      .then(d => { setProduct(d); setLoading(false); })
+      .then(d => {
+        setProduct(d);
+        setLoading(false);
+        // Fetch related (same tag, exclude current)
+        fetch(`${API}/api/products`)
+          .then(r => r.json())
+          .then((all: Product[]) => {
+            const rel = all
+              .filter(p => p.id !== id && p.status === "available" && (!d.tag || p.tag === d.tag))
+              .slice(0, 4);
+            setRelated(rel.length >= 2 ? rel : all.filter(p => p.id !== id && p.status === "available").slice(0, 4));
+          });
+      })
       .catch(() => setLoading(false));
-  }, [id, loaderProduct]);
+  }, [id]);
 
-  if (loading) return <ProductSkeleton />;
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  if (loading) return (
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="w-10 h-10 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
   if (!product) return (
-    <div className="min-h-screen bg-white text-black flex flex-col items-center justify-center gap-4">
-      <p className="text-zinc-700 text-sm tracking-widest font-bold">ITEM NOT FOUND</p>
-      <Link to="/shop" className="text-orange-600 hover:text-orange-700 text-sm font-bold">← Back to shop</Link>
+    <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center flex-col gap-4">
+      <p className="text-zinc-400">Item not found.</p>
+      <Link to="/shop" className="text-orange-400 text-sm font-bold tracking-widest hover:underline">← BACK TO SHOP</Link>
     </div>
   );
 
   const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
   const igMessage = encodeURIComponent(`Hi! I want to reserve: ${product.name}${product.size ? ` (Size: ${product.size})` : ""}`);
   const igLink = `${IG}?text=${igMessage}`;
-  const pageUrl = `${SITE_URL}/product/${product.id}`;
-
-  function prevImg() { setActiveImg(i => (i - 1 + allImages.length) % allImages.length); }
-  function nextImg() { setActiveImg(i => (i + 1) % allImages.length); }
-
-  function onTouchStart(e: React.TouchEvent) { touchStartX.current = e.touches[0].clientX; }
-  function onTouchEnd(e: React.TouchEvent) {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? nextImg() : prevImg();
-    touchStartX.current = null;
-  }
-
-  async function handleShare() {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: product!.name, text: `Check this out on Mr. Pizza Steve Finds`, url: pageUrl });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(pageUrl);
-      setShared(true);
-      setTimeout(() => setShared(false), 2000);
-    }
-  }
-
-  const inCart = cart.items.some(i => i.id === product.id);
+  const condColorClass = product.condition ? (CONDITION_COLORS[product.condition] || "text-zinc-300 bg-zinc-800 border-zinc-600") : "";
 
   return (
-    <div className="min-h-screen bg-white text-black px-4 py-12">
-      <div className="max-w-5xl mx-auto">
-        <Link to="/shop" className="text-zinc-700 hover:text-black text-xs tracking-widest mb-12 inline-block transition-colors font-bold">
-          ← BACK TO SHOP
-        </Link>
+    <div className="min-h-screen bg-zinc-950 text-white">
+      {showSizeGuide && <SizeGuideModal onClose={() => setShowSizeGuide(false)} />}
 
-        <div className="grid md:grid-cols-2 gap-12 mt-4">
-          {/* Image gallery */}
+      {/* Zoom overlay */}
+      {zoom && allImages.length > 0 && (
+        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center cursor-zoom-out" onClick={() => setZoom(false)}>
+          <img src={allImages[activeImg]} alt={product.name} className="max-h-screen max-w-full object-contain" />
+        </div>
+      )}
+
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-xs text-zinc-500 mb-8 tracking-widest">
+          <Link to="/" className="hover:text-orange-400 transition-colors">HOME</Link>
+          <span>/</span>
+          <Link to="/shop" className="hover:text-orange-400 transition-colors">SHOP</Link>
+          <span>/</span>
+          <span className="text-zinc-300 truncate max-w-[200px]">{product.name}</span>
+        </nav>
+
+        <div className="grid md:grid-cols-2 gap-10">
+          {/* ── Images ── */}
           <div>
             <div
-              className="aspect-square bg-zinc-100 border border-zinc-300 overflow-hidden mb-4 relative select-none"
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
+              className="aspect-square bg-zinc-900 overflow-hidden mb-3 cursor-zoom-in relative"
+              onClick={() => allImages.length > 0 && setZoom(true)}
             >
               {allImages.length > 0
-                ? <img
-                    src={allImages[activeImg]}
-                    alt={`${product.name}${product.condition ? ` – ${product.condition} condition` : ""}`}
-                    className="w-full h-full object-cover"
-                  />
-                : <div className="w-full h-full flex items-center justify-center text-8xl bg-white">{product.emoji}</div>}
-
-              {/* Sold overlay */}
-              {product.status === "sold" && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <span className="text-white font-black text-2xl tracking-widest border-2 border-white px-4 py-2 rotate-[-15deg]">SOLD</span>
-                </div>
-              )}
-
-              {/* Arrow buttons */}
-              {allImages.length > 1 && (
-                <>
-                  <button onClick={prevImg} className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white flex items-center justify-center text-black transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                  </button>
-                  <button onClick={nextImg} className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white flex items-center justify-center text-black transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
-                  {/* Dot indicators */}
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
-                    {allImages.map((_, i) => (
-                      <button key={i} onClick={() => setActiveImg(i)}
-                        className={`rounded-full transition-all ${activeImg === i ? "w-4 h-1.5 bg-black" : "w-1.5 h-1.5 bg-black/40 hover:bg-black/70"}`} />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* 1 of 1 badge */}
-              {product.status === "available" && (
-                <span className="absolute top-4 left-4 text-[10px] font-black bg-black text-white px-2.5 py-1 tracking-widest">1 OF 1</span>
-              )}
-              {product.condition && (
-                <span className={`absolute top-4 right-4 text-xs border font-bold px-2 py-0.5 ${CONDITION_COLORS[product.condition] || "bg-white border-zinc-300 text-black"}`}>
-                  {product.condition}
-                </span>
+                ? <img src={allImages[activeImg]} alt={product.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
+              {allImages.length > 0 && (
+                <span className="absolute bottom-3 right-3 text-[10px] bg-black/60 text-white px-2 py-1 tracking-widest">TAP TO ZOOM</span>
               )}
             </div>
-
-            {/* Thumbnails */}
             {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
-                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-black" : "border-zinc-300 hover:border-zinc-500"}`}>
+                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-orange-500" : "border-zinc-700 hover:border-zinc-500"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -207,91 +187,156 @@ function ProductPage() {
             )}
           </div>
 
-          {/* Info */}
+          {/* ── Info ── */}
           <div className="flex flex-col">
-            {product.tag && (
-              <span className="text-orange-600 text-xs font-black tracking-widest mb-3">{product.tag}</span>
-            )}
-            <h1 className="text-3xl md:text-4xl font-black leading-tight mb-6">{product.name}</h1>
-
-            <div className="flex items-center gap-4 mb-4">
-              <span className={`text-3xl md:text-4xl font-black ${product.status === "sold" ? "text-zinc-500" : "text-black"}`}>
-                {product.status === "sold"
-                  ? "SOLD"
-                  : product.price
-                    ? `${product.price} EGP`
-                    : product.priceLabel || "DM for price"}
-              </span>
-              {product.status === "available" && (
-                <span className="text-xs text-red-600 font-bold tracking-widest animate-pulse">1 LEFT</span>
-              )}
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {product.tag && (
+                  <span className="text-orange-400 text-xs font-bold tracking-widest">{product.tag}</span>
+                )}
+                {product.condition && (
+                  <span className={`text-xs font-bold px-2 py-0.5 border ${condColorClass}`}>{product.condition}</span>
+                )}
+              </div>
+              {/* Share button */}
+              <button onClick={copyLink} className="text-zinc-500 hover:text-orange-400 text-xs tracking-widest transition-colors flex-shrink-0">
+                {copied ? "✓ COPIED" : "SHARE"}
+              </button>
             </div>
 
-            <div className="space-y-3 mb-8 mt-4 pb-6 border-b border-zinc-300">
+            <h1 className="text-2xl font-black leading-tight mb-4">{product.name}</h1>
+
+            {/* Price + stock indicator */}
+            <div className="flex items-center gap-4 mb-2">
+              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
+                {product.status === "sold" ? "SOLD" : product.price ? `${product.price} EGP` : product.priceLabel || "DM for price"}
+              </span>
+            </div>
+
+            {product.status === "available" && (
+              <p className="text-xs text-orange-500 font-bold tracking-widest mb-6 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                ONLY 1 LEFT — 1 OF 1
+              </p>
+            )}
+
+            {/* Size + condition */}
+            <div className="space-y-3 mb-6">
               {product.size && (
                 <div className="flex items-center gap-3">
-                  <span className="text-zinc-700 text-sm w-24">Size</span>
-                  <span className="bg-zinc-100 border border-zinc-400 text-black text-sm font-bold px-3 py-1">{product.size}</span>
+                  <span className="text-zinc-500 text-xs tracking-widest w-24">SIZE</span>
+                  <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
+                  <button onClick={() => setShowSizeGuide(true)}
+                    className="text-xs text-orange-400 hover:text-orange-300 underline transition-colors tracking-widest">
+                    SIZE GUIDE
+                  </button>
                 </div>
               )}
               {product.condition && (
                 <div className="flex items-center gap-3">
-                  <span className="text-zinc-700 text-sm w-24">Condition</span>
-                  <span className="text-black text-sm font-bold">{product.condition}</span>
+                  <span className="text-zinc-500 text-xs tracking-widest w-24">CONDITION</span>
+                  <span className="text-white text-sm font-bold">{product.condition}</span>
                 </div>
               )}
             </div>
 
             {product.description && (
-              <p className="text-zinc-700 text-sm leading-relaxed mb-8">{product.description}</p>
+              <p className="text-zinc-400 text-sm leading-relaxed mb-6 border-l-2 border-zinc-700 pl-4">
+                {product.description}
+              </p>
             )}
 
-            {/* Actions */}
-            <div className="flex flex-col gap-3 mt-auto">
-              {product.status === "available" ? (
-                <>
-                  <button
-                    onClick={() => {
-                      if (!inCart) cart.add({
-                        id: product.id, name: product.name, size: product.size,
-                        price: product.price, priceLabel: product.priceLabel,
-                        imageUrl: product.imageUrl, emoji: product.emoji,
-                      });
-                    }}
-                    className={`w-full font-black text-center py-4 tracking-widest transition-colors text-sm ${
-                      inCart
-                        ? "bg-zinc-300 text-zinc-600 cursor-default"
-                        : "bg-black hover:bg-zinc-800 text-white"
-                    }`}
-                  >
-                    {inCart ? "✓ IN CART" : "ADD TO CART"}
-                  </button>
-                  <a href={igLink} target="_blank" rel="noreferrer"
-                    className="w-full border-2 border-black hover:bg-black text-black hover:text-white font-bold text-center py-3 tracking-widest transition-colors text-sm">
-                    RESERVE VIA DM
-                  </a>
-                </>
-              ) : (
-                <div className="w-full bg-zinc-300 text-zinc-700 font-black text-center py-4 tracking-widest text-sm">
-                  SOLD OUT
-                </div>
-              )}
-
-              <div className="flex gap-3 mt-4 pt-4 border-t border-zinc-300">
-                <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-                  className="flex-1 border border-zinc-400 hover:border-black text-black hover:bg-black hover:text-white font-bold text-center py-2 tracking-widest transition-colors text-xs">
-                  FOLLOW
-                </a>
-                <button onClick={handleShare}
-                  className="flex-1 border border-zinc-400 hover:border-black text-black hover:bg-black hover:text-white font-bold text-center py-2 tracking-widest transition-colors text-xs">
-                  {shared ? "COPIED ✓" : "SHARE"}
-                </button>
+            {/* CTA */}
+            {product.status === "available" ? (
+              <a href={igLink} target="_blank" rel="noreferrer"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                RESERVE VIA INSTAGRAM DM
+              </a>
+            ) : (
+              <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 tracking-widest text-sm mb-3">
+                SOLD OUT
               </div>
+            )}
+
+            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
+              className="w-full border border-zinc-700 hover:border-orange-500 text-zinc-400 hover:text-orange-400 font-bold text-center py-3 tracking-widest transition-colors text-sm">
+              FOLLOW @mr.pizzastevefinds
+            </a>
+
+            {/* Trust badges */}
+            <div className="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-zinc-800">
+              {[
+                { icon: "🔒", label: "SECURE", sub: "Safe checkout" },
+                { icon: "📦", label: "CAREFUL", sub: "Packed with care" },
+                { icon: "✅", label: "AUTHENTIC", sub: "Hand-verified" },
+              ].map(b => (
+                <div key={b.label} className="text-center">
+                  <div className="text-xl mb-1">{b.icon}</div>
+                  <p className="text-white text-[10px] font-black tracking-widest">{b.label}</p>
+                  <p className="text-zinc-500 text-[10px]">{b.sub}</p>
+                </div>
+              ))}
             </div>
 
-            <p className="text-zinc-600 text-xs text-center mt-6">1 of 1 piece. Once it's gone, it's gone.</p>
+            <p className="text-zinc-600 text-xs text-center mt-4">Items sell fast. DM to hold yours.</p>
           </div>
         </div>
+
+        {/* ── Size guide callout ── */}
+        <div className="mt-12 bg-zinc-900 border border-zinc-800 p-6 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-white font-black text-sm tracking-widest mb-1">VINTAGE SIZING RUNS DIFFERENT</p>
+            <p className="text-zinc-400 text-xs leading-relaxed max-w-lg">
+              A vintage "L" often fits like a modern "M–S". Always check the listed size against the measurements before ordering.
+            </p>
+          </div>
+          <button onClick={() => setShowSizeGuide(true)}
+            className="flex-shrink-0 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white font-black px-5 py-2 text-xs tracking-widest transition-colors">
+            VIEW SIZE GUIDE
+          </button>
+        </div>
+
+        {/* ── Reviews ── */}
+        <div className="mt-12">
+          <div className="flex items-baseline gap-4 mb-6">
+            <h2 className="text-sm font-black tracking-widest">CUSTOMER REVIEWS</h2>
+            <span className="text-zinc-500 text-xs">★★★★★ 5.0 · 3 reviews</span>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {REVIEWS.map((r, i) => (
+              <div key={i} className="bg-zinc-900 border border-zinc-800 p-5">
+                <Stars n={r.stars} />
+                <p className="text-zinc-300 text-sm mt-2 leading-relaxed">"{r.text}"</p>
+                <p className="text-zinc-500 text-xs mt-3 font-bold tracking-widest">— {r.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Related products ── */}
+        {related.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-sm font-black tracking-widest">YOU MIGHT ALSO LIKE</h2>
+              <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-xs font-bold tracking-widest transition-colors">
+                VIEW ALL →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {related.map(p => (
+                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group">
+                  <div className="aspect-square bg-zinc-900 border border-zinc-800 overflow-hidden mb-2 hover:border-zinc-600 transition-colors">
+                    {p.imageUrl
+                      ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
+                      : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
+                  </div>
+                  <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
+                  <p className="text-orange-400 text-xs font-black">{p.price ? `${p.price} EGP` : "DM"}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

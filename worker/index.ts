@@ -41,7 +41,7 @@ export default {
       ).run();
     } catch {}
 
-    // Run auto-migrations for orders, order_items and settings
+    // Run auto-migrations for orders, order_items, settings, and newsletter
     try {
       await env.pizzasteve_db.prepare(`
         CREATE TABLE IF NOT EXISTS orders (
@@ -78,6 +78,15 @@ export default {
         CREATE TABLE IF NOT EXISTS settings (
           key TEXT PRIMARY KEY,
           value TEXT
+        )
+      `).run();
+    } catch {}
+
+    try {
+      await env.pizzasteve_db.prepare(`
+        CREATE TABLE IF NOT EXISTS newsletter (
+          email TEXT PRIMARY KEY,
+          subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `).run();
     } catch {}

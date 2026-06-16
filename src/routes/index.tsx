@@ -13,7 +13,6 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Curated vintage and thrift clothing by Steve dos Santos. Heavyweight tees, grail pieces, streetwear finds. Located in Zamalek, Cairo. Open daily 3PM-11PM." },
       { property: "og:title", content: "Mr. Pizza Steve Finds" },
       { property: "og:description", content: "Curated vintage and thrift clothing. Zamalek, Cairo." },
-      { property: "og:image", content: "/assets/logo-transparent.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
@@ -24,10 +23,12 @@ function HomePage() {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [email, setEmail] = useState("");
   const [subMsg, setSubMsg] = useState("");
-  const [announcement, setAnnouncement] = useState(true);
+  const [announcement, setAnnouncement] = useState("");
+  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/api/products`).then(r => r.json()).then(d => setNewArrivals(d.filter((p: Product) => p.status === "available").slice(0, 4)));
+    fetch(`${API}/api/announcement`).then(r => r.json()).then(d => { if (d.text) { setAnnouncement(d.text); setShowBanner(true); } });
   }, []);
 
   async function subscribe() {
@@ -39,15 +40,13 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Announcement banner */}
-      {announcement && (
+      {showBanner && (
         <div className="bg-orange-500 text-white text-center py-2 px-4 text-xs font-bold tracking-widest flex items-center justify-center gap-4">
-          <span>NEW DROP AVAILABLE — Visit the shop or DM on Instagram</span>
-          <button onClick={() => setAnnouncement(false)} className="text-white/70 hover:text-white text-lg leading-none">x</button>
+          <span>{announcement}</span>
+          <button onClick={() => setShowBanner(false)} className="text-white/70 hover:text-white text-lg leading-none font-bold">x</button>
         </div>
       )}
 
-      {/* Hero */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-orange-950/20 via-zinc-950 to-zinc-950" />
         <div className="relative z-10 max-w-4xl">
@@ -63,7 +62,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* New Arrivals */}
       {newArrivals.length > 0 && (
         <section className="px-4 py-16 max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -88,7 +86,6 @@ function HomePage() {
         </section>
       )}
 
-      {/* About strip */}
       <section className="bg-zinc-900 border-y border-zinc-800 px-4 py-16">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-black tracking-widest mb-4">PIZZA STEVE ENERGY</h2>
@@ -103,7 +100,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Events */}
       <section className="px-4 py-16 max-w-6xl mx-auto">
         <h2 className="text-2xl font-black tracking-widest mb-8">EVENTS & POP-UPS</h2>
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
@@ -114,7 +110,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter */}
       <section className="px-4 py-16 bg-orange-500">
         <div className="max-w-md mx-auto text-center">
           <h2 className="text-2xl font-black tracking-widest mb-2 text-white">GET THE DROPS</h2>

@@ -79,6 +79,20 @@ export default {
       return new Response(JSON.stringify({ success: true }), { headers: { ...CORS, "Content-Type": "application/json" } });
     }
 
+    // GET /api/announcement
+    if (url.pathname === "/api/announcement" && request.method === "GET") {
+      const r: any = await env.pizzasteve_db.prepare("SELECT value FROM settings WHERE key = 'announcement'").first();
+      return new Response(JSON.stringify({ text: r?.value || "" }), { headers: { ...CORS, "Content-Type": "application/json" } });
+    }
+
+    // POST /api/announcement
+    if (url.pathname === "/api/announcement" && request.method === "POST") {
+      if (!isAdmin(request)) return new Response("Unauthorized", { status: 401, headers: CORS });
+      const body: any = await request.json();
+      await env.pizzasteve_db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('announcement', ?)").bind(body.text || "").run();
+      return new Response(JSON.stringify({ success: true }), { headers: { ...CORS, "Content-Type": "application/json" } });
+    }
+
     // POST /api/newsletter
     if (url.pathname === "/api/newsletter" && request.method === "POST") {
       const body: any = await request.json();

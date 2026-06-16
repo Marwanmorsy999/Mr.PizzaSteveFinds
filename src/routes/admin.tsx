@@ -15,11 +15,22 @@ function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState("");
+  const [savedAnnouncement, setSavedAnnouncement] = useState("");
+  const [activeTab, setActiveTab] = useState<"products" | "settings">("products");
   const [form, setForm] = useState({ name: "", size: "", price: "", tag: "TEE", emoji: "👕", status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[] });
 
   const headers = { "Content-Type": "application/json", "X-Admin-Key": "pizzasteve2024" };
 
-  async function load() { const res = await fetch(`${API}/api/products`); setProducts(await res.json()); }
+  async function load() {
+    const res = await fetch(`${API}/api/products`);
+    setProducts(await res.json());
+    // Load announcement
+    try {
+      const a = await fetch(`${API}/api/announcement`);
+      if (a.ok) { const d = await a.json(); setAnnouncement(d.text || ""); setSavedAnnouncement(d.text || ""); }
+    } catch {}
+  }
 
   async function uploadImg(file: File): Promise<string> {
     const fd = new FormData(); fd.append("file", file); fd.append("upload_preset", UPLOAD_PRESET);
@@ -31,7 +42,7 @@ function AdminPage() {
     const file = e.target.files?.[0]; if (!file) return;
     setUploading(productId || "new-main");
     const url = await uploadImg(file);
-    if (productId) { await fetch(`${API}/api/products/${productId}`, { method: "PATCH", headers, body: JSON.stringify({ imageUrl: url }) }); load(); setMsg("Main image updated"); }
+    if (productId) { await fetch(`${API}/api/products/${productId}`, { method: "PATCH", headers, body: JSON.stringify({ imageUrl: url }) }); load(); setMsg("Image updated"); }
     else setForm(f => ({ ...f, imageUrl: url }));
     setUploading(null);
   }
@@ -40,8 +51,7 @@ function AdminPage() {
     const file = e.target.files?.[0]; if (!file) return;
     setUploading(productId + "-extra");
     const url = await uploadImg(file);
-    const newImages = [...existingImages, url];
-    await fetch(`${API}/api/products/${productId}`, { method: "PATCH", headers, body: JSON.stringify({ images: newImages }) });
+    await fetch(`${API}/api/products/${productId}`, { method: "PATCH", headers, body: JSON.stringify({ images: [...existingImages, url] }) });
     load(); setMsg("Image added"); setUploading(null);
   }
 
@@ -61,16 +71,25 @@ function AdminPage() {
     await fetch(`${API}/api/products/${id}`, { method: "DELETE", headers }); setMsg("Deleted"); load();
   }
 
+  async function saveAnnouncement() {
+    await fetch(`${API}/api/announcement`, { method: "POST", headers, body: JSON.stringify({ text: announcement }) });
+    setSavedAnnouncement(announcement); setMsg("Announcement saved");
+  }
+
+  function login() {
+    if (pass === "pizzasteve2024") { setAuthed(true); load(); }
+    else setMsg("Wrong password");
+  }
+
   if (!authed) return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 w-full max-w-sm">
         <div className="text-3xl mb-4 text-center">🍕</div>
         <input type="password" placeholder="Password" value={pass} onChange={e => setPass(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && (pass === "pizzasteve2024" ? (setAuthed(true), load()) : setMsg("Wrong password"))}
+          onKeyDown={e => e.key === "Enter" && login()}
           className="w-full bg-zinc-800 text-white border border-zinc-700 rounded-lg px-4 py-3 mb-4 outline-none focus:border-orange-500" />
         {msg && <p className="text-red-400 text-sm mb-3 text-center">{msg}</p>}
-        <button onClick={() => pass === "pizzasteve2024" ? (setAuthed(true), load()) : setMsg("Wrong password")}
-          className="w-full bg-orange-500 text-white font-bold py-3 rounded-lg">Enter</button>
+        <button onClick={login} className="w-full bg-orange-500 text-white font-bold py-3 rounded-lg">Enter</button>
       </div>
     </div>
   );
@@ -78,84 +97,108 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black tracking-widest">🍕 ADMIN</h1>
           {msg && <span className="text-orange-400 text-sm">{msg}</span>}
         </div>
 
-        {/* Add form */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
-          <h2 className="text-orange-400 font-bold tracking-widest mb-4">ADD PRODUCT</h2>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <input placeholder="Name *" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
-            <input placeholder="Size" value={form.size} onChange={e => setForm(f => ({...f, size: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
-            <input placeholder="Price (EGP)" value={form.price} onChange={e => setForm(f => ({...f, price: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
-            <input placeholder="Emoji" value={form.emoji} onChange={e => setForm(f => ({...f, emoji: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
-            <select value={form.tag} onChange={e => setForm(f => ({...f, tag: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
-              {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
-            </select>
-            <select value={form.condition} onChange={e => setForm(f => ({...f, condition: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
-              {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
-            </select>
-            <select value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
-              <option value="available">Available</option><option value="sold">Sold</option>
-            </select>
-            <textarea placeholder="Description (optional)" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500 h-20 resize-none" />
-          </div>
-          <div className="flex items-center gap-3 mb-3">
-            <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-orange-500 rounded-lg px-4 py-2 text-sm text-zinc-400 hover:text-orange-400 transition-colors">
-              {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "Change main image" : "Upload main image"}
-              <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
-            </label>
-            {form.imageUrl && <img src={form.imageUrl} className="w-12 h-12 object-cover rounded-lg" />}
-          </div>
-          <button onClick={addProduct} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors">Add Product</button>
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8">
+          {(["products", "settings"] as const).map(t => (
+            <button key={t} onClick={() => setActiveTab(t)}
+              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${activeTab === t ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-orange-500"}`}>
+              {t.toUpperCase()}
+            </button>
+          ))}
         </div>
 
-        {/* Product list */}
-        <h2 className="text-orange-400 font-bold tracking-widest mb-4">ALL PRODUCTS ({products.length})</h2>
-        <div className="space-y-3">
-          {products.map(p => <AdminProductRow key={p.id} product={p}
-            uploading={uploading}
-            onMainImg={e => handleMainImg(e, p.id)}
-            onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
-            onToggle={() => toggleStatus(p.id, p.status)}
-            onDelete={() => deleteProduct(p.id)}
-            onSave={async (price, label, condition, description) => {
-              await fetch(`${API}/api/products/${p.id}`, { method: "PATCH", headers, body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
-              setMsg("Saved"); load();
-            }}
-          />)}
-        </div>
+        {activeTab === "settings" && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
+            <h2 className="text-orange-400 font-bold tracking-widest mb-4">ANNOUNCEMENT BANNER</h2>
+            <p className="text-zinc-500 text-xs mb-3">This shows at the top of the homepage. Leave empty to hide it.</p>
+            <input value={announcement} onChange={e => setAnnouncement(e.target.value)}
+              placeholder="e.g. New drop this Friday — come through!"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500 mb-3" />
+            {savedAnnouncement && <p className="text-zinc-500 text-xs mb-3">Current: "{savedAnnouncement}"</p>}
+            <button onClick={saveAnnouncement} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors">Save Banner</button>
+          </div>
+        )}
+
+        {activeTab === "products" && (
+          <>
+            {/* Add form */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
+              <h2 className="text-orange-400 font-bold tracking-widest mb-4">ADD PRODUCT</h2>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <input placeholder="Name *" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
+                <input placeholder="Size" value={form.size} onChange={e => setForm(f => ({...f, size: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
+                <input placeholder="Price (EGP)" value={form.price} onChange={e => setForm(f => ({...f, price: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
+                <input placeholder="Emoji" value={form.emoji} onChange={e => setForm(f => ({...f, emoji: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500" />
+                <select value={form.tag} onChange={e => setForm(f => ({...f, tag: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
+                  {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
+                </select>
+                <select value={form.condition} onChange={e => setForm(f => ({...f, condition: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
+                  {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                </select>
+                <select value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))} className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500">
+                  <option value="available">Available</option><option value="sold">Sold</option>
+                </select>
+                <textarea placeholder="Description (optional)" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white outline-none focus:border-orange-500 placeholder-zinc-500 h-20 resize-none" />
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-orange-500 rounded-lg px-4 py-2 text-sm text-zinc-400 hover:text-orange-400 transition-colors">
+                  {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "Change image" : "Upload image"}
+                  <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
+                </label>
+                {form.imageUrl && <img src={form.imageUrl} className="w-12 h-12 object-cover rounded-lg" />}
+              </div>
+              <button onClick={addProduct} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors">Add Product</button>
+            </div>
+
+            <h2 className="text-orange-400 font-bold tracking-widest mb-4">ALL PRODUCTS ({products.length})</h2>
+            <div className="space-y-3">
+              {products.map(p => (
+                <AdminRow key={p.id} product={p} uploading={uploading}
+                  onMainImg={e => handleMainImg(e, p.id)}
+                  onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
+                  onToggle={() => toggleStatus(p.id, p.status)}
+                  onDelete={() => deleteProduct(p.id)}
+                  onSave={async (price, label, condition, description) => {
+                    await fetch(`${API}/api/products/${p.id}`, { method: "PATCH", headers, body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
+                    setMsg("Saved"); load();
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function AdminProductRow({ product: p, uploading, onMainImg, onExtraImg, onToggle, onDelete, onSave }: any) {
+function AdminRow({ product: p, uploading, onMainImg, onExtraImg, onToggle, onDelete, onSave }: any) {
   const [price, setPrice] = useState(p.price?.toString() || "");
   const [label, setLabel] = useState(p.priceLabel || "");
   const [condition, setCondition] = useState(p.condition || "Good");
   const [desc, setDesc] = useState(p.description || "");
-
   const allImgs = [p.imageUrl, ...(p.images || [])].filter(Boolean);
 
   return (
     <div className={`bg-zinc-900 border rounded-xl p-4 ${p.status === "sold" ? "border-zinc-800 opacity-60" : "border-zinc-800"}`}>
       <div className="flex gap-4">
-        <div className="flex gap-1 flex-shrink-0">
-          {allImgs.slice(0, 3).map((img: string, i: number) => (
-            <img key={i} src={img} className="w-14 h-14 object-cover rounded-lg" />
-          ))}
+        <div className="flex gap-1 flex-shrink-0 flex-wrap max-w-[120px]">
+          {allImgs.slice(0, 4).map((img: string, i: number) => <img key={i} src={img} className="w-14 h-14 object-cover rounded-lg" />)}
           {allImgs.length === 0 && <div className="w-14 h-14 bg-zinc-800 rounded-lg flex items-center justify-center text-2xl">{p.emoji}</div>}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-bold text-sm truncate">{p.name}</span>
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="font-bold text-sm">{p.name}</span>
             <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded">{p.tag}</span>
+            {p.size && <span className="text-xs text-zinc-500">{p.size}</span>}
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
-            <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-xs outline-none focus:border-orange-500 placeholder-zinc-600" />
+            <input placeholder="Price (EGP)" value={price} onChange={e => setPrice(e.target.value)} className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-xs outline-none focus:border-orange-500 placeholder-zinc-600" />
             <select value={condition} onChange={e => setCondition(e.target.value)} className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-xs outline-none focus:border-orange-500">
               {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
             </select>

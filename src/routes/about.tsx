@@ -2,6 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 
 export const Route = createFileRoute("/about")({
+  head: () => ({
+    meta: [
+      { title: "About — Mr. Pizza Steve Finds" },
+      { name: "description", content: "The story behind Mr. Pizza Steve Finds — Steve dos Santos' vintage and thrift shop in Zamalek, Cairo. Open daily 3PM-11PM." },
+      { property: "og:title", content: "About — Mr. Pizza Steve Finds" },
+      { property: "og:description", content: "Steve dos Santos' vintage shop in Zamalek, Cairo." },
+    ],
+  }),
   component: About,
 });
 

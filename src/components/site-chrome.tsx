@@ -1,18 +1,12 @@
+﻿import logo from "../assets/logo.png";
 import { Link } from "@tanstack/react-router";
-import logo from "../assets/logo.png";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-          <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-  <img src={logo} alt="Mr. Pizza Steve" className="h-10 w-auto" />
-</Link>🍕</span>
-          <span className="leading-none">
-            Mr. Pizza Steve
-            <span className="block text-[10px] tracking-[0.3em] text-muted-foreground">FINDS · ZAMALEK</span>
-          </span>
+          <img src={logo} alt="Mr. Pizza Steve" className="h-10 w-auto" />
         </Link>
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[
@@ -50,12 +44,12 @@ export function Footer() {
         <div>
           <h4 className="text-sm">Visit</h4>
           <p className="mt-2 text-sm text-muted-foreground">
-            30 Hassan Assem St<br />Zamalek, Cairo 🍕<br />Daily · 3PM – 11PM
+            30 Hassan Assem St<br />Zamalek, Cairo<br />Daily · 3PM – 11PM
           </p>
         </div>
         <div>
           <h4 className="text-sm">Follow the Drops</h4>
-          <a
+          
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"

@@ -1,6 +1,5 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer } from "@/components/site-chrome";
-import { RotatingBanner } from "@/components/site-chrome";
+import { Header, Footer, RotatingBanner } from "@/components/site-chrome";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 import { products } from "@/lib/products";
 

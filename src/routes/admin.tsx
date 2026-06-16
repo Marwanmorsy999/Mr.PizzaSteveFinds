@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const CLOUD_NAME = "dnggmrgmu";
@@ -8,7 +8,7 @@ const UPLOAD_PRESET = "pizzasteve4";
 interface Product {
   id: string; name: string; size?: string; price?: number; priceLabel?: string;
   status: string; emoji?: string; tag?: string; imageUrl?: string;
-  images?: string[]; condition?: string; description?: string;
+  images?: string[]; condition?: string; description?: string; sortOrder?: number;
 }
 
 export const Route = createFileRoute("/admin")({ component: AdminPage });
@@ -18,10 +18,15 @@ function AdminPage() {
   const [pass, setPass] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [msg, setMsg] = useState("");
+  const [msgType, setMsgType] = useState<"ok" | "err">("ok");
   const [uploading, setUploading] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const [savedAnnouncement, setSavedAnnouncement] = useState("");
   const [activeTab, setActiveTab] = useState<"products" | "settings">("products");
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+  const [reorderMode, setReorderMode] = useState(false);
+  const [dragOrder, setDragOrder] = useState<Product[]>([]);
   const [form, setForm] = useState({
     name: "", size: "", price: "", tag: "TEE", emoji: "🍕",
     status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[]
@@ -29,14 +34,16 @@ function AdminPage() {
 
   const headers = { "Content-Type": "application/json", "X-Admin-Key": "pizzasteve2024" };
 
-  function showMsg(text: string) {
-    setMsg(text);
+  function showMsg(text: string, type: "ok" | "err" = "ok") {
+    setMsg(text); setMsgType(type);
     setTimeout(() => setMsg(""), 3000);
   }
 
   async function load() {
     const res = await fetch(`${API}/api/products`);
-    setProducts(await res.json());
+    const data = await res.json();
+    setProducts(data);
+    setDragOrder(data.filter((p: Product) => p.status === "available"));
     try {
       const a = await fetch(`${API}/api/announcement`);
       if (a.ok) { const d = await a.json(); setAnnouncement(d.text || ""); setSavedAnnouncement(d.text || ""); }
@@ -62,7 +69,7 @@ function AdminPage() {
       } else {
         setForm(f => ({ ...f, imageUrl: url }));
       }
-    } catch { showMsg("Upload failed"); }
+    } catch { showMsg("Upload failed", "err"); }
     setUploading(null);
   }
 
@@ -73,7 +80,7 @@ function AdminPage() {
       const url = await uploadImg(file);
       await fetch(`${API}/api/products/${productId}`, { method: "PATCH", headers, body: JSON.stringify({ images: [...existingImages, url] }) });
       load(); showMsg("Extra image added");
-    } catch { showMsg("Upload failed"); }
+    } catch { showMsg("Upload failed", "err"); }
     setUploading(null);
   }
 
@@ -84,17 +91,23 @@ function AdminPage() {
   }
 
   async function addProduct() {
-    if (!form.name) return showMsg("Name required");
+    if (!form.name) return showMsg("Name required", "err");
     await fetch(`${API}/api/products`, {
       method: "POST", headers,
       body: JSON.stringify({ ...form, price: form.price ? parseInt(form.price) : null })
     });
     setForm({ name: "", size: "", price: "", tag: "TEE", emoji: "🍕", status: "available", condition: "Good", description: "", imageUrl: "", images: [] });
-    showMsg("Product added"); load();
+    showMsg("✓ Product added — it's live"); load();
+  }
+
+  async function quickSell(id: string) {
+    await fetch(`${API}/api/products/${id}`, { method: "PATCH", headers, body: JSON.stringify({ status: "sold" }) });
+    showMsg("Marked sold"); load();
   }
 
   async function toggleStatus(id: string, current: string) {
-    await fetch(`${API}/api/products/${id}`, { method: "PATCH", headers, body: JSON.stringify({ status: current === "available" ? "sold" : "available" }) });
+    const next = current === "available" ? "sold" : "available";
+    await fetch(`${API}/api/products/${id}`, { method: "PATCH", headers, body: JSON.stringify({ status: next }) });
     load();
   }
 
@@ -109,9 +122,52 @@ function AdminPage() {
     setSavedAnnouncement(announcement); showMsg("Banner saved");
   }
 
+  async function bulkMarkSold() {
+    if (bulkSelected.size === 0) return;
+    await fetch(`${API}/api/products/bulk-sold`, {
+      method: "POST", headers,
+      body: JSON.stringify({ ids: Array.from(bulkSelected) })
+    });
+    showMsg(`✓ ${bulkSelected.size} item${bulkSelected.size > 1 ? "s" : ""} marked sold`);
+    setBulkSelected(new Set());
+    setBulkMode(false);
+    load();
+  }
+
+  async function saveReorder() {
+    await fetch(`${API}/api/products/reorder`, {
+      method: "POST", headers,
+      body: JSON.stringify({ order: dragOrder.map(p => p.id) })
+    });
+    showMsg("Order saved"); setReorderMode(false); load();
+  }
+
+  // Drag to reorder
+  const dragItem = useRef<number | null>(null);
+  const dragOver = useRef<number | null>(null);
+
+  function onDragStart(i: number) { dragItem.current = i; }
+  function onDragEnter(i: number) {
+    dragOver.current = i;
+    const copy = [...dragOrder];
+    const dragged = copy.splice(dragItem.current!, 1)[0];
+    copy.splice(i, 0, dragged);
+    dragItem.current = i;
+    setDragOrder(copy);
+  }
+  function onDragEnd() { dragItem.current = null; dragOver.current = null; }
+
+  function toggleBulkSelect(id: string) {
+    setBulkSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
   function login() {
     if (pass === "pizzasteve2024") { setAuthed(true); load(); }
-    else showMsg("Wrong password");
+    else showMsg("Wrong password", "err");
   }
 
   if (!authed) return (
@@ -134,24 +190,26 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
+
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black tracking-widest">🍕 ADMIN</h1>
           {msg && (
-            <span className="text-orange-400 text-sm bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">
+            <span className={`text-sm px-3 py-1 rounded-full border ${msgType === "ok" ? "text-orange-400 bg-orange-500/10 border-orange-500/20" : "text-red-400 bg-red-500/10 border-red-500/20"}`}>
               {msg}
             </span>
           )}
         </div>
 
-        {/* Stats bar */}
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
             { label: "TOTAL", value: products.length },
-            { label: "AVAILABLE", value: available.length },
-            { label: "SOLD", value: sold.length },
+            { label: "LIVE", value: available.length, color: "text-emerald-400" },
+            { label: "SOLD", value: sold.length, color: "text-zinc-500" },
           ].map(s => (
             <div key={s.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-              <div className="text-xl font-black text-orange-400">{s.value}</div>
+              <div className={`text-xl font-black ${s.color || "text-orange-400"}`}>{s.value}</div>
               <div className="text-zinc-500 text-xs tracking-widest">{s.label}</div>
             </div>
           ))}
@@ -167,6 +225,7 @@ function AdminPage() {
           ))}
         </div>
 
+        {/* SETTINGS TAB */}
         {activeTab === "settings" && (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
             <h2 className="text-orange-400 font-bold tracking-widest mb-1">ANNOUNCEMENT BANNER</h2>
@@ -180,25 +239,30 @@ function AdminPage() {
             <div className="flex gap-3">
               <button onClick={saveAnnouncement} className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2 rounded-xl transition-colors">Save Banner</button>
               {savedAnnouncement && (
-                <button onClick={() => { setAnnouncement(""); saveAnnouncement(); }} className="border border-zinc-700 hover:border-red-700 text-zinc-400 hover:text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm">Clear</button>
+                <button onClick={() => { setAnnouncement(""); saveAnnouncement(); }}
+                  className="border border-zinc-700 hover:border-red-700 text-zinc-400 hover:text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm">
+                  Clear
+                </button>
               )}
             </div>
           </div>
         )}
 
+        {/* PRODUCTS TAB */}
         {activeTab === "products" && (
           <>
-            {/* Add form */}
+            {/* Add product form */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
               <h2 className="text-orange-400 font-bold tracking-widest mb-4">ADD PRODUCT</h2>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <input placeholder="Name *" value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  onKeyDown={e => e.key === "Enter" && addProduct()}
                   className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
                 <input placeholder="Size (e.g. L, XL, OS)" value={form.size}
                   onChange={e => setForm(f => ({ ...f, size: e.target.value }))}
                   className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
-                <input placeholder="Price (EGP)" value={form.price}
+                <input placeholder="Price (EGP)" value={form.price} type="number"
                   onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                   className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
                 <select value={form.tag} onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}
@@ -209,63 +273,120 @@ function AdminPage() {
                   className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
                   {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
                 </select>
-                <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                  className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
-                  <option value="available">Available</option>
-                  <option value="sold">Sold</option>
-                </select>
                 <textarea placeholder="Description (optional)" value={form.description}
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm h-20 resize-none" />
+                  className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm h-16 resize-none" />
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-orange-500 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-orange-400 transition-colors">
                   {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "✓ Change image" : "Upload main image"}
                   <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
                 </label>
-                {form.imageUrl && <img src={form.imageUrl} className="w-14 h-14 object-cover rounded-xl border border-zinc-700" />}
+                {form.imageUrl && <img src={form.imageUrl} className="w-14 h-14 object-cover rounded-xl border border-zinc-700" alt="" />}
               </div>
               <button onClick={addProduct}
-                className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2.5 rounded-xl transition-colors">
-                Add Product
+                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 active:scale-95 text-white font-bold px-8 py-3 rounded-xl transition-all text-sm tracking-widest">
+                + ADD PRODUCT
               </button>
             </div>
 
-            {/* Available */}
-            <div className="mb-2 flex items-center gap-3">
-              <h2 className="text-orange-400 font-bold tracking-widest text-sm">AVAILABLE ({available.length})</h2>
-            </div>
-            <div className="space-y-3 mb-8">
-              {available.map(p => (
-                <AdminRow key={p.id} product={p} uploading={uploading}
-                  onMainImg={e => handleMainImg(e, p.id)}
-                  onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
-                  onRemoveImg={(i) => removeExtraImg(p.id, p.images || [], i)}
-                  onToggle={() => toggleStatus(p.id, p.status)}
-                  onDelete={() => deleteProduct(p.id)}
-                  onSave={async (price, label, condition, description) => {
-                    await fetch(`${API}/api/products/${p.id}`, { method: "PATCH", headers, body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
-                    showMsg("Saved"); load();
-                  }}
-                />
-              ))}
+            {/* Toolbar */}
+            <div className="flex flex-wrap gap-2 mb-4 items-center">
+              <span className="text-orange-400 font-bold tracking-widest text-sm mr-1">AVAILABLE ({available.length})</span>
+              <button onClick={() => { setBulkMode(b => !b); setBulkSelected(new Set()); }}
+                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${bulkMode ? "bg-orange-500/20 border-orange-500 text-orange-400" : "border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400"}`}>
+                {bulkMode ? "✕ Cancel bulk" : "Bulk sold"}
+              </button>
+              <button onClick={() => { setReorderMode(r => !r); setDragOrder(available); }}
+                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${reorderMode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "border-zinc-700 text-zinc-400 hover:border-blue-500 hover:text-blue-400"}`}>
+                {reorderMode ? "✕ Cancel" : "⠿ Reorder"}
+              </button>
+              {bulkMode && bulkSelected.size > 0 && (
+                <button onClick={bulkMarkSold}
+                  className="text-xs font-bold px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-400 text-white transition-colors">
+                  Mark {bulkSelected.size} as sold →
+                </button>
+              )}
+              {reorderMode && (
+                <button onClick={saveReorder}
+                  className="text-xs font-bold px-4 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-white transition-colors">
+                  Save order ✓
+                </button>
+              )}
             </div>
 
-            {/* Sold */}
-            {sold.length > 0 && (
+            {/* Reorder mode */}
+            {reorderMode && (
+              <div className="space-y-2 mb-8">
+                <p className="text-zinc-500 text-xs mb-3">Drag rows to reorder. First = shows first in shop.</p>
+                {dragOrder.map((p, i) => (
+                  <div key={p.id}
+                    draggable
+                    onDragStart={() => onDragStart(i)}
+                    onDragEnter={() => onDragEnter(i)}
+                    onDragEnd={onDragEnd}
+                    onDragOver={e => e.preventDefault()}
+                    className="flex items-center gap-3 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 cursor-grab active:cursor-grabbing active:border-blue-500 active:bg-zinc-800 transition-colors select-none">
+                    <span className="text-zinc-600 text-lg">⠿</span>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
+                      {p.imageUrl
+                        ? <img src={p.imageUrl} className="w-full h-full object-cover" alt="" />
+                        : <div className="w-full h-full flex items-center justify-center text-lg">{p.emoji}</div>}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold truncate">{p.name}</p>
+                      <p className="text-xs text-zinc-500">{p.tag} · {p.size || "OS"}</p>
+                    </div>
+                    <span className="text-xs text-zinc-600">#{i + 1}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Normal product list */}
+            {!reorderMode && (
+              <div className="space-y-3 mb-8">
+                {available.map(p => (
+                  <AdminRow key={p.id} product={p} uploading={uploading}
+                    bulkMode={bulkMode}
+                    bulkSelected={bulkSelected.has(p.id)}
+                    onBulkToggle={() => toggleBulkSelect(p.id)}
+                    onMainImg={e => handleMainImg(e, p.id)}
+                    onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
+                    onRemoveImg={i => removeExtraImg(p.id, p.images || [], i)}
+                    onToggle={() => toggleStatus(p.id, p.status)}
+                    onQuickSell={() => quickSell(p.id)}
+                    onDelete={() => deleteProduct(p.id)}
+                    onSave={async (price: string, label: string, condition: string, description: string) => {
+                      await fetch(`${API}/api/products/${p.id}`, { method: "PATCH", headers, body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
+                      showMsg("Saved ✓"); load();
+                    }}
+                  />
+                ))}
+                {available.length === 0 && (
+                  <p className="text-zinc-600 text-sm text-center py-8">No available products. Add one above.</p>
+                )}
+              </div>
+            )}
+
+            {/* Sold section */}
+            {sold.length > 0 && !reorderMode && (
               <>
                 <h2 className="text-zinc-600 font-bold tracking-widest text-sm mb-3">SOLD ({sold.length})</h2>
                 <div className="space-y-3 opacity-60">
                   {sold.map(p => (
                     <AdminRow key={p.id} product={p} uploading={uploading}
+                      bulkMode={false} bulkSelected={false}
+                      onBulkToggle={() => {}}
                       onMainImg={e => handleMainImg(e, p.id)}
                       onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
-                      onRemoveImg={(i) => removeExtraImg(p.id, p.images || [], i)}
+                      onRemoveImg={i => removeExtraImg(p.id, p.images || [], i)}
                       onToggle={() => toggleStatus(p.id, p.status)}
+                      onQuickSell={() => {}}
                       onDelete={() => deleteProduct(p.id)}
-                      onSave={async (price, label, condition, description) => {
+                      onSave={async (price: string, label: string, condition: string, description: string) => {
                         await fetch(`${API}/api/products/${p.id}`, { method: "PATCH", headers, body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
-                        showMsg("Saved"); load();
+                        showMsg("Saved ✓"); load();
                       }}
                     />
                   ))}
@@ -279,7 +400,7 @@ function AdminPage() {
   );
 }
 
-function AdminRow({ product: p, uploading, onMainImg, onExtraImg, onRemoveImg, onToggle, onDelete, onSave }: any) {
+function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle, onMainImg, onExtraImg, onRemoveImg, onToggle, onQuickSell, onDelete, onSave }: any) {
   const [price, setPrice] = useState(p.price?.toString() || "");
   const [label, setLabel] = useState(p.priceLabel || "");
   const [condition, setCondition] = useState(p.condition || "Good");
@@ -287,47 +408,72 @@ function AdminRow({ product: p, uploading, onMainImg, onExtraImg, onRemoveImg, o
   const [expanded, setExpanded] = useState(false);
 
   const allImgs = [p.imageUrl, ...(p.images || [])].filter(Boolean);
-  const extraImgs: string[] = p.images || [];
 
   return (
-    <div className={`bg-zinc-900 border rounded-2xl overflow-hidden ${p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-zinc-700"} transition-colors`}>
-      {/* Header row */}
+    <div className={`bg-zinc-900 border rounded-2xl overflow-hidden transition-colors ${bulkSelected ? "border-orange-500" : p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-zinc-700"}`}>
       <div className="flex gap-3 p-4 items-center">
+
+        {/* Bulk checkbox */}
+        {bulkMode && (
+          <button onClick={onBulkToggle}
+            className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${bulkSelected ? "bg-orange-500 border-orange-500" : "border-zinc-600 hover:border-orange-400"}`}>
+            {bulkSelected && <span className="text-white text-xs font-black">✓</span>}
+          </button>
+        )}
+
+        {/* Thumbnail */}
         <div className="flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden bg-zinc-800">
           {allImgs[0]
             ? <img src={allImgs[0]} className="w-full h-full object-cover" alt="" />
             : <div className="w-full h-full flex items-center justify-center text-2xl">{p.emoji}</div>}
         </div>
+
+        {/* Info */}
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm truncate">{p.name}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="text-xs text-zinc-500">{p.tag}</span>
             {p.size && <span className="text-xs text-zinc-600">{p.size}</span>}
-            {p.price && <span className="text-xs text-orange-400">{p.price} EGP</span>}
-            <span className="text-xs text-zinc-600">{allImgs.length} img{allImgs.length !== 1 ? "s" : ""}</span>
+            {p.price && <span className="text-xs text-orange-400 font-bold">{p.price} EGP</span>}
+            <span className="text-xs text-zinc-700">{allImgs.length} img{allImgs.length !== 1 ? "s" : ""}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={onToggle}
-            className={`text-xs px-3 py-1.5 rounded-lg border font-bold transition-colors ${p.status === "available" ? "border-green-700 text-green-400 hover:bg-green-900/30" : "border-zinc-600 text-zinc-400 hover:bg-zinc-800"}`}>
-            {p.status === "available" ? "Live" : "Sold"}
-          </button>
-          <button onClick={() => setExpanded(e => !e)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400 transition-colors">
-            {expanded ? "Close" : "Edit"}
-          </button>
-          <button onClick={onDelete}
-            className="text-xs px-2 py-1.5 rounded-lg border border-red-900 text-red-500 hover:bg-red-900/30 transition-colors">
-            ✕
-          </button>
-        </div>
+
+        {/* Actions */}
+        {!bulkMode && (
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {/* Quick sell — only for available */}
+            {p.status === "available" && (
+              <button onClick={onQuickSell}
+                className="text-xs px-3 py-1.5 rounded-lg bg-red-900/40 border border-red-800 text-red-400 hover:bg-red-900/70 font-bold transition-colors">
+                SOLD
+              </button>
+            )}
+            {/* Restore if sold */}
+            {p.status === "sold" && (
+              <button onClick={onToggle}
+                className="text-xs px-3 py-1.5 rounded-lg border border-zinc-600 text-zinc-400 hover:bg-zinc-800 font-bold transition-colors">
+                Restore
+              </button>
+            )}
+            <button onClick={() => setExpanded(e => !e)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400 transition-colors">
+              {expanded ? "Close" : "Edit"}
+            </button>
+            <button onClick={onDelete}
+              className="text-xs px-2 py-1.5 rounded-lg border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 transition-colors">
+              ✕
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Expanded edit panel */}
-      {expanded && (
+      {expanded && !bulkMode && (
         <div className="border-t border-zinc-800 p-4 space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <input placeholder="Price (EGP)" value={price} onChange={e => setPrice(e.target.value)}
+            <input placeholder="Price (EGP)" value={price} type="number"
+              onChange={e => setPrice(e.target.value)}
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-orange-500 placeholder-zinc-600" />
             <select value={condition} onChange={e => setCondition(e.target.value)}
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-orange-500">
@@ -337,11 +483,11 @@ function AdminRow({ product: p, uploading, onMainImg, onExtraImg, onRemoveImg, o
           <textarea placeholder="Description" value={desc} onChange={e => setDesc(e.target.value)}
             className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-orange-500 placeholder-zinc-600 h-16 resize-none" />
           <button onClick={() => onSave(price, label, condition, desc)}
-            className="bg-orange-500 hover:bg-orange-400 text-white text-sm font-bold px-5 py-2 rounded-xl transition-colors">
-            Save Changes
+            className="bg-orange-500 hover:bg-orange-400 active:scale-95 text-white text-sm font-bold px-5 py-2 rounded-xl transition-all">
+            Save Changes ✓
           </button>
 
-          {/* Images section */}
+          {/* Images */}
           <div>
             <p className="text-zinc-500 text-xs tracking-widest mb-3">IMAGES</p>
             <div className="flex gap-2 flex-wrap">
@@ -360,18 +506,13 @@ function AdminRow({ product: p, uploading, onMainImg, onExtraImg, onRemoveImg, o
               <label className="w-16 h-16 border-2 border-dashed border-zinc-700 hover:border-orange-500 rounded-xl flex items-center justify-center cursor-pointer transition-colors text-zinc-500 hover:text-orange-400 text-2xl">
                 {uploading === p.id || uploading === p.id + "-extra" ? <span className="text-xs">...</span> : "+"}
                 <input type="file" accept="image/*" className="hidden"
-                  onChange={e => {
-                    if (allImgs.length === 0 || !allImgs[0]) onMainImg(e);
-                    else onExtraImg(e);
-                  }} />
+                  onChange={e => { if (!allImgs[0]) onMainImg(e); else onExtraImg(e); }} />
               </label>
             </div>
-            <div className="flex gap-2 mt-2">
-              <label className="text-xs text-zinc-500 hover:text-orange-400 cursor-pointer transition-colors">
-                Replace main image
-                <input type="file" accept="image/*" className="hidden" onChange={onMainImg} />
-              </label>
-            </div>
+            <label className="text-xs text-zinc-500 hover:text-orange-400 cursor-pointer transition-colors mt-2 inline-block">
+              Replace main →
+              <input type="file" accept="image/*" className="hidden" onChange={onMainImg} />
+            </label>
           </div>
         </div>
       )}

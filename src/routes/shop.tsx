@@ -5,27 +5,15 @@ import type { Product } from "@/lib/products";
 import { memo, useMemo } from "react";
 
 const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
-const SITE_TITLE = "Shop - Mr. Pizza Steve Finds";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
-      { title: SITE_TITLE },
-      {
-        name: "description",
-        content:
-          "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more vintage finds in Zamalek, Cairo.",
-      },
-      {
-        name: "keywords",
-        content:
-          "shop vintage, vintage tees, jorts, eyewear, Harley Davidson vintage, curated thrift, Cairo streetwear, Mr Pizza Steve shop",
-      },
-      { property: "og:title", content: SITE_TITLE },
-      {
-        property: "og:description",
-        content: "The current drop, fresh off the Zamalek rack. Tees, jorts, eyewear, grails.",
-      },
+      { title: "Shop - Mr. Pizza Steve Finds" },
+      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more vintage finds in Zamalek, Cairo." },
+      { name: "keywords", content: "shop vintage, vintage tees, jorts, eyewear, Harley Davidson vintage, curated thrift, Cairo streetwear, Mr Pizza Steve shop" },
+      { property: "og:title", content: "Shop - Mr. Pizza Steve Finds" },
+      { property: "og:description", content: "The current drop, fresh off the Zamalek rack. Tees, jorts, eyewear, grails." },
     ],
   }),
   component: Shop,
@@ -46,15 +34,10 @@ function Shop() {
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
             dm{" "}
-            <a
-              className="text-primary underline"
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a className="text-primary underline" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
               @mr.pizzastevefinds
             </a>{" "}
-            to reserve before some other guy takes it. or just show up, idc ًںڈƒ
+            to reserve before some other guy takes it. or just show up, idc
           </p>
         </div>
 
@@ -63,28 +46,15 @@ function Shop() {
             {productCards}
           </div>
         ) : (
-          <EmptyState />
+          <div className="mt-16 grid place-items-center text-center">
+            <p className="text-muted-foreground">The rack is empty right now. Check back soon - fresh drops land weekly.</p>
+          </div>
         )}
       </section>
       <Footer />
     </div>
   );
 }
-
-/* â”€â”€ empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-
-function EmptyState() {
-  return (
-    <div className="mt-16 grid place-items-center text-center">
-      <span className="text-6xl">ًں§ƒ</span>
-      <p className="mt-4 text-muted-foreground">
-        The rack's empty right now. Check back soon â€” fresh drops land weekly.
-      </p>
-    </div>
-  );
-}
-
-/* â”€â”€ product card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const Card = memo(function Card({ p }: { p: Product }) {
   const sold = p.status === "sold";
@@ -93,42 +63,27 @@ const Card = memo(function Card({ p }: { p: Product }) {
     <Link
       to="/product/$id"
       params={{ id: p.id }}
-      aria-label={
-        sold
-          ? `${p.name} â€” sold`
-          : `${p.name} â€” ${p.price ? `${p.price} EGP` : p.priceLabel ?? "price TBD"}`
-      }
       className={`group relative overflow-hidden border border-border bg-card transition ${
         sold ? "opacity-75" : "hover:-translate-y-1 hover:border-primary"
       }`}
     >
-      {/* Available / sold sticker (top-left) */}
       <div className="absolute left-3 top-3 z-10">
         <span
-          role="status"
-          className={`rounded-xs tilt-l px-2 py-1 text-[10px] font-black uppercase tracking-widest shadow ${
-            sold
-              ? "bg-zinc-800 text-zinc-400"
-              : "bg-success text-success-foreground"
+          className={`tilt-l px-2 py-1 text-[10px] font-black uppercase tracking-widest shadow ${
+            sold ? "bg-zinc-800 text-zinc-400" : "bg-success text-success-foreground"
           }`}
+          style={{ borderRadius: "2px" }}
         >
-          {sold ? "gone ًں’€" : "available âœ…"}
+          {sold ? "gone" : "available"}
         </span>
       </div>
 
-      {/* Tag sticker (top-right) */}
-      <div className="absolute right-3 top-3 z-10 rounded-xs tilt-r bg-secondary px-2 py-1 text-[10px] font-black text-secondary-foreground shadow">
+      <div className="absolute right-3 top-3 z-10 tilt-r bg-secondary px-2 py-1 text-[10px] font-black text-secondary-foreground shadow" style={{ borderRadius: "2px" }}>
         {p.tag}
       </div>
 
-      {/* Image / emoji area */}
       <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-        <span
-          className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${
-            sold ? "grayscale opacity-40" : ""
-          }`}
-          aria-hidden={true}
-        >
+        <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale opacity-40" : ""}`}>
           {p.emoji}
         </span>
         {sold && (
@@ -143,20 +98,13 @@ const Card = memo(function Card({ p }: { p: Product }) {
         )}
       </div>
 
-      {/* Card body */}
       <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">
-          {p.name}
-        </h3>
+        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">{p.name}</h3>
         <div className="flex items-center justify-between border-t border-border pt-3">
           <span className="text-xs text-muted-foreground">
             {p.size ? `size ${p.size}` : "one size"}
           </span>
-          <span
-            className={`font-display text-lg ${
-              sold ? "text-zinc-600 line-through" : "text-primary"
-            }`}
-          >
+          <span className={`font-display text-lg ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
             {p.price ? `${p.price} EGP` : p.priceLabel}
           </span>
         </div>

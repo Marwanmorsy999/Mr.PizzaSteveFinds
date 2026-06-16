@@ -1,4 +1,4 @@
-﻿import logo from "../assets/logo.png";
+import logo from "../assets/logo.png";
 import { Link } from "@tanstack/react-router";
 
 export function Header() {
@@ -38,29 +38,29 @@ export function Footer() {
         <div>
           <h3 className="text-xl">Mr. Pizza Steve Finds</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Vintage & thrift curated by Steve dos Santos. Loud, bold, Cairo.
+            Vintage &amp; thrift curated by Steve dos Santos. Loud, bold, Cairo.
           </p>
         </div>
         <div>
           <h4 className="text-sm">Visit</h4>
           <p className="mt-2 text-sm text-muted-foreground">
-            30 Hassan Assem St<br />Zamalek, Cairo<br />Daily · 3PM – 11PM
+            30 Hassan Assem St<br />Zamalek, Cairo<br />Daily 3PM - 11PM
           </p>
         </div>
         <div>
           <h4 className="text-sm">Follow the Drops</h4>
-          
+          <a
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
             className="mt-2 inline-flex items-center gap-2 rounded-sm bg-primary px-3 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition hover:bg-secondary"
           >
-            @mr.pizzastevefinds →
+            @mr.pizzastevefinds
           </a>
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
-        © {new Date().getFullYear()} Pizza Steve Energy
+        {new Date().getFullYear()} Pizza Steve Energy
       </div>
     </footer>
   );
@@ -73,7 +73,7 @@ export function Marquee({ text }: { text: string }) {
       <div className="marquee flex w-max gap-8 py-2 text-sm font-black uppercase tracking-widest">
         {items.concat(items).map((i) => (
           <span key={i} className="flex items-center gap-8 whitespace-nowrap">
-            {text} <span>★</span>
+            {text} <span>*</span>
           </span>
         ))}
       </div>

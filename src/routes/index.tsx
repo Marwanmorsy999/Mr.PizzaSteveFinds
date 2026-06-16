@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
+import { InstagramFeed } from "../components/ui/instagram-feed";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const IG = "https://instagram.com/mr.pizzastevefinds";
@@ -134,18 +135,17 @@ function HomePage() {
       )}
 
       {/* Hero */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-orange-950/20 via-zinc-950 to-zinc-950" />
+      <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12 overflow-hidden bg-white">
         <div className="relative z-10 max-w-4xl">
-          <p className="text-orange-400 text-xs font-bold tracking-[0.5em] mb-6">ZAMALEK, CAIRO – EST. 2024</p>
-          <h1 className="text-6xl md:text-8xl font-black leading-none mb-4">
-            MR. PIZZA<br /><span className="text-orange-500">STEVE</span><br />FINDS.
+          <p className="text-orange-600 text-xs font-bold tracking-[0.4em] mb-8">ZAMALEK, CAIRO · ESTABLISHED 2024</p>
+          <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-black">
+            MR. PIZZA<br /><span className="text-orange-600">STEVE</span><br />FINDS
           </h1>
-          <p className="text-zinc-400 text-lg mb-10 max-w-md mx-auto">Loud vintage. Bolder thrift. Curated by Steve dos Santos.</p>
+          <p className="text-zinc-700 text-base md:text-lg mb-12 max-w-xl mx-auto leading-relaxed">Curated vintage pieces and streetwear finds from the streets of Cairo. Every item tells a story.</p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/shop" className="bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-4 rounded-full tracking-widest transition-colors text-sm">SHOP NOW</Link>
+            <Link to="/shop" className="bg-black hover:bg-zinc-800 text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">SHOP NOW</Link>
             <a href={IG} target="_blank" rel="noreferrer"
-              className="border border-zinc-600 hover:border-orange-500 text-zinc-300 hover:text-orange-400 font-bold px-8 py-4 rounded-full tracking-widest transition-colors text-sm">
+              className="border-2 border-black hover:bg-black text-black hover:text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">
               INSTAGRAM
             </a>
           </div>
@@ -154,31 +154,39 @@ function HomePage() {
 
       {/* New Arrivals */}
       {newArrivals.length > 0 && (
-        <section className="px-4 py-16 max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black tracking-widest">NEW ARRIVALS</h2>
-            <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-sm font-bold tracking-widest transition-colors">VIEW ALL</Link>
+        <section className="px-4 py-20 max-w-6xl mx-auto">
+          <div className="flex items-baseline justify-between mb-12">
+            <div>
+              <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-2">JUST IN</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-widest">NEW ARRIVALS</h2>
+            </div>
+            <Link to="/shop" className="text-orange-500 hover:text-orange-400 text-xs font-bold tracking-widest transition-colors">VIEW SHOP →</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {newArrivals.map(p => {
               const condColor = p.condition ? (CONDITION_COLORS[p.condition] || "bg-zinc-700/50 text-zinc-300 border-zinc-600") : "";
               return (
                 <Link key={p.id} to="/product/$id" params={{ id: p.id }}
-                  className="group bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-orange-500 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/10">
-                  <div className="aspect-square bg-zinc-800 flex items-center justify-center overflow-hidden relative">
+                  className="group">
+                  <div className="aspect-square bg-white border border-zinc-300 overflow-hidden relative mb-4 hover:border-zinc-600 transition-colors">
                     {p.imageUrl
-                      ? <img src={p.imageUrl} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      : <span className="text-5xl">{p.emoji}</span>}
-                    <span className="absolute top-2 left-2 text-xs bg-orange-500 text-white font-black px-2 py-0.5 rounded tracking-widest">1 OF 1</span>
+                      ? <img src={p.imageUrl} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:opacity-75 transition-opacity duration-300" />
+                      : <div className="w-full h-full flex items-center justify-center bg-zinc-100 text-6xl">{p.emoji}</div>}
+                    {p.status === "available" && (
+                      <span className="absolute top-3 left-3 text-[10px] bg-black text-white font-black px-2.5 py-1 tracking-widest">1 OF 1</span>
+                    )}
                     {p.condition && (
-                      <span className={`absolute top-2 right-2 text-xs border font-bold px-2 py-0.5 rounded ${condColor}`}>
+                      <span className={`absolute top-3 right-3 text-[10px] border font-bold px-2 py-0.5 ${condColor}`}>
                         {p.condition}
                       </span>
                     )}
                   </div>
-                  <div className="p-3">
-                    <p className="text-white font-bold text-sm line-clamp-1">{p.name}</p>
-                    <p className="text-orange-400 font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM for price"}</p>
+                  <div>
+                    <p className="text-black font-bold text-sm line-clamp-2 mb-1">{p.name}</p>
+                    <div className="flex items-end justify-between">
+                      <p className="text-zinc-600 text-xs">{p.size || "—"}</p>
+                      <p className="text-black font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM"}</p>
+                    </div>
                   </div>
                 </Link>
               );
@@ -187,44 +195,53 @@ function HomePage() {
         </section>
       )}
 
+      {/* Instagram Feed */}
+      <InstagramFeed />
+
       {/* About */}
-      <section className="bg-zinc-900 border-y border-zinc-800 px-4 py-16">
+      <section className="bg-white border-y border-zinc-300 px-4 py-20">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-black tracking-widest mb-4">PIZZA STEVE ENERGY</h2>
-          <p className="text-zinc-400 leading-relaxed mb-8">Steve dos Santos hunts Cairo's hidden gems — rare vintage tees, grail pieces, and streetwear finds you won't see anywhere else. Every piece is handpicked from the streets of Zamalek.</p>
-          <div className="flex gap-6 justify-center text-center">
-            <div><p className="text-3xl font-black text-orange-500">6.4K</p><p className="text-zinc-500 text-xs tracking-widest">FOLLOWERS</p></div>
-            <div className="w-px bg-zinc-700" />
-            <div><p className="text-3xl font-black text-orange-500">2024</p><p className="text-zinc-500 text-xs tracking-widest">EST.</p></div>
-            <div className="w-px bg-zinc-700" />
-            <div><p className="text-3xl font-black text-orange-500">ZMK</p><p className="text-zinc-500 text-xs tracking-widest">ZAMALEK</p></div>
+          <p className="text-orange-600 text-xs font-bold tracking-[0.3em] mb-4">THE CURATOR</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-widest text-black mb-6">PIZZA STEVE ENERGY</h2>
+          <p className="text-black leading-relaxed text-lg mb-10">Steve dos Santos hunts Cairo's hidden gems — rare vintage tees, grail pieces, and streetwear finds you won't see anywhere else. Every piece is handpicked with intention.</p>
+          <div className="flex gap-8 justify-center text-center">
+            <div><p className="text-3xl md:text-4xl font-black text-black">6.4K</p><p className="text-zinc-700 text-xs tracking-widest">FOLLOWERS</p></div>
+            <div className="w-px bg-zinc-300" />
+            <div><p className="text-3xl md:text-4xl font-black text-black">2024</p><p className="text-zinc-700 text-xs tracking-widest">EST.</p></div>
+            <div className="w-px bg-zinc-300" />
+            <div><p className="text-3xl md:text-4xl font-black text-black">ZMK</p><p className="text-zinc-700 text-xs tracking-widest">ZAMALEK</p></div>
           </div>
         </div>
       </section>
 
-      {/* Events */}
-      <section className="px-4 py-16 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-black tracking-widest mb-8">EVENTS & POP-UPS</h2>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
-          <p className="text-4xl mb-4">📍</p>
-          <p className="text-white font-bold mb-2">30 Hassan Assem St, Zamalek</p>
-          <p className="text-zinc-400 text-sm mb-6">Daily 3PM – 11PM · Walk-ins welcome</p>
-          <p className="text-zinc-500 text-sm">Follow{" "}
-            <a href={IG} target="_blank" rel="noreferrer" className="text-orange-400 hover:text-orange-300">
+      {/* Visit Section */}
+      <section className="px-4 py-20 max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <p className="text-orange-600 text-xs font-bold tracking-[0.3em] mb-4">VISIT US</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-widest text-black">ZAMALEK SHOP</h2>
+        </div>
+        <div className="bg-zinc-50 border border-zinc-300 p-10 text-center">
+          <p className="text-5xl mb-6">📍</p>
+          <p className="text-black font-bold text-lg mb-2">30 Hassan Assem St</p>
+          <p className="text-black font-bold text-lg mb-6">Zamalek, Cairo</p>
+          <p className="text-zinc-700 text-base mb-8">Daily 3PM – 11PM · Walk-ins welcome</p>
+          <p className="text-zinc-600 text-sm">Follow{" "}
+            <a href={IG} target="_blank" rel="noreferrer" className="text-orange-600 hover:text-orange-700 font-bold">
               @mr.pizzastevefinds
             </a>{" "}
-            for pop-up announcements and special drops.
+            for announcements.
           </p>
         </div>
       </section>
 
       {/* Newsletter */}
-      <section className="px-4 py-16 bg-orange-500">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="text-2xl font-black tracking-widest mb-2 text-white">GET THE DROPS</h2>
-          <p className="text-orange-100 text-sm mb-6">Be first to know when new pieces land.</p>
+      <section className="px-4 py-20 bg-black border-y border-zinc-800">
+        <div className="max-w-lg mx-auto text-center">
+          <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-4">STAY UPDATED</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-widest mb-4 text-white">GET THE DROPS</h2>
+          <p className="text-zinc-400 text-sm mb-8">Be first to know when new pieces arrive.</p>
           {subMsg ? (
-            <p className="text-white font-bold">{subMsg}</p>
+            <p className="text-white font-bold text-sm">{subMsg}</p>
           ) : (
             <div className="flex gap-2">
               <input
@@ -232,11 +249,11 @@ function HomePage() {
                 onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && subscribe()}
                 placeholder="your@email.com"
-                className="flex-1 bg-white text-black px-4 py-3 rounded-full text-sm outline-none placeholder-zinc-400"
+                className="flex-1 bg-white text-black px-4 py-3 text-sm outline-none placeholder-zinc-400 border border-zinc-300"
               />
               <button onClick={subscribe}
-                className="bg-black text-white font-black px-6 py-3 rounded-full text-sm hover:bg-zinc-800 transition-colors">
-                IN
+                className="bg-orange-600 hover:bg-orange-700 text-white font-black px-6 py-3 text-sm transition-colors">
+                SUBSCRIBE
               </button>
             </div>
           )}

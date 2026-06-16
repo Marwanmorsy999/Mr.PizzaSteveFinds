@@ -78,34 +78,34 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-zinc-800 bg-zinc-900">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
+    <footer className="mt-24 border-t border-zinc-300 bg-white">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-3">
         <div>
-          <p className="text-xl font-black tracking-widest text-white">MR. PIZZA<br /><span className="text-orange-500">STEVE</span> FINDS.</p>
-          <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
-            Vintage and thrift curated by Steve dos Santos. Loud, bold, Cairo.
+          <p className="text-xl font-black tracking-widest text-black">MR. PIZZA<br /><span className="text-orange-600">STEVE</span> FINDS.</p>
+          <p className="mt-3 text-sm text-zinc-700 leading-relaxed">
+            Curated vintage & thrift by Steve dos Santos. Cairo.
           </p>
         </div>
         <div>
-          <h4 className="text-xs font-black tracking-widest text-zinc-500 mb-3">VISIT</h4>
-          <p className="text-sm text-zinc-300 leading-relaxed">
+          <h4 className="text-xs font-black tracking-widest text-zinc-900 mb-3">VISIT</h4>
+          <p className="text-sm text-black leading-relaxed">
             30 Hassan Assem St<br />Zamalek, Cairo<br />
-            <span className="text-zinc-500">Daily 3PM – 11PM</span>
+            <span className="text-zinc-600">Daily 3PM – 11PM</span>
           </p>
         </div>
         <div>
-          <h4 className="text-xs font-black tracking-widest text-zinc-500 mb-3">FOLLOW THE DROPS</h4>
+          <h4 className="text-xs font-black tracking-widest text-zinc-900 mb-3">FOLLOW</h4>
           <a
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-orange-500 hover:bg-orange-600 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-colors"
+            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-colors"
           >
             @mr.pizzastevefinds
           </a>
         </div>
       </div>
-      <div className="border-t border-zinc-800 py-4 text-center text-[10px] uppercase tracking-[0.4em] text-zinc-700">
+      <div className="border-t border-zinc-300 py-4 text-center text-[10px] uppercase tracking-[0.4em] text-zinc-600">
         © {new Date().getFullYear()} Pizza Steve Energy
       </div>
     </footer>

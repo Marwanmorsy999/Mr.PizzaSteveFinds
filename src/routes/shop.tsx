@@ -30,11 +30,11 @@ export const Route = createFileRoute("/shop")({
 
 function SkeletonCard() {
   return (
-    <div className="bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 animate-pulse">
-      <div className="aspect-square bg-zinc-800" />
+    <div className="bg-zinc-100 border border-zinc-300 animate-pulse">
+      <div className="aspect-square bg-zinc-200" />
       <div className="p-3 space-y-2">
-        <div className="h-3 bg-zinc-800 rounded w-3/4" />
-        <div className="h-3 bg-zinc-800 rounded w-1/2" />
+        <div className="h-3 bg-zinc-300 w-3/4" />
+        <div className="h-3 bg-zinc-300 w-1/2" />
       </div>
     </div>
   );
@@ -79,32 +79,35 @@ function ShopPage() {
   const hasFilters = tag !== "ALL" || size !== "ALL" || q !== "";
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
+    <div className="min-h-screen bg-white text-black px-4 py-12">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-black tracking-widest mb-2 text-center">THE FINDS</h1>
-        <p className="text-zinc-500 text-center mb-8 text-sm tracking-widest">CURATED VINTAGE – ZAMALEK, CAIRO</p>
+        <div className="text-center mb-12">
+          <p className="text-orange-600 text-xs font-bold tracking-[0.3em] mb-4">SHOP</p>
+          <h1 className="text-4xl md:text-5xl font-black tracking-widest mb-2">THE FINDS</h1>
+          <p className="text-zinc-700 text-sm tracking-widest">CURATED VINTAGE & THRIFT</p>
+        </div>
 
         {/* Search */}
-        <div className="max-w-md mx-auto mb-6 relative">
+        <div className="max-w-md mx-auto mb-8 relative">
           <input
             value={q}
             onChange={e => setFilter({ q: e.target.value })}
             placeholder="Search items..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:border-orange-500 outline-none text-sm pr-10"
+            className="w-full bg-white border border-zinc-400 px-5 py-3 text-black placeholder-zinc-500 focus:border-black outline-none text-sm pr-10"
           />
           {q && (
             <button onClick={() => setFilter({ q: "" })}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors">
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black transition-colors">
               ✕
             </button>
           )}
         </div>
 
         {/* Tag filters */}
-        <div className="flex gap-2 flex-wrap justify-center mb-3">
+        <div className="flex gap-2 flex-wrap justify-center mb-4">
           {tags.map(t => (
             <button key={t} onClick={() => setFilter({ tag: t })}
-              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${tag === t ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400"}`}>
+              className={`text-xs font-bold tracking-widest px-4 py-2 border transition-colors ${tag === t ? "bg-black border-black text-white" : "border-zinc-400 text-black hover:border-black"}`}>
               {t}
             </button>
           ))}
@@ -114,7 +117,7 @@ function ShopPage() {
         <div className="flex gap-2 flex-wrap justify-center mb-6">
           {sizes.map(s => (
             <button key={s} onClick={() => setFilter({ size: s })}
-              className={`text-xs font-bold tracking-widest px-3 py-1 rounded border transition-colors ${size === s ? "bg-zinc-100 border-zinc-100 text-black" : "border-zinc-800 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"}`}>
+              className={`text-xs font-bold tracking-widest px-3 py-1 border transition-colors ${size === s ? "bg-black border-black text-white" : "border-zinc-400 text-black hover:border-black"}`}>
               {s}
             </button>
           ))}
@@ -122,48 +125,48 @@ function ShopPage() {
 
         {/* Clear filters */}
         {hasFilters && (
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             <button onClick={() => setFilter({ tag: "ALL", size: "ALL", q: "" })}
-              className="text-xs text-orange-400 hover:text-orange-300 border border-orange-500/30 hover:border-orange-500 px-4 py-1.5 rounded-full transition-colors">
+              className="text-xs text-orange-600 hover:text-orange-700 border border-orange-600 hover:border-orange-700 px-4 py-1.5 transition-colors font-bold">
               ✕ Clear filters
             </button>
           </div>
         )}
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : (
           <>
             {available.length === 0 && !hasFilters ? (
               <div className="text-center py-20">
-                <p className="text-zinc-600 text-sm tracking-widest">NO ITEMS AVAILABLE RIGHT NOW</p>
+                <p className="text-black text-sm tracking-widest font-bold">NO ITEMS AVAILABLE RIGHT NOW</p>
                 <p className="text-zinc-700 text-xs mt-2">Follow @mr.pizzastevefinds for new drops</p>
               </div>
             ) : available.length === 0 && hasFilters ? (
               <div className="text-center py-20">
-                <p className="text-zinc-600 text-sm tracking-widest">NO ITEMS MATCH</p>
+                <p className="text-black text-sm tracking-widest font-bold">NO ITEMS MATCH</p>
                 <button onClick={() => setFilter({ tag: "ALL", size: "ALL", q: "" })}
-                  className="mt-4 text-orange-400 text-xs hover:underline">Clear filters</button>
+                  className="mt-4 text-orange-600 text-xs hover:text-orange-700 font-bold">Clear filters</button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {available.map(p => <ProductCard key={p.id} product={p} />)}
               </div>
             )}
 
             {/* Sold section - hidden by default */}
             {soldItems.length > 0 && (
-              <div className="mt-12">
+              <div className="mt-16">
                 <button
                   onClick={() => setFilter({ sold: !showSold })}
-                  className="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 text-xs tracking-widest font-bold transition-colors mx-auto mb-4">
+                  className="flex items-center gap-2 text-zinc-700 hover:text-black text-xs tracking-widest font-bold transition-colors mx-auto mb-6">
                   <span>{showSold ? "▲" : "▼"}</span>
                   <span>{showSold ? "HIDE SOLD" : `SHOW SOLD (${soldItems.length})`}</span>
                 </button>
                 {showSold && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-50">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 opacity-60">
                     {soldItems.map(p => <ProductCard key={p.id} product={p} />)}
                   </div>
                 )}
@@ -181,40 +184,40 @@ function ProductCard({ product: p }: { product: Product }) {
     <Link
       to="/product/$id"
       params={{ id: p.id }}
-      className={`group block bg-zinc-900 rounded-xl overflow-hidden border transition-all duration-200 ${p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-orange-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10"}`}
+      className="group"
     >
-      <div className="aspect-square bg-zinc-800 relative flex items-center justify-center overflow-hidden">
+      <div className={`aspect-square bg-white border overflow-hidden relative flex items-center justify-center transition-colors ${p.status === "sold" ? "border-zinc-300 bg-zinc-50" : "border-zinc-300 hover:border-black"}`}>
         {p.imageUrl
-          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-          : <span className="text-6xl">{p.emoji}</span>}
+          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity duration-300" loading="lazy" />
+          : <span className="text-6xl bg-zinc-100">{p.emoji}</span>}
 
         {p.status === "sold" && (
-          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-            <span className="text-white font-black text-xl tracking-widest border-2 border-white px-3 py-1 rotate-[-20deg]">SOLD</span>
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <span className="text-white font-black text-lg tracking-widest border-2 border-white px-3 py-1 rotate-[-15deg]">SOLD</span>
           </div>
         )}
         {p.status === "available" && (
-          <span className="absolute top-2 left-2 text-[10px] font-black bg-orange-500 text-white px-2 py-0.5 rounded tracking-widest">
+          <span className="absolute top-3 left-3 text-[10px] font-black bg-black text-white px-2.5 py-1 tracking-widest">
             1 OF 1
           </span>
         )}
         {p.tag && (
-          <span className="absolute bottom-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">
+          <span className="absolute bottom-3 left-3 text-xs font-bold bg-black text-white px-2 py-0.5 tracking-widest">
             {p.tag}
           </span>
         )}
         {p.condition && p.condition !== "Good" && (
-          <span className={`absolute top-2 right-2 text-xs font-bold px-2 py-0.5 rounded ${CONDITION_COLORS[p.condition] || "bg-zinc-800 text-zinc-300"}`}>
+          <span className={`absolute top-3 right-3 text-xs font-bold px-2 py-0.5 border ${CONDITION_COLORS[p.condition] || "bg-white border-zinc-300 text-black"}`}>
             {p.condition}
           </span>
         )}
       </div>
-      <div className="p-3">
-        <p className="text-white font-bold text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>
+      <div className="pt-4">
+        <p className="text-black font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:underline">{p.name}</p>
         <div className="flex items-center justify-between">
-          <span className="text-zinc-500 text-xs">{p.size || "One size"}</span>
-          <span className={`text-sm font-black ${p.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
-            {p.status === "sold" ? "SOLD" : p.price ? `${p.price} EGP` : p.priceLabel || "—"}
+          <span className="text-zinc-600 text-xs">{p.size || "—"}</span>
+          <span className={`text-sm font-black ${p.status === "sold" ? "text-zinc-500" : "text-black"}`}>
+            {p.status === "sold" ? "SOLD" : p.price ? `${p.price} EGP` : p.priceLabel || "DM"}
           </span>
         </div>
       </div>

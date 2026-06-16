@@ -59,18 +59,18 @@ const CONDITION_COLORS: Record<string, string> = {
 
 function ProductSkeleton() {
   return (
-    <div className="min-h-screen bg-zinc-950 px-4 py-12">
+    <div className="min-h-screen bg-white px-4 py-12">
       <div className="max-w-5xl mx-auto animate-pulse">
-        <div className="h-4 w-24 bg-zinc-800 rounded mb-8" />
-        <div className="grid md:grid-cols-2 gap-10">
-          <div className="aspect-square bg-zinc-900 rounded-2xl" />
+        <div className="h-4 w-24 bg-zinc-300 mb-8" />
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="aspect-square bg-zinc-200 border border-zinc-300" />
           <div className="space-y-4 pt-4">
-            <div className="h-4 w-20 bg-zinc-800 rounded" />
-            <div className="h-8 w-3/4 bg-zinc-800 rounded" />
-            <div className="h-10 w-1/3 bg-zinc-800 rounded" />
-            <div className="h-4 w-1/2 bg-zinc-800 rounded" />
-            <div className="h-4 w-1/3 bg-zinc-800 rounded" />
-            <div className="mt-8 h-14 bg-zinc-800 rounded-xl" />
+            <div className="h-4 w-20 bg-zinc-300" />
+            <div className="h-8 w-3/4 bg-zinc-300" />
+            <div className="h-10 w-1/3 bg-zinc-300" />
+            <div className="h-4 w-1/2 bg-zinc-300" />
+            <div className="h-4 w-1/3 bg-zinc-300" />
+            <div className="mt-8 h-14 bg-zinc-300" />
           </div>
         </div>
       </div>
@@ -98,9 +98,9 @@ function ProductPage() {
 
   if (loading) return <ProductSkeleton />;
   if (!product) return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-4">
-      <p className="text-zinc-500 text-sm tracking-widest">ITEM NOT FOUND</p>
-      <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-sm font-bold">← Back to shop</Link>
+    <div className="min-h-screen bg-white text-black flex flex-col items-center justify-center gap-4">
+      <p className="text-zinc-700 text-sm tracking-widest font-bold">ITEM NOT FOUND</p>
+      <Link to="/shop" className="text-orange-600 hover:text-orange-700 text-sm font-bold">← Back to shop</Link>
     </div>
   );
 
@@ -135,17 +135,17 @@ function ProductPage() {
   const inCart = cart.items.some(i => i.id === product.id);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
+    <div className="min-h-screen bg-white text-black px-4 py-12">
       <div className="max-w-5xl mx-auto">
-        <Link to="/shop" className="text-zinc-500 hover:text-orange-400 text-xs tracking-widest mb-8 inline-block transition-colors font-bold">
+        <Link to="/shop" className="text-zinc-700 hover:text-black text-xs tracking-widest mb-12 inline-block transition-colors font-bold">
           ← BACK TO SHOP
         </Link>
 
-        <div className="grid md:grid-cols-2 gap-10 mt-4">
+        <div className="grid md:grid-cols-2 gap-12 mt-4">
           {/* Image gallery */}
           <div>
             <div
-              className="aspect-square bg-zinc-900 rounded-2xl overflow-hidden mb-3 relative select-none"
+              className="aspect-square bg-zinc-100 border border-zinc-300 overflow-hidden mb-4 relative select-none"
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
             >
@@ -155,11 +155,11 @@ function ProductPage() {
                     alt={`${product.name}${product.condition ? ` – ${product.condition} condition` : ""}`}
                     className="w-full h-full object-cover"
                   />
-                : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
+                : <div className="w-full h-full flex items-center justify-center text-8xl bg-white">{product.emoji}</div>}
 
               {/* Sold overlay */}
               {product.status === "sold" && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                   <span className="text-white font-black text-2xl tracking-widest border-2 border-white px-4 py-2 rotate-[-15deg]">SOLD</span>
                 </div>
               )}
@@ -167,17 +167,17 @@ function ProductPage() {
               {/* Arrow buttons */}
               {allImages.length > 1 && (
                 <>
-                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors">
+                  <button onClick={prevImg} className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white flex items-center justify-center text-black transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
                   </button>
-                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors">
+                  <button onClick={nextImg} className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white flex items-center justify-center text-black transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
                   </button>
                   {/* Dot indicators */}
-                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
                     {allImages.map((_, i) => (
                       <button key={i} onClick={() => setActiveImg(i)}
-                        className={`rounded-full transition-all ${activeImg === i ? "w-4 h-1.5 bg-orange-500" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"}`} />
+                        className={`rounded-full transition-all ${activeImg === i ? "w-4 h-1.5 bg-black" : "w-1.5 h-1.5 bg-black/40 hover:bg-black/70"}`} />
                     ))}
                   </div>
                 </>
@@ -185,10 +185,10 @@ function ProductPage() {
 
               {/* 1 of 1 badge */}
               {product.status === "available" && (
-                <span className="absolute top-3 left-3 text-[10px] font-black bg-orange-500 text-white px-2 py-0.5 rounded tracking-widest">1 OF 1</span>
+                <span className="absolute top-4 left-4 text-[10px] font-black bg-black text-white px-2.5 py-1 tracking-widest">1 OF 1</span>
               )}
               {product.condition && (
-                <span className={`absolute top-3 right-3 text-xs border font-bold px-2 py-0.5 rounded ${CONDITION_COLORS[product.condition] || "bg-zinc-700/50 text-zinc-300 border-zinc-600"}`}>
+                <span className={`absolute top-4 right-4 text-xs border font-bold px-2 py-0.5 ${CONDITION_COLORS[product.condition] || "bg-white border-zinc-300 text-black"}`}>
                   {product.condition}
                 </span>
               )}
@@ -196,10 +196,10 @@ function ProductPage() {
 
             {/* Thumbnails */}
             {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${activeImg === i ? "border-orange-500" : "border-zinc-700 hover:border-zinc-500"}`}>
+                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-black" : "border-zinc-300 hover:border-zinc-500"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -210,12 +210,12 @@ function ProductPage() {
           {/* Info */}
           <div className="flex flex-col">
             {product.tag && (
-              <span className="text-orange-400 text-xs font-black tracking-widest mb-2">{product.tag}</span>
+              <span className="text-orange-600 text-xs font-black tracking-widest mb-3">{product.tag}</span>
             )}
-            <h1 className="text-2xl font-black leading-tight mb-4">{product.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-black leading-tight mb-6">{product.name}</h1>
 
-            <div className="flex items-center gap-4 mb-2">
-              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
+            <div className="flex items-center gap-4 mb-4">
+              <span className={`text-3xl md:text-4xl font-black ${product.status === "sold" ? "text-zinc-500" : "text-black"}`}>
                 {product.status === "sold"
                   ? "SOLD"
                   : product.price
@@ -223,27 +223,27 @@ function ProductPage() {
                     : product.priceLabel || "DM for price"}
               </span>
               {product.status === "available" && (
-                <span className="text-xs text-red-400 font-bold tracking-widest animate-pulse">ONLY 1 LEFT</span>
+                <span className="text-xs text-red-600 font-bold tracking-widest animate-pulse">1 LEFT</span>
               )}
             </div>
 
-            <div className="space-y-2 mb-6 mt-2">
+            <div className="space-y-3 mb-8 mt-4 pb-6 border-b border-zinc-300">
               {product.size && (
                 <div className="flex items-center gap-3">
-                  <span className="text-zinc-500 text-sm w-20">Size</span>
-                  <span className="bg-zinc-800 text-white text-sm font-bold px-3 py-1 rounded">{product.size}</span>
+                  <span className="text-zinc-700 text-sm w-24">Size</span>
+                  <span className="bg-zinc-100 border border-zinc-400 text-black text-sm font-bold px-3 py-1">{product.size}</span>
                 </div>
               )}
               {product.condition && (
                 <div className="flex items-center gap-3">
-                  <span className="text-zinc-500 text-sm w-20">Condition</span>
-                  <span className="text-white text-sm">{product.condition}</span>
+                  <span className="text-zinc-700 text-sm w-24">Condition</span>
+                  <span className="text-black text-sm font-bold">{product.condition}</span>
                 </div>
               )}
             </div>
 
             {product.description && (
-              <p className="text-zinc-400 text-sm leading-relaxed mb-6">{product.description}</p>
+              <p className="text-zinc-700 text-sm leading-relaxed mb-8">{product.description}</p>
             )}
 
             {/* Actions */}
@@ -258,38 +258,38 @@ function ProductPage() {
                         imageUrl: product.imageUrl, emoji: product.emoji,
                       });
                     }}
-                    className={`w-full font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm ${
+                    className={`w-full font-black text-center py-4 tracking-widest transition-colors text-sm ${
                       inCart
-                        ? "bg-zinc-700 text-zinc-300 cursor-default"
-                        : "bg-orange-500 hover:bg-orange-600 text-white"
+                        ? "bg-zinc-300 text-zinc-600 cursor-default"
+                        : "bg-black hover:bg-zinc-800 text-white"
                     }`}
                   >
                     {inCart ? "✓ IN CART" : "ADD TO CART"}
                   </button>
                   <a href={igLink} target="_blank" rel="noreferrer"
-                    className="w-full border border-zinc-700 hover:border-orange-500 text-zinc-400 hover:text-orange-400 font-bold text-center py-3 rounded-xl tracking-widest transition-colors text-sm">
-                    RESERVE VIA INSTAGRAM DM
+                    className="w-full border-2 border-black hover:bg-black text-black hover:text-white font-bold text-center py-3 tracking-widest transition-colors text-sm">
+                    RESERVE VIA DM
                   </a>
                 </>
               ) : (
-                <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 rounded-xl tracking-widest text-sm">
+                <div className="w-full bg-zinc-300 text-zinc-700 font-black text-center py-4 tracking-widest text-sm">
                   SOLD OUT
                 </div>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-4 pt-4 border-t border-zinc-300">
                 <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-                  className="flex-1 border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 font-bold text-center py-3 rounded-xl tracking-widest transition-colors text-xs">
-                  FOLLOW @PIZZASTEVE
+                  className="flex-1 border border-zinc-400 hover:border-black text-black hover:bg-black hover:text-white font-bold text-center py-2 tracking-widest transition-colors text-xs">
+                  FOLLOW
                 </a>
                 <button onClick={handleShare}
-                  className="flex-1 border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 font-bold text-center py-3 rounded-xl tracking-widest transition-colors text-xs">
+                  className="flex-1 border border-zinc-400 hover:border-black text-black hover:bg-black hover:text-white font-bold text-center py-2 tracking-widest transition-colors text-xs">
                   {shared ? "COPIED ✓" : "SHARE"}
                 </button>
               </div>
             </div>
 
-            <p className="text-zinc-600 text-xs text-center mt-4">Items sell fast. 1 of 1 — once it's gone, it's gone.</p>
+            <p className="text-zinc-600 text-xs text-center mt-6">1 of 1 piece. Once it's gone, it's gone.</p>
           </div>
         </div>
       </div>

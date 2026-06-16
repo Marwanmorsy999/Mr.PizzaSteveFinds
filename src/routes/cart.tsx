@@ -12,7 +12,7 @@ function CartPage() {
       <p className="text-6xl mb-6">🛒</p>
       <h1 className="text-2xl font-black tracking-widest mb-2">YOUR CART IS EMPTY</h1>
       <p className="text-zinc-500 text-sm mb-8">Go find something fire.</p>
-      <Link to="/shop" className="bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-4 rounded-full tracking-widest transition-colors text-sm">
+      <Link to="/shop" className="bg-zinc-800 hover:bg-zinc-800 text-white font-black px-8 py-4 rounded-full tracking-widest transition-colors text-sm">
         BROWSE THE FINDS
       </Link>
     </div>
@@ -40,7 +40,7 @@ function CartPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm line-clamp-1">{item.name}</p>
                 {item.size && <p className="text-zinc-500 text-xs">Size: {item.size}</p>}
-                <p className="text-orange-400 font-black text-sm mt-0.5">
+                <p className="text-zinc-100 font-black text-sm mt-0.5">
                   {item.price ? `${item.price} EGP` : item.priceLabel || "DM for price"}
                 </p>
               </div>
@@ -75,7 +75,7 @@ function CartPage() {
         </div>
 
         <button onClick={() => navigate({ to: "/checkout" })}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-xl tracking-widest transition-all hover:shadow-lg hover:shadow-orange-500/30 text-sm">
+          className="w-full bg-zinc-800 hover:bg-zinc-800 text-white font-black py-4 rounded-xl tracking-widest transition-all hover:shadow-lg hover:shadow-orange-500/30 text-sm">
           RESERVE NOW →
         </button>
         <Link to="/shop"
@@ -86,3 +86,4 @@ function CartPage() {
     </div>
   );
 }
+

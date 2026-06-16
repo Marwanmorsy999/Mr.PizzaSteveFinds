@@ -40,7 +40,7 @@ export const Route = createFileRoute("/product/$id")({ component: ProductPage })
 
 function Stars({ n }: { n: number }) {
   return (
-    <span className="text-orange-400 text-sm">
+    <span className="text-zinc-100 text-sm">
       {"★".repeat(n)}{"☆".repeat(5 - n)}
     </span>
   );
@@ -124,14 +124,14 @@ function ProductPage() {
 
   if (loading) return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="w-10 h-10 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (!product) return (
     <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center flex-col gap-4">
       <p className="text-zinc-400">Item not found.</p>
-      <Link to="/shop" className="text-orange-400 text-sm font-bold tracking-widest hover:underline">← BACK TO SHOP</Link>
+      <Link to="/shop" className="text-zinc-100 text-sm font-bold tracking-widest hover:underline">← BACK TO SHOP</Link>
     </div>
   );
 
@@ -154,9 +154,9 @@ function ProductPage() {
       <div className="max-w-5xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-zinc-500 mb-8 tracking-widest">
-          <Link to="/" className="hover:text-orange-400 transition-colors">HOME</Link>
+          <Link to="/" className="hover:text-zinc-100 transition-colors">HOME</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-orange-400 transition-colors">SHOP</Link>
+          <Link to="/shop" className="hover:text-zinc-100 transition-colors">SHOP</Link>
           <span>/</span>
           <span className="text-zinc-300 truncate max-w-[200px]">{product.name}</span>
         </nav>
@@ -179,7 +179,7 @@ function ProductPage() {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
-                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-orange-500" : "border-zinc-700 hover:border-zinc-500"}`}>
+                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-zinc-200" : "border-zinc-700 hover:border-zinc-500"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -192,14 +192,14 @@ function ProductPage() {
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-2 flex-wrap">
                 {product.tag && (
-                  <span className="text-orange-400 text-xs font-bold tracking-widest">{product.tag}</span>
+                  <span className="text-zinc-100 text-xs font-bold tracking-widest">{product.tag}</span>
                 )}
                 {product.condition && (
                   <span className={`text-xs font-bold px-2 py-0.5 border ${condColorClass}`}>{product.condition}</span>
                 )}
               </div>
               {/* Share button */}
-              <button onClick={copyLink} className="text-zinc-500 hover:text-orange-400 text-xs tracking-widest transition-colors flex-shrink-0">
+              <button onClick={copyLink} className="text-zinc-500 hover:text-zinc-100 text-xs tracking-widest transition-colors flex-shrink-0">
                 {copied ? "✓ COPIED" : "SHARE"}
               </button>
             </div>
@@ -208,14 +208,14 @@ function ProductPage() {
 
             {/* Price + stock indicator */}
             <div className="flex items-center gap-4 mb-2">
-              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
+              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-zinc-100"}`}>
                 {product.status === "sold" ? "SOLD" : product.price ? `${product.price} EGP` : product.priceLabel || "DM for price"}
               </span>
             </div>
 
             {product.status === "available" && (
-              <p className="text-xs text-orange-500 font-bold tracking-widest mb-6 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              <p className="text-xs text-zinc-100 font-bold tracking-widest mb-6 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-800 animate-pulse" />
                 ONLY 1 LEFT — 1 OF 1
               </p>
             )}
@@ -227,7 +227,7 @@ function ProductPage() {
                   <span className="text-zinc-500 text-xs tracking-widest w-24">SIZE</span>
                   <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
                   <button onClick={() => setShowSizeGuide(true)}
-                    className="text-xs text-orange-400 hover:text-orange-300 underline transition-colors tracking-widest">
+                    className="text-xs text-zinc-100 hover:text-zinc-100 underline transition-colors tracking-widest">
                     SIZE GUIDE
                   </button>
                 </div>
@@ -249,7 +249,7 @@ function ProductPage() {
             {/* CTA */}
             {product.status === "available" ? (
               <a href={igLink} target="_blank" rel="noreferrer"
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                className="w-full bg-zinc-800 hover:bg-zinc-800 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
                 RESERVE VIA INSTAGRAM DM
               </a>
             ) : (
@@ -259,7 +259,7 @@ function ProductPage() {
             )}
 
             <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="w-full border border-zinc-700 hover:border-orange-500 text-zinc-400 hover:text-orange-400 font-bold text-center py-3 tracking-widest transition-colors text-sm">
+              className="w-full border border-zinc-700 hover:border-zinc-200 text-zinc-400 hover:text-zinc-100 font-bold text-center py-3 tracking-widest transition-colors text-sm">
               FOLLOW @mr.pizzastevefinds
             </a>
 
@@ -291,7 +291,7 @@ function ProductPage() {
             </p>
           </div>
           <button onClick={() => setShowSizeGuide(true)}
-            className="flex-shrink-0 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white font-black px-5 py-2 text-xs tracking-widest transition-colors">
+            className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white font-black px-5 py-2 text-xs tracking-widest transition-colors">
             VIEW SIZE GUIDE
           </button>
         </div>
@@ -318,7 +318,7 @@ function ProductPage() {
           <div className="mt-16">
             <div className="flex items-baseline justify-between mb-6">
               <h2 className="text-sm font-black tracking-widest">YOU MIGHT ALSO LIKE</h2>
-              <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-xs font-bold tracking-widest transition-colors">
+              <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 text-xs font-bold tracking-widest transition-colors">
                 VIEW ALL →
               </Link>
             </div>
@@ -331,7 +331,7 @@ function ProductPage() {
                       : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
                   </div>
                   <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
-                  <p className="text-orange-400 text-xs font-black">{p.price ? `${p.price} EGP` : "DM"}</p>
+                  <p className="text-zinc-100 text-xs font-black">{p.price ? `${p.price} EGP` : "DM"}</p>
                 </Link>
               ))}
             </div>
@@ -341,3 +341,4 @@ function ProductPage() {
     </div>
   );
 }
+

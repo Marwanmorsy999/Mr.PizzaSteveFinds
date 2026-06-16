@@ -99,7 +99,7 @@ export function Footer() {
             href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-colors"
+            className="inline-flex items-center gap-2 bg-zinc-800 hover:bg-orange-700 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-colors"
           >
             @mr.pizzastevefinds
           </a>
@@ -115,7 +115,7 @@ export function Footer() {
 export function Marquee({ text }: { text: string }) {
   const items = Array.from({ length: 12 }, (_, i) => i);
   return (
-    <div className="overflow-hidden border-y border-zinc-800 bg-orange-500">
+    <div className="overflow-hidden border-y border-zinc-800 bg-zinc-800">
       <div
         className="flex w-max gap-8 py-2 text-sm font-black uppercase tracking-widest text-white"
         style={{ animation: "marquee 22s linear infinite" }}
@@ -138,3 +138,4 @@ export function Marquee({ text }: { text: string }) {
     </div>
   );
 }
+

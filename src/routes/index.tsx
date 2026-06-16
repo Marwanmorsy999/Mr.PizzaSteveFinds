@@ -40,7 +40,7 @@ const CONDITION_COLORS: Record<string, string> = {
   "Excellent": "bg-blue-500/20 text-blue-400 border-blue-500/40",
   "Great": "bg-cyan-500/20 text-cyan-400 border-cyan-500/40",
   "Good": "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
-  "Fair": "bg-orange-500/20 text-orange-400 border-orange-500/40",
+  "Fair": "bg-zinc-800/20 text-zinc-100 border-zinc-200/40",
 };
 
 function HomePage() {
@@ -104,7 +104,7 @@ function HomePage() {
     <div className="min-h-screen bg-zinc-950 text-white">
       {/* Announcement Banner */}
       {showBanner && (
-        <div className="bg-orange-500 text-white text-center py-2 px-4 text-xs font-bold tracking-widest flex items-center justify-center gap-4">
+        <div className="bg-zinc-800 text-white text-center py-2 px-4 text-xs font-bold tracking-widest flex items-center justify-center gap-4">
           <span>{announcement}</span>
           <button onClick={() => setShowBanner(false)} className="text-white/70 hover:text-white text-lg leading-none font-bold">×</button>
         </div>
@@ -122,7 +122,7 @@ function HomePage() {
           </div>
           <div className="flex gap-2">
             <button onClick={handleInstallClick}
-              className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-full transition-colors">
+              className="bg-zinc-800 hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2 rounded-full transition-colors">
               INSTALL
             </button>
             <button onClick={() => setShowInstall(false)}
@@ -138,13 +138,13 @@ function HomePage() {
         <div className="relative z-10 max-w-4xl">
           <p className="text-orange-600 text-xs font-bold tracking-[0.4em] mb-8">ZAMALEK, CAIRO · ESTABLISHED 2024</p>
           <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-white">
-            MR. PIZZA<br /><span className="text-orange-500">STEVE</span><br />FINDS
+            MR. PIZZA<br /><span className="text-zinc-100">STEVE</span><br />FINDS
           </h1>
           <p className="text-zinc-300 text-base md:text-lg mb-12 max-w-xl mx-auto leading-relaxed">Curated vintage pieces and streetwear finds from the streets of Cairo. Every item tells a story.</p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/shop" className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">SHOP NOW</Link>
+            <Link to="/shop" className="bg-zinc-800 hover:bg-zinc-800 text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">SHOP NOW</Link>
             <a href={IG} target="_blank" rel="noreferrer"
-              className="border-2 border-orange-500 hover:bg-orange-500 text-white hover:text-black font-bold px-8 py-4 tracking-widest transition-colors text-sm">
+              className="border-2 border-zinc-200 hover:bg-zinc-800 text-white hover:text-black font-bold px-8 py-4 tracking-widest transition-colors text-sm">
               INSTAGRAM
             </a>
           </div>
@@ -159,7 +159,7 @@ function HomePage() {
             <p className="text-zinc-400 text-xs font-bold tracking-[0.3em] mb-2">JUST IN</p>
               <h2 className="text-3xl md:text-4xl font-black tracking-widest text-white">NEW ARRIVALS</h2>
             </div>
-            <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-xs font-bold tracking-widest transition-colors">VIEW SHOP →</Link>
+            <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 text-xs font-bold tracking-widest transition-colors">VIEW SHOP →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {newArrivals.map(p => {
@@ -184,7 +184,7 @@ function HomePage() {
                     <p className="text-white font-bold text-sm line-clamp-2 mb-1">{p.name}</p>
                     <div className="flex items-end justify-between">
                       <p className="text-zinc-500 text-xs">{p.size || "—"}</p>
-                      <p className="text-orange-400 font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM"}</p>
+                      <p className="text-zinc-100 font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM"}</p>
                     </div>
                   </div>
                 </Link>
@@ -197,7 +197,7 @@ function HomePage() {
       {/* About */}
       <section className="bg-zinc-950 border-y border-zinc-800 px-4 py-20">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-4">THE CURATOR</p>
+          <p className="text-zinc-100 text-xs font-bold tracking-[0.3em] mb-4">THE CURATOR</p>
           <h2 className="text-3xl md:text-4xl font-black tracking-widest text-white mb-6">PIZZA STEVE ENERGY</h2>
           <p className="text-zinc-300 leading-relaxed text-lg mb-10">Steve dos Santos hunts Cairo's hidden gems — rare vintage tees, grail pieces, and streetwear finds you won't see anywhere else. Every piece is handpicked with intention.</p>
           <div className="flex gap-8 justify-center text-center">
@@ -233,7 +233,7 @@ function HomePage() {
       {/* Newsletter */}
       <section className="px-4 py-20 bg-black border-y border-zinc-800">
         <div className="max-w-lg mx-auto text-center">
-          <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-4">STAY UPDATED</p>
+          <p className="text-zinc-100 text-xs font-bold tracking-[0.3em] mb-4">STAY UPDATED</p>
           <h2 className="text-3xl md:text-4xl font-black tracking-widest mb-4 text-white">GET THE DROPS</h2>
           <p className="text-zinc-400 text-sm mb-8">Be first to know when new pieces arrive.</p>
           {subMsg ? (
@@ -248,7 +248,7 @@ function HomePage() {
                 className="flex-1 bg-white text-black px-4 py-3 text-sm outline-none placeholder-zinc-400 border border-zinc-300"
               />
               <button onClick={subscribe}
-                className="bg-orange-600 hover:bg-orange-700 text-white font-black px-6 py-3 text-sm transition-colors">
+                className="bg-zinc-800 hover:bg-orange-700 text-white font-black px-6 py-3 text-sm transition-colors">
                 SUBSCRIBE
               </button>
             </div>
@@ -260,7 +260,7 @@ function HomePage() {
       {showBackTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 bg-orange-500 hover:bg-orange-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30 transition-all hover:scale-110 active:scale-95"
+          className="fixed bottom-6 right-6 z-50 bg-zinc-800 hover:bg-zinc-800 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30 transition-all hover:scale-110 active:scale-95"
           aria-label="Back to top"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -271,3 +271,4 @@ function HomePage() {
     </div>
   );
 }
+

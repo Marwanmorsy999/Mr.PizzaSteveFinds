@@ -102,7 +102,7 @@ function CheckoutPage() {
                 <p className="text-sm font-bold truncate">{item.name}</p>
                 {item.size && <p className="text-zinc-600 text-xs">Size: {item.size}</p>}
               </div>
-              <span className="text-orange-400 font-black text-sm flex-shrink-0">
+              <span className="text-zinc-100 font-black text-sm flex-shrink-0">
                 {item.price ? `${item.price} EGP` : "—"}
               </span>
             </div>
@@ -120,12 +120,12 @@ function CheckoutPage() {
           <div>
             <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">YOUR NAME *</label>
             <input value={form.name} onChange={e => f({ name: e.target.value })} placeholder="Ahmed Mohamed"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-sm" />
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
           </div>
           <div>
             <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">PHONE NUMBER *</label>
             <input value={form.phone} onChange={e => f({ phone: e.target.value })} placeholder="01012345678" type="tel"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-sm" />
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
           </div>
 
           {/* Pickup vs delivery */}
@@ -133,11 +133,11 @@ function CheckoutPage() {
             <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">HOW DO YOU WANT IT?</label>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={() => f({ pickup: true })}
-                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${form.pickup ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
+                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${form.pickup ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
                 📍 Pickup (Zamalek)
               </button>
               <button onClick={() => f({ pickup: false })}
-                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${!form.pickup ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
+                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${!form.pickup ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
                 🚚 Delivery
               </button>
             </div>
@@ -147,14 +147,14 @@ function CheckoutPage() {
             <div>
               <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">DELIVERY ADDRESS *</label>
               <textarea value={form.address} onChange={e => f({ address: e.target.value })} placeholder="Street, area, city..."
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-sm h-20 resize-none" />
+                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-20 resize-none" />
             </div>
           )}
 
           <div>
             <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">NOTES (optional)</label>
             <textarea value={form.notes} onChange={e => f({ notes: e.target.value })} placeholder="Any special requests..."
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-sm h-16 resize-none" />
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-16 resize-none" />
           </div>
 
           {/* Payment placeholder */}
@@ -166,7 +166,7 @@ function CheckoutPage() {
           {error && <p className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <button onClick={submit} disabled={loading}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-black py-4 rounded-xl tracking-widest transition-all text-sm">
+            className="w-full bg-zinc-800 hover:bg-zinc-800 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-black py-4 rounded-xl tracking-widest transition-all text-sm">
             {loading ? "PLACING ORDER..." : "PLACE RESERVATION →"}
           </button>
 
@@ -178,3 +178,4 @@ function CheckoutPage() {
     </div>
   );
 }
+

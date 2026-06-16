@@ -37,7 +37,6 @@ function Home() {
       <section className="noise-bg relative overflow-hidden border-b border-border">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
 
-          {/* sticker badge — tilted, fun */}
           <div className="inline-flex items-center gap-2 tilt-r bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg"
             style={{ borderRadius: "2px" }}>
             <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
@@ -61,7 +60,7 @@ function Home() {
             >
               shop the damn drop →
             </Link>
-            <a
+            
               href="https://instagram.com/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
@@ -71,7 +70,6 @@ function Home() {
             </a>
           </div>
 
-          {/* fun stat row */}
           <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-3">
             <Stat emoji="📍" label="where tf are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
             <Stat emoji="🕐" label="hours" value="3PM – 11PM" sub="yes every damn day" />
@@ -99,7 +97,6 @@ function Home() {
               params={{ id: p.id }}
               className={`group relative overflow-hidden border border-border bg-card transition hover:-translate-y-1 hover:border-primary ${i === 1 ? "sm:mt-4" : ""}`}
             >
-              {/* price tag sticker */}
               <div className="absolute right-2 top-2 z-10 tilt-r bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
                 {p.tag}
               </div>
@@ -122,7 +119,28 @@ function Home() {
         </div>
       </section>
 
-      {/* fun callout strip */}
+      {/* Jacket rack vibe photo */}
+      <section className="mx-auto max-w-4xl px-4 pb-8">
+        <img
+          src="/rack.jpg"
+          alt="fresh finds on the rack"
+          className="w-full rounded-sm border border-border object-cover"
+        />
+      </section>
+
+      {/* Shop opening announcement video */}
+      <section className="mx-auto max-w-4xl px-4 pb-16">
+        <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-3">the announcement 🍕</div>
+        <video
+          src="/opening.mp4"
+          controls
+          playsInline
+          className="w-full rounded-sm border border-border"
+          poster="/rack.jpg"
+        />
+      </section>
+
+      {/* callout strip */}
       <div className="border-y border-border bg-zinc-900 py-6 text-center">
         <p className="text-xl font-black uppercase tracking-widest text-white">
           new drops hit instagram first, no cap 🫶

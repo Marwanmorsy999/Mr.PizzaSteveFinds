@@ -37,7 +37,14 @@ function About() {
             <p>
               Pop in between 3PM and 11PM, or slide into the DMs. Don't be shy, we don't bite. New drops post first on Instagram — follow or miss out, honestly.
             </p>
-            <a
+
+            {/* Cairo market sourcing photo */}
+            <div className="rounded-sm border border-border overflow-hidden">
+              <img src="/market.jpg" alt="Steve sourcing at Cairo market" className="w-full object-cover" />
+              <p className="text-xs text-muted-foreground px-4 py-2">steve on the hunt · cairo outdoor market</p>
+            </div>
+
+            
               href="https://instagram.com/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
@@ -84,7 +91,7 @@ function About() {
             <p className="mt-3 text-sm text-muted-foreground">
               got a question about a piece? wanna hold something before someone else snatches it? just dm us, we're not scary.
             </p>
-            <a
+            
               href="https://ig.me/m/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"

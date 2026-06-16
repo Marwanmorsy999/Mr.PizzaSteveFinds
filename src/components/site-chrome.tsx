@@ -1,35 +1,77 @@
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
+import { useEffect, useRef, useState } from "react";
 
 export function Header() {
   const { count } = useCart();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [volume, setVolume] = useState(0.5);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = volume;
+    const play = () => audio.play().catch(() => {});
+    document.addEventListener("click", play, { once: true });
+    document.addEventListener("touchstart", play, { once: true });
+    audio.play().catch(() => {
+      // Blocked by browser, will retry on first interaction
+    });
+    return () => {
+      document.removeEventListener("click", play);
+      document.removeEventListener("touchstart", play);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume;
+  }, [volume]);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         <Link to="/">
-          <img src={logo} alt="Mr. Pizza Steve Finds" className="h-16 w-auto sm:h-20" />
+          <img src={logo} alt="Mr. Pizza Steve" className="h-16 w-auto sm:h-20" />
         </Link>
-        <nav className="flex items-center gap-1 text-xs font-black uppercase tracking-widest sm:gap-4 sm:text-sm">
+
+        <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[
             { to: "/", label: "Home" },
             { to: "/shop", label: "Shop" },
             { to: "/about", label: "About" },
-            { to: "/cart", label: count > 0 ? `Cart (${count})` : "Cart" },
+            { to: "/cart", label: `Cart${count > 0 ? ` (${count})` : ""}` },
           ].map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: true }}
-              activeProps={{ className: "text-orange-500" }}
-              inactiveProps={{ className: "text-zinc-400 hover:text-orange-400" }}
+              activeProps={{ className: "text-primary" }}
+              inactiveProps={{ className: "text-foreground hover:text-primary" }}
               className="px-2 py-1 transition-colors"
             >
               {l.label}
             </Link>
           ))}
+
+          {/* Volume slider — desktop only */}
+          <div className="hidden sm:flex items-center gap-2 ml-2">
+            <span className="text-muted-foreground">🔈</span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={volume}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
+              className="w-20 accent-primary cursor-pointer"
+            />
+            <span className="text-muted-foreground">🔊</span>
+          </div>
         </nav>
       </div>
+
+      <audio ref={audioRef} src="/site.mp3" loop preload="auto" />
     </header>
   );
 }

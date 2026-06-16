@@ -1,18 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer, Marquee } from "@/components/site-chrome";
+import { Header, Footer } from "@/components/site-chrome";
+import { RotatingBanner } from "@/components/site-chrome";
+import { InstagramFeed } from "@/components/ui/instagram-feed";
 import { products } from "@/lib/products";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Mr. Pizza Steve Finds — Vintage & Thrift in Zamalek, Cairo" },
-      {
-        name: "description",
-        content:
-          "Loud vintage and thrift drops curated by Steve dos Santos. 30 Hassan Assem St, Zamalek. Open daily 3PM–11PM.",
-      },
-      { property: "og:title", content: "Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "Vintage & thrift — Zamalek, Cairo. New drop available." },
+      { title: "Mr. Pizza Steve Finds — Loud Vintage & Thrift | Zamalek, Cairo" },
+      { name: "description", content: "Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo. Hand-picked tees, jorts, eyewear, grails. New drops post first on Instagram." },
+      { name: "keywords", content: "vintage clothing, thrift, Zamalek, Cairo, streetwear, vintage tees, embroidered jorts, eyewear, grail, secondhand, curated vintage, Steve dos Santos, Mr Pizza Steve Finds, mens vintage, street style, unique clothing Egypt, sustainable fashion, rare finds" },
+      { name: "author", content: "Steve dos Santos" },
+      { property: "og:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift | Zamalek, Cairo" },
+      { property: "og:description", content: "Hand-picked vintage and thrift in Zamalek, Cairo. New drop available — tees, jorts, eyewear, grails. Shop the drop or DM @mr.pizzastevefinds." },
+      { property: "og:url", content: "https://mr.pizzastevefinds.com/" },
+      { property: "og:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@mr.pizzastevefinds" },
+      { name: "twitter:title", content: "Mr. Pizza Steve Finds — Loud Vintage & Thrift" },
+      { name: "twitter:description", content: "Zamalek's worst-kept secret. Hand-picked vintage and thrift, new drops every week. DM to reserve." },
+      { name: "twitter:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
     ],
   }),
   component: Home,
@@ -23,7 +32,7 @@ function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <Marquee text="NEW DROP AVAILABLE 🍕" />
+      <RotatingBanner />
 
       <section className="noise-bg relative overflow-hidden border-b border-border">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
@@ -86,6 +95,7 @@ function Home() {
         </div>
       </section>
 
+      <InstagramFeed />
       <Footer />
     </div>
   );

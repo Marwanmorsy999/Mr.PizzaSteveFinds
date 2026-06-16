@@ -6,9 +6,10 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Mr. Pizza Steve Finds" },
-      { name: "description", content: "The story behind Mr. Pizza Steve Finds — Steve dos Santos' vintage shop in Zamalek, Cairo." },
+      { name: "description", content: "The story behind Mr. Pizza Steve Finds — Steve dos Santos' vintage shop in Zamalek, Cairo. Curated loud vintage and thrift." },
+      { name: "keywords", content: "about Mr Pizza Steve Finds, Steve dos Santos, Zamalek vintage, thrift shop Cairo, streetwear Egypt" },
       { property: "og:title", content: "About — Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "Steve dos Santos' vintage shop in Zamalek, Cairo." },
+      { property: "og:description", content: "Steve dos Santos' vintage shop in Zamalek, Cairo. Loud vintage, bolder thrift." },
     ],
   }),
   component: About,

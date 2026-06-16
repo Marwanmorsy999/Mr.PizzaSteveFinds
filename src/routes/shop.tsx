@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Header, Footer, Marquee } from "@/components/site-chrome";
+import { Header, Footer } from "@/components/site-chrome";
+import { RotatingBanner } from "@/components/site-chrome";
 import { products, type Product } from "@/lib/products";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
       { title: "Shop — Mr. Pizza Steve Finds" },
-      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more." },
+      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more vintage finds in Zamalek, Cairo." },
+      { name: "keywords", content: "shop vintage, vintage tees, jorts, eyewear, Harley Davidson vintage, curated thrift, Cairo streetwear, Mr Pizza Steve shop" },
       { property: "og:title", content: "Shop — Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "The current drop, fresh off the Zamalek rack." },
+      { property: "og:description", content: "The current drop, fresh off the Zamalek rack. Tees, jorts, eyewear, grails." },
     ],
   }),
   component: Shop,
@@ -18,7 +20,7 @@ function Shop() {
   return (
     <div className="min-h-screen">
       <Header />
-      <Marquee text="NEW DROP AVAILABLE 🍕" />
+      <RotatingBanner />
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="border-b border-border pb-8">
           <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>

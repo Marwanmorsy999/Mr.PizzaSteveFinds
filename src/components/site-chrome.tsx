@@ -3,6 +3,31 @@ import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
 import { useEffect, useRef, useState } from "react";
 
+const BANNERS = [
+  { label: "NEW DROP AVAILABLE", emoji: "🍕" },
+  { label: "FRESH OFF THE RACK", emoji: "🔥" },
+  { label: "ZAMALEK'S WORST-KEPT SECRET", emoji: "👟" },
+  { label: "DM TO RESERVE", emoji: "📩" },
+];
+
+export function RotatingBanner({ interval = 4000 }: { interval?: number }) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIdx((i) => (i + 1) % BANNERS.length), interval);
+    return () => clearInterval(t);
+  }, [interval]);
+
+  const b = BANNERS[idx];
+  return (
+    <div className="overflow-hidden border-y border-zinc-800 bg-zinc-800">
+      <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 py-2 text-sm font-black uppercase tracking-widest text-white">
+        <span className="text-orange-200">{b.emoji}</span>
+        <span>{b.label}</span>
+      </div>
+    </div>
+  );
+}
+
 export function Header() {
   const { count } = useCart();
   const audioRef = useRef<HTMLAudioElement>(null);

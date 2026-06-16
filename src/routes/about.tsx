@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Header, Footer } from "@/components/site-chrome";
+import { Header, Footer, Marquee } from "@/components/site-chrome";
+import { InstagramFeed } from "@/components/ui/instagram-feed";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Mr. Pizza Steve Finds" },
-      { name: "description", content: "The story behind Mr. Pizza Steve Finds — Steve dos Santos' vintage shop in Zamalek, Cairo." },
+      { name: "description", content: "The story behind Mr. Pizza Steve Finds — Steve dos Santos' vintage shop in Zamalek, Cairo. Curated loud vintage and thrift." },
+      { name: "keywords", content: "about Mr Pizza Steve Finds, Steve dos Santos, Zamalek vintage, thrift shop Cairo, streetwear Egypt" },
+      { property: "og:title", content: "About — Mr. Pizza Steve Finds" },
+      { property: "og:description", content: "Steve dos Santos' vintage shop in Zamalek, Cairo. Loud vintage, bolder thrift." },
     ],
   }),
   component: About,
@@ -15,20 +19,17 @@ function About() {
   return (
     <div className="min-h-screen">
       <Header />
+      <Marquee text="ZAMALEK · CAIRO · 3PM – 11PM ·" />
+      <section className="mx-auto max-w-4xl px-4 py-16">
+        <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Story</div>
+        <h1 className="mt-2 text-5xl sm:text-7xl">
+          One <span className="text-primary">slice</span> of Cairo street culture.
+        </h1>
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <div className="border-b border-border pb-8">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">The Story</p>
-          <h1 className="font-display text-4xl italic sm:text-6xl text-foreground leading-tight">
-            One slice of<br />
-            <span className="text-primary">Cairo</span> street culture.
-          </h1>
-        </div>
-
-        <div className="mt-10 grid gap-12 sm:grid-cols-[2fr_1fr]">
-          <div className="space-y-6 text-base leading-relaxed text-muted-foreground">
+        <div className="mt-10 grid gap-8 text-lg leading-relaxed text-muted-foreground sm:grid-cols-[2fr_1fr]">
+          <div className="space-y-5">
             <p>
-              <span className="text-foreground font-medium">Mr. Pizza Steve Finds</span> is the vintage and thrift project of Steve dos Santos — a small shop in Zamalek with a loud personality and a sharper eye.
+              <span className="text-foreground">Mr. Pizza Steve Finds</span> is the vintage and thrift project of Steve dos Santos — a small shop in Zamalek with a loud personality and a sharper eye.
             </p>
             <p>
               Every piece is hand-picked: heavyweight tees, embroidered jorts, eyewear that has no business looking this good, and the occasional grail (RIP that Ed Hardy zip-up). Streetwear sensibility, thrift store prices, Pizza Steve energy.
@@ -40,56 +41,58 @@ function About() {
               href="https://instagram.com/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
-              className="inline-block border border-primary px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-primary transition hover:bg-primary hover:text-primary-foreground"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
             >
               Follow @mr.pizzastevefinds →
             </a>
           </div>
-
-          <aside className="text-sm text-muted-foreground space-y-6">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-foreground mb-2">Find Us</p>
-              <p className="leading-relaxed">
-                30 Hassan Assem St<br />
-                Zamalek, Cairo
-              </p>
-              <p className="mt-1">Daily · 3PM – 11PM</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-widest text-foreground mb-2">Owner</p>
-              <p>Steve dos Santos</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-widest text-foreground mb-2">Message</p>
-              <a
-                href="https://ig.me/m/mr.pizzastevefinds"
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary hover:underline underline-offset-4 transition"
-              >
-                Instagram DM →
-              </a>
-            </div>
+          <aside className="rounded-sm border border-border bg-card p-6">
+            <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Find Us</div>
+            <p className="mt-3 font-display text-xl uppercase leading-tight text-foreground">
+              30 Hassan Assem St<br />Zamalek, Cairo 🍕
+            </p>
+            <p className="mt-3 text-sm">Daily · 3PM – 11PM</p>
+            <p className="mt-1 text-sm">Owner: Steve dos Santos</p>
           </aside>
         </div>
 
-        {/* Map */}
-        <div className="mt-16 border-t border-border pt-10">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Where we are</p>
-          <div className="overflow-hidden border border-border" style={{ height: "400px" }}>
-            <iframe
-              title="Mr. Pizza Steve Finds location"
-              src="https://www.google.com/maps?q=30+Hassan+Assem+St,+Zamalek,+Cairo&output=embed"
-              width="100%"
-              height="100%"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="block w-full grayscale"
-            />
+        <div className="mt-12 overflow-hidden rounded-sm border border-border">
+          <iframe
+            title="Mr. Pizza Steve Finds location"
+            src="https://www.google.com/maps?q=30+Hassan+Assem+St,+Zamalek,+Cairo&output=embed"
+            width="100%"
+            height="400"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="block w-full grayscale"
+          />
+        </div>
+
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-sm border border-border bg-card p-6">
+            <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Visit Us</div>
+            <p className="mt-3 font-display text-xl uppercase leading-tight text-foreground">
+              30 Hassan Assem St<br />Zamalek, Cairo 🍕
+            </p>
+            <p className="mt-3 text-sm text-muted-foreground">Daily · 3PM – 11PM</p>
+          </div>
+          <div className="rounded-sm border border-border bg-card p-6">
+            <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Message Us</div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Questions about a piece? Want to hold something? Slide into the DMs.
+            </p>
+            <a
+              href="https://ig.me/m/mr.pizzastevefinds"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
+            >
+              Instagram DM →
+            </a>
           </div>
         </div>
       </section>
-
+      <InstagramFeed />
       <Footer />
     </div>
   );

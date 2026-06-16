@@ -1,4 +1,4 @@
-const CACHE = "pizzasteve-v1";
+const CACHE = "pizzasteve-v2";
 const STATIC = ["/", "/shop", "/about", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -19,7 +19,10 @@ self.addEventListener("fetch", (e) => {
   const { request } = e;
   const url = new URL(request.url);
 
-  // Network first for API calls
+  // Skip non-GET requests entirely
+  if (request.method !== "GET") return;
+
+  // Network only for API calls
   if (url.hostname.includes("workers.dev") || url.pathname.startsWith("/api/")) {
     e.respondWith(
       fetch(request).catch(() => new Response(JSON.stringify([]), {
@@ -29,12 +32,14 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Cache first for static assets
+  // Cache first for images
   if (request.destination === "image") {
     e.respondWith(
       caches.match(request).then(cached => cached || fetch(request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(request, clone));
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(request, clone));
+        }
         return res;
       }))
     );
@@ -45,7 +50,10 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(
     caches.match(request).then(cached => {
       const fetched = fetch(request).then(res => {
-        if (res.ok) caches.open(CACHE).then(c => c.put(request, res.clone()));
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(request, clone));
+        }
         return res;
       }).catch(() => cached);
       return cached || fetched;

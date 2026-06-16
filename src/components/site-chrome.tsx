@@ -1,16 +1,13 @@
+
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-         <img src={logo} alt="Mr. Pizza Steve" className="h-32 w-auto" />
-          <span className="leading-none">
-            Mr. Pizza Steve
-            <span className="block text-[10px] tracking-[0.3em] text-muted-foreground">FINDS · ZAMALEK</span>
-          </span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
+        <Link to="/">
+          <img src={logo} alt="Mr. Pizza Steve" className="h-8 w-auto sm:h-14" />
         </Link>
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[
@@ -34,6 +31,7 @@ export function Header() {
     </header>
   );
 }
+
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-border bg-card">
@@ -76,3 +74,4 @@ export function Marquee({ text }: { text: string }) {
     </div>
   );
 }
+

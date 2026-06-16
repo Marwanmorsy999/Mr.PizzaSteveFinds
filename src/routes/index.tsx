@@ -137,14 +137,14 @@ function HomePage() {
       <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12 overflow-hidden bg-zinc-950">
         <div className="relative z-10 max-w-4xl">
           <p className="text-orange-600 text-xs font-bold tracking-[0.4em] mb-8">ZAMALEK, CAIRO · ESTABLISHED 2024</p>
-          <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-black">
-            MR. PIZZA<br /><span className="text-orange-600">STEVE</span><br />FINDS
+          <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-white">
+            MR. PIZZA<br /><span className="text-orange-500">STEVE</span><br />FINDS
           </h1>
-          <p className="text-zinc-700 text-base md:text-lg mb-12 max-w-xl mx-auto leading-relaxed">Curated vintage pieces and streetwear finds from the streets of Cairo. Every item tells a story.</p>
+          <p className="text-zinc-300 text-base md:text-lg mb-12 max-w-xl mx-auto leading-relaxed">Curated vintage pieces and streetwear finds from the streets of Cairo. Every item tells a story.</p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/shop" className="bg-black hover:bg-zinc-800 text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">SHOP NOW</Link>
+            <Link to="/shop" className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">SHOP NOW</Link>
             <a href={IG} target="_blank" rel="noreferrer"
-              className="border-2 border-black hover:bg-black text-black hover:text-white font-bold px-8 py-4 tracking-widest transition-colors text-sm">
+              className="border-2 border-orange-500 hover:bg-orange-500 text-white hover:text-black font-bold px-8 py-4 tracking-widest transition-colors text-sm">
               INSTAGRAM
             </a>
           </div>
@@ -156,10 +156,10 @@ function HomePage() {
         <section className="px-4 py-20 max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between mb-12">
             <div>
-              <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-2">JUST IN</p>
-              <h2 className="text-3xl md:text-4xl font-black tracking-widest">NEW ARRIVALS</h2>
+            <p className="text-zinc-400 text-xs font-bold tracking-[0.3em] mb-2">JUST IN</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-widest text-white">NEW ARRIVALS</h2>
             </div>
-            <Link to="/shop" className="text-orange-500 hover:text-orange-400 text-xs font-bold tracking-widest transition-colors">VIEW SHOP →</Link>
+            <Link to="/shop" className="text-orange-400 hover:text-orange-300 text-xs font-bold tracking-widest transition-colors">VIEW SHOP →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {newArrivals.map(p => {
@@ -167,10 +167,10 @@ function HomePage() {
               return (
                 <Link key={p.id} to="/product/$id" params={{ id: p.id }}
                   className="group">
-                  <div className="aspect-square bg-white border border-zinc-300 overflow-hidden relative mb-4 hover:border-zinc-600 transition-colors">
+                  <div className="aspect-square bg-zinc-900 border border-zinc-800 overflow-hidden relative mb-4 hover:border-zinc-600 transition-colors">
                     {p.imageUrl
                       ? <img src={p.imageUrl} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:opacity-75 transition-opacity duration-300" />
-                      : <div className="w-full h-full flex items-center justify-center bg-zinc-100 text-6xl">{p.emoji}</div>}
+                      : <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-6xl text-zinc-500">{p.emoji}</div>}
                     {p.status === "available" && (
                       <span className="absolute top-3 left-3 text-[10px] bg-black text-white font-black px-2.5 py-1 tracking-widest">1 OF 1</span>
                     )}
@@ -181,10 +181,10 @@ function HomePage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-black font-bold text-sm line-clamp-2 mb-1">{p.name}</p>
+                    <p className="text-white font-bold text-sm line-clamp-2 mb-1">{p.name}</p>
                     <div className="flex items-end justify-between">
-                      <p className="text-zinc-600 text-xs">{p.size || "—"}</p>
-                      <p className="text-black font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM"}</p>
+                      <p className="text-zinc-500 text-xs">{p.size || "—"}</p>
+                      <p className="text-orange-400 font-black text-sm">{p.price ? `${p.price} EGP` : p.priceLabel || "DM"}</p>
                     </div>
                   </div>
                 </Link>
@@ -195,17 +195,17 @@ function HomePage() {
       )}
 
       {/* About */}
-      <section className="bg-white border-y border-zinc-300 px-4 py-20">
+      <section className="bg-zinc-950 border-y border-zinc-800 px-4 py-20">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-orange-600 text-xs font-bold tracking-[0.3em] mb-4">THE CURATOR</p>
-          <h2 className="text-3xl md:text-4xl font-black tracking-widest text-black mb-6">PIZZA STEVE ENERGY</h2>
-          <p className="text-black leading-relaxed text-lg mb-10">Steve dos Santos hunts Cairo's hidden gems — rare vintage tees, grail pieces, and streetwear finds you won't see anywhere else. Every piece is handpicked with intention.</p>
+          <p className="text-orange-500 text-xs font-bold tracking-[0.3em] mb-4">THE CURATOR</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-widest text-white mb-6">PIZZA STEVE ENERGY</h2>
+          <p className="text-zinc-300 leading-relaxed text-lg mb-10">Steve dos Santos hunts Cairo's hidden gems — rare vintage tees, grail pieces, and streetwear finds you won't see anywhere else. Every piece is handpicked with intention.</p>
           <div className="flex gap-8 justify-center text-center">
-            <div><p className="text-3xl md:text-4xl font-black text-black">6.4K</p><p className="text-zinc-700 text-xs tracking-widest">FOLLOWERS</p></div>
-            <div className="w-px bg-zinc-300" />
-            <div><p className="text-3xl md:text-4xl font-black text-black">2024</p><p className="text-zinc-700 text-xs tracking-widest">EST.</p></div>
-            <div className="w-px bg-zinc-300" />
-            <div><p className="text-3xl md:text-4xl font-black text-black">ZMK</p><p className="text-zinc-700 text-xs tracking-widest">ZAMALEK</p></div>
+            <div><p className="text-3xl md:text-4xl font-black text-white">6.4K</p><p className="text-zinc-500 text-xs tracking-widest">FOLLOWERS</p></div>
+            <div className="w-px bg-zinc-800" />
+            <div><p className="text-3xl md:text-4xl font-black text-white">2024</p><p className="text-zinc-500 text-xs tracking-widest">EST.</p></div>
+            <div className="w-px bg-zinc-800" />
+            <div><p className="text-3xl md:text-4xl font-black text-white">ZMK</p><p className="text-zinc-500 text-xs tracking-widest">ZAMALEK</p></div>
           </div>
         </div>
       </section>

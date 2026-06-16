@@ -1,4 +1,3 @@
-
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
@@ -6,24 +5,24 @@ import { useCart } from "../context/CartContext";
 export function Header() {
   const { count } = useCart();
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         <Link to="/">
-         <img src={logo} alt="Mr. Pizza Steve" className="h-16 w-auto sm:h-20" />
+          <img src={logo} alt="Mr. Pizza Steve Finds" className="h-16 w-auto sm:h-20" />
         </Link>
-        <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
+        <nav className="flex items-center gap-1 text-xs font-black uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[
             { to: "/", label: "Home" },
             { to: "/shop", label: "Shop" },
             { to: "/about", label: "About" },
-            { to: "/cart", label: `Cart${count > 0 ? ` (${count})` : ""}` },
+            { to: "/cart", label: count > 0 ? `Cart (${count})` : "Cart" },
           ].map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: true }}
-              activeProps={{ className: "text-primary" }}
-              inactiveProps={{ className: "text-foreground hover:text-primary" }}
+              activeProps={{ className: "text-orange-500" }}
+              inactiveProps={{ className: "text-zinc-400 hover:text-orange-400" }}
               className="px-2 py-1 transition-colors"
             >
               {l.label}
@@ -37,27 +36,35 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border bg-card">
+    <footer className="mt-24 border-t border-zinc-800 bg-zinc-900">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
         <div>
-          <h3 className="text-xl">Mr. Pizza Steve Finds</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-xl font-black tracking-widest text-white">MR. PIZZA<br /><span className="text-orange-500">STEVE</span> FINDS.</p>
+          <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
             Vintage and thrift curated by Steve dos Santos. Loud, bold, Cairo.
           </p>
         </div>
         <div>
-          <h4 className="text-sm">Visit</h4>
-          <p className="mt-2 text-sm text-muted-foreground">
-            30 Hassan Assem St<br />Zamalek, Cairo<br />Daily 3PM - 11PM
+          <h4 className="text-xs font-black tracking-widest text-zinc-500 mb-3">VISIT</h4>
+          <p className="text-sm text-zinc-300 leading-relaxed">
+            30 Hassan Assem St<br />Zamalek, Cairo<br />
+            <span className="text-zinc-500">Daily 3PM – 11PM</span>
           </p>
         </div>
         <div>
-          <h4 className="text-sm">Follow the Drops</h4>
-          <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-2 rounded-sm bg-primary px-3 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition hover:bg-secondary">@mr.pizzastevefinds</a>
+          <h4 className="text-xs font-black tracking-widest text-zinc-500 mb-3">FOLLOW THE DROPS</h4>
+          <a
+            href="https://instagram.com/mr.pizzastevefinds"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-orange-500 hover:bg-orange-600 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-colors"
+          >
+            @mr.pizzastevefinds
+          </a>
         </div>
       </div>
-      <div className="border-t border-border py-4 text-center text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
-        {new Date().getFullYear()} Pizza Steve Energy
+      <div className="border-t border-zinc-800 py-4 text-center text-[10px] uppercase tracking-[0.4em] text-zinc-700">
+        © {new Date().getFullYear()} Pizza Steve Energy
       </div>
     </footer>
   );
@@ -66,15 +73,26 @@ export function Footer() {
 export function Marquee({ text }: { text: string }) {
   const items = Array.from({ length: 12 }, (_, i) => i);
   return (
-    <div className="overflow-hidden border-y border-border bg-primary text-primary-foreground">
-      <div className="marquee flex w-max gap-8 py-2 text-sm font-black uppercase tracking-widest">
-        {items.concat(items).map((i) => (
+    <div className="overflow-hidden border-y border-zinc-800 bg-orange-500">
+      <div
+        className="flex w-max gap-8 py-2 text-sm font-black uppercase tracking-widest text-white"
+        style={{ animation: "marquee 22s linear infinite" }}
+      >
+        {items.concat(items).map((_, i) => (
           <span key={i} className="flex items-center gap-8 whitespace-nowrap">
-            {text} <span>*</span>
+            {text} <span className="text-orange-200">✦</span>
           </span>
         ))}
       </div>
+      <style>{`
+        @keyframes marquee {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-inner { animation: none; }
+        }
+      `}</style>
     </div>
   );
 }
-

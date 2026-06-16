@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const IG = "https://instagram.com/mr.pizzastevefinds";
+const SITE_URL = "https://mrpizzastevefinds.com";
+const OG_IMAGE = `${SITE_URL}/og-default.jpg`;
 
 interface Product {
   id: string; name: string; size?: string; price?: number; priceLabel?: string;
@@ -18,10 +20,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Mr. Pizza Steve Finds – Vintage & Thrift, Zamalek Cairo" },
-      { name: "description", content: "Curated vintage and thrift clothing by Steve dos Santos. Heavyweight tees, grail pieces, streetwear finds. Located in Zamalek, Cairo. Open daily 3PM-11PM." },
+      { name: "description", content: "Curated vintage and thrift clothing by Steve dos Santos. Heavyweight tees, grail pieces, streetwear finds. Located in Zamalek, Cairo. Open daily 3PM–11PM." },
       { property: "og:title", content: "Mr. Pizza Steve Finds" },
       { property: "og:description", content: "Curated vintage and thrift clothing. Zamalek, Cairo." },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Mr. Pizza Steve Finds" },
+      { name: "twitter:description", content: "Curated vintage and thrift clothing. Zamalek, Cairo." },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
   }),
   component: HomePage,
@@ -161,7 +169,6 @@ function HomePage() {
                     {p.imageUrl
                       ? <img src={p.imageUrl} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       : <span className="text-5xl">{p.emoji}</span>}
-                    {/* 1 of 1 badge */}
                     <span className="absolute top-2 left-2 text-xs bg-orange-500 text-white font-black px-2 py-0.5 rounded tracking-widest">1 OF 1</span>
                     {p.condition && (
                       <span className={`absolute top-2 right-2 text-xs border font-bold px-2 py-0.5 rounded ${condColor}`}>
@@ -201,7 +208,7 @@ function HomePage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
           <p className="text-4xl mb-4">📍</p>
           <p className="text-white font-bold mb-2">30 Hassan Assem St, Zamalek</p>
-          <p className="text-zinc-400 text-sm mb-6">Daily 3PM - 11PM · Walk-ins welcome</p>
+          <p className="text-zinc-400 text-sm mb-6">Daily 3PM – 11PM · Walk-ins welcome</p>
           <p className="text-zinc-500 text-sm">Follow{" "}
             <a href={IG} target="_blank" rel="noreferrer" className="text-orange-400 hover:text-orange-300">
               @mr.pizzastevefinds

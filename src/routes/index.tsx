@@ -26,10 +26,20 @@ function Home() {
       <Header />
       <RotatingBanner />
 
-      {/* Hero */}
-      <section className="noise-bg relative overflow-hidden border-b border-border">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
-          <div className="inline-flex items-center gap-2 tilt-r bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
+      {/* Hero with video background */}
+      <section className="relative overflow-hidden border-b border-border" style={{ minHeight: "90vh" }}>
+        <video
+          src="/opening.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 0.25 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:py-32">
+          <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
             <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
             yeah we are open rn · 3pm - 11pm
           </div>
@@ -73,7 +83,7 @@ function Home() {
           {featured.map((p, i) => (
             <Link key={p.id} to="/product/$id" params={{ id: p.id }}
               className={`group relative overflow-hidden border border-border bg-card transition hover:-translate-y-1 hover:border-primary ${i === 1 ? "sm:mt-4" : ""}`}>
-              <div className="absolute right-2 top-2 z-10 tilt-r bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
+              <div className="absolute right-2 top-2 z-10 bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
                 {p.tag}
               </div>
               <div className="grid aspect-square place-items-center bg-gradient-to-br from-muted to-card text-7xl transition-transform duration-300 group-hover:scale-105">
@@ -91,29 +101,15 @@ function Home() {
         </div>
       </section>
 
-      {/* Editorial rack photo strip */}
-      <div className="w-full overflow-hidden" style={{ maxHeight: "480px" }}>
-        <img
-          src="/rack.jpg"
-          alt="fresh finds on the rack"
-          className="w-full object-cover object-top"
-          style={{ maxHeight: "480px" }}
-        />
-      </div>
-
-      {/* Opening video section */}
-      <section className="bg-zinc-950 py-16 px-4">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-2">the announcement</p>
-          <h2 className="text-2xl font-black uppercase tracking-widest text-white mb-6">we opened. come through.</h2>
-          <video
-            src="/opening.mp4"
-            controls
-            playsInline
-            className="w-full border border-zinc-800"
-          />
+      {/* Rack photo full-bleed */}
+      <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
+        <img src="/rack.jpg" alt="on the rack now" className="w-full h-full object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+        <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
+          <p className="text-xs font-black uppercase tracking-[0.4em] text-white">On the rack now</p>
+          <p className="mt-1 text-sm text-zinc-300">Evisu · Tommy · Camo · Varsity</p>
         </div>
-      </section>
+      </div>
 
       {/* Callout strip */}
       <div className="border-y border-border bg-zinc-900 py-6 text-center">

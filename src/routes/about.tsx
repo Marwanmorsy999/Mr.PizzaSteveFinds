@@ -18,12 +18,13 @@ function About() {
       <Header />
       <Marquee text="ZAMALEK · CAIRO · 3PM - 11PM · COME THRU ·" />
 
-      <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
-        <img src="/market.jpg" alt="Steve sourcing at Cairo market" className="w-full h-full object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+      {/* Market photo banner */}
+      <div className="relative w-full overflow-hidden" style={{ height: "55vh" }}>
+        <img src="/market.jpg" alt="Steve sourcing at Cairo market" className="w-full h-full object-cover object-center grayscale" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
         <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">on the hunt</p>
-          <p className="mt-1 text-sm text-zinc-300">steve sourcing at cairo outdoor market</p>
+          <p className="text-xs font-black uppercase tracking-[0.4em] text-white">Out in the wild</p>
+          <p className="mt-1 text-sm text-zinc-300">Market days · Cairo sun · Mr. Pizza Steve</p>
         </div>
       </div>
 

@@ -25,15 +25,16 @@ function OrderConfirmationPage() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-3xl font-black tracking-widest text-white">RESERVATION PLACED!</h1>
-          <p className="text-zinc-400 text-sm">Your order ID is <span className="font-mono text-zinc-100 font-bold">{orderId}</span></p>
+          <h1 className="text-3xl font-black tracking-widest text-white">LET'S GOOO 🎉</h1>
+          <p className="text-zinc-400 text-sm">reservation placed, ur order ID is <span className="font-mono text-zinc-100 font-bold">{orderId}</span></p>
+          <p className="text-zinc-600 text-xs">screenshot this or smth, just in case</p>
         </div>
 
         {/* Warning / Call to Action Box */}
         <div className="bg-zinc-900 border border-zinc-200/30 rounded-2xl p-6 text-left space-y-4 shadow-lg shadow-orange-500/5">
-          <h2 className="text-zinc-100 font-bold text-sm tracking-wider uppercase text-center">⚠️ ONE LAST STEP!</h2>
+          <h2 className="text-zinc-100 font-bold text-sm tracking-wider uppercase text-center">⚠️ one last thing tho!</h2>
           <p className="text-zinc-300 text-sm text-center leading-relaxed">
-            Click the button below to send this reservation request to Steve on WhatsApp. Your items are held, but Steve needs to confirm your delivery/pickup details.
+            hit the button below to send ur reservation to Steve on WhatsApp. ur items are held but Steve needs to confirm the details — don't ghost him pls 😭
           </p>
           <a
             href={waLink}
@@ -41,21 +42,21 @@ function OrderConfirmationPage() {
             rel="noreferrer"
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-xl tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95"
           >
-            💬 CONFIRM VIA WHATSAPP
+            💬 CONFIRM ON WHATSAPP (do it)
           </a>
         </div>
 
         {/* Secondary Info */}
         <div className="space-y-4 pt-4">
           <p className="text-zinc-500 text-xs leading-relaxed">
-            If WhatsApp doesn't open automatically, you can copy your Order ID <span className="font-mono text-zinc-100/80 font-bold select-all">{orderId}</span> and DM it to Steve on Instagram <a href="https://ig.me/m/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="text-zinc-100 hover:underline">@mr.pizzastevefinds</a>.
+            if WhatsApp doesn't open, copy ur order ID <span className="font-mono text-zinc-100/80 font-bold select-all">{orderId}</span> and dm it to Steve on instagram <a href="https://ig.me/m/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="text-zinc-100 hover:underline">@mr.pizzastevefinds</a>. he won't leave u on read, promise.
           </p>
           <div className="pt-2">
             <Link
               to="/shop"
               className="inline-block text-sm text-zinc-400 hover:text-zinc-100 font-bold tracking-widest transition-colors"
             >
-              ← BACK TO SHOP
+              ← back to shop (there's more good stuff)
             </Link>
           </div>
         </div>
@@ -63,4 +64,3 @@ function OrderConfirmationPage() {
     </div>
   );
 }
-

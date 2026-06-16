@@ -23,7 +23,7 @@ function ProductPage() {
   }, [id]);
 
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-10 h-10 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin" /></div>;
-  if (!product) return <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center"><p>Item not found</p></div>;
+  if (!product) return <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center"><p>item not found 😔 probably sold already</p></div>;
 
   const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
 
@@ -89,12 +89,12 @@ function ProductPage() {
 
             {product.status === "available" ? (
               <a href={igLink} target="_blank" rel="noreferrer"
-                className="w-full bg-zinc-800 hover:bg-zinc-800 text-white font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm">
-                RESERVE VIA INSTAGRAM DM
+                className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm">
+                I WANT THIS → DM TO RESERVE
               </a>
             ) : (
               <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 rounded-xl tracking-widest text-sm">
-                SOLD OUT
+                GONE 💀 someone was faster
               </div>
             )}
 
@@ -103,7 +103,7 @@ function ProductPage() {
               FOLLOW @mr.pizzastevefinds
             </a>
 
-            <p className="text-zinc-600 text-xs text-center mt-4">Items sell fast. DM to hold yours.</p>
+            <p className="text-zinc-600 text-xs text-center mt-4">pieces move fast. dm now if u want it.</p>
           </div>
         </div>
       </div>

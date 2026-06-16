@@ -85,12 +85,12 @@ function CheckoutPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-black tracking-widest mb-2">CHECKOUT</h1>
-        <p className="text-zinc-500 text-sm mb-8">Fill in your details and Steve will confirm your order.</p>
+        <h1 className="text-3xl font-black tracking-widest mb-2">CHECKOUT 🍕</h1>
+        <p className="text-zinc-500 text-sm mb-8">almost there — fill in ur details and steve will confirm everything. don't overthink it.</p>
 
         {/* Order summary */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6">
-          <p className="text-xs text-zinc-500 tracking-widest mb-3">YOUR ORDER</p>
+          <p className="text-xs text-zinc-500 tracking-widest mb-3">ur order 🛒</p>
           {cart.items.map(item => (
             <div key={item.id} className="flex items-center gap-3 mb-2 last:mb-0">
               <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
@@ -118,19 +118,19 @@ function CheckoutPage() {
         {/* Form */}
         <div className="space-y-4">
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">YOUR NAME *</label>
+            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">ur name *</label>
             <input value={form.name} onChange={e => f({ name: e.target.value })} placeholder="Ahmed Mohamed"
               className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
           </div>
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">PHONE NUMBER *</label>
+            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">phone number * (so steve can reach u)</label>
             <input value={form.phone} onChange={e => f({ phone: e.target.value })} placeholder="01012345678" type="tel"
               className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
           </div>
 
           {/* Pickup vs delivery */}
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">HOW DO YOU WANT IT?</label>
+            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">how do u want it? 👀</label>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={() => f({ pickup: true })}
                 className={`py-3 rounded-xl text-sm font-bold border transition-colors ${form.pickup ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
@@ -145,33 +145,33 @@ function CheckoutPage() {
 
           {!form.pickup && (
             <div>
-              <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">DELIVERY ADDRESS *</label>
-              <textarea value={form.address} onChange={e => f({ address: e.target.value })} placeholder="Street, area, city..."
+              <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">delivery address * (be specific pls)</label>
+              <textarea value={form.address} onChange={e => f({ address: e.target.value })} placeholder="street, area, city..."
                 className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-20 resize-none" />
             </div>
           )}
 
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">NOTES (optional)</label>
-            <textarea value={form.notes} onChange={e => f({ notes: e.target.value })} placeholder="Any special requests..."
+            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">any notes? (optional, but go off)</label>
+            <textarea value={form.notes} onChange={e => f({ notes: e.target.value })} placeholder="any special requests, size concerns, whatever..."
               className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-16 resize-none" />
           </div>
 
           {/* Payment placeholder */}
           <div className="bg-zinc-900 border border-dashed border-zinc-700 rounded-xl p-4 text-center">
             <p className="text-zinc-500 text-xs tracking-widest">💳 ONLINE PAYMENT COMING SOON</p>
-            <p className="text-zinc-600 text-xs mt-1">Steve will confirm payment method when he contacts you</p>
+            <p className="text-zinc-600 text-xs mt-1">steve will sort out payment when he hits u back, chill</p>
           </div>
 
           {error && <p className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <button onClick={submit} disabled={loading}
             className="w-full bg-zinc-800 hover:bg-zinc-800 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-black py-4 rounded-xl tracking-widest transition-all text-sm">
-            {loading ? "PLACING ORDER..." : "PLACE RESERVATION →"}
+            {loading ? "placing ur order..." : "YEAH, RESERVE THIS SHIT →"}
           </button>
 
           <p className="text-zinc-600 text-xs text-center">
-            By reserving, you agree to be contacted by Steve to confirm your order.
+            by reserving u agree to let steve contact u to confirm. he's chill, don't worry about it.
           </p>
         </div>
       </div>

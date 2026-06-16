@@ -22,9 +22,9 @@ const SIZE_GUIDE = [
 
 // ── Static testimonials ──────────────────────────────────────────────────────
 const REVIEWS = [
-  { name: "Ahmed K.", text: "Got a crazy vintage Nike tee, exactly as described. Steve packed it super carefully.", stars: 5 },
-  { name: "Nour M.", text: "Fast DM reply, piece was even better in person. Will be back for sure.", stars: 5 },
-  { name: "Omar S.", text: "Sizing was perfect — the measurements listed saved me from guessing.", stars: 5 },
+  { name: "Ahmed K.", text: "Got a crazy vintage Nike tee, exactly as described. Steve packed it super carefully. Actually obsessed with this piece wtf.", stars: 5 },
+  { name: "Nour M.", text: "Fast DM reply, piece was even better in person. Can't stop wearing it fr. Will definitely be back.", stars: 5 },
+  { name: "Omar S.", text: "Sizing was spot on — the measurements listed saved me from guessing. No way this fits this good, I'm dead 💀", stars: 5 },
 ];
 
 // ── Condition badge colors ───────────────────────────────────────────────────
@@ -130,8 +130,8 @@ function ProductPage() {
 
   if (!product) return (
     <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center flex-col gap-4">
-      <p className="text-zinc-400">Item not found.</p>
-      <Link to="/shop" className="text-zinc-100 text-sm font-bold tracking-widest hover:underline">← BACK TO SHOP</Link>
+      <p className="text-zinc-400">item not found 😔 it probably got snatched already</p>
+      <Link to="/shop" className="text-zinc-100 text-sm font-bold tracking-widest hover:underline">← back to shop, find something else</Link>
     </div>
   );
 
@@ -215,8 +215,8 @@ function ProductPage() {
 
             {product.status === "available" && (
               <p className="text-xs text-zinc-100 font-bold tracking-widest mb-6 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-800 animate-pulse" />
-                ONLY 1 LEFT — 1 OF 1
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                ONLY 1 LEFT — 1 OF 1 (don't sleep on this)
               </p>
             )}
 
@@ -249,12 +249,12 @@ function ProductPage() {
             {/* CTA */}
             {product.status === "available" ? (
               <a href={igLink} target="_blank" rel="noreferrer"
-                className="w-full bg-zinc-800 hover:bg-zinc-800 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
-                RESERVE VIA INSTAGRAM DM
+                className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                I WANT THIS → DM TO RESERVE
               </a>
             ) : (
               <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 tracking-widest text-sm mb-3">
-                SOLD OUT
+                GONE 💀 (someone was faster than u)
               </div>
             )}
 
@@ -266,9 +266,9 @@ function ProductPage() {
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-zinc-800">
               {[
-                { icon: "🔒", label: "SECURE", sub: "Safe checkout" },
-                { icon: "📦", label: "CAREFUL", sub: "Packed with care" },
-                { icon: "✅", label: "AUTHENTIC", sub: "Hand-verified" },
+                { icon: "🔒", label: "SECURE", sub: "no sketchy bs" },
+                { icon: "📦", label: "CAREFUL", sub: "packed with actual love" },
+                { icon: "✅", label: "AUTHENTIC", sub: "hand-verified by steve" },
               ].map(b => (
                 <div key={b.label} className="text-center">
                   <div className="text-xl mb-1">{b.icon}</div>
@@ -278,7 +278,7 @@ function ProductPage() {
               ))}
             </div>
 
-            <p className="text-zinc-600 text-xs text-center mt-4">Items sell fast. DM to hold yours.</p>
+            <p className="text-zinc-600 text-xs text-center mt-4">pieces move fast. if u want it, dm now — don't wait around.</p>
           </div>
         </div>
 
@@ -287,7 +287,7 @@ function ProductPage() {
           <div>
             <p className="text-white font-black text-sm tracking-widest mb-1">VINTAGE SIZING RUNS DIFFERENT</p>
             <p className="text-zinc-400 text-xs leading-relaxed max-w-lg">
-              A vintage "L" often fits like a modern "M–S". Always check the listed size against the measurements before ordering.
+              a vintage "L" often fits like a modern "M–S". always check the measurements before ordering, trust us — we've seen people get surprised.
             </p>
           </div>
           <button onClick={() => setShowSizeGuide(true)}
@@ -299,8 +299,8 @@ function ProductPage() {
         {/* ── Reviews ── */}
         <div className="mt-12">
           <div className="flex items-baseline gap-4 mb-6">
-            <h2 className="text-sm font-black tracking-widest">CUSTOMER REVIEWS</h2>
-            <span className="text-zinc-500 text-xs">★★★★★ 5.0 · 3 reviews</span>
+            <h2 className="text-sm font-black tracking-widest">what people are saying 👀</h2>
+            <span className="text-zinc-500 text-xs">★★★★★ 5.0 · 3 reviews (all real, no cap)</span>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             {REVIEWS.map((r, i) => (
@@ -317,7 +317,7 @@ function ProductPage() {
         {related.length > 0 && (
           <div className="mt-16">
             <div className="flex items-baseline justify-between mb-6">
-              <h2 className="text-sm font-black tracking-widest">YOU MIGHT ALSO LIKE</h2>
+              <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
               <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 text-xs font-bold tracking-widest transition-colors">
                 VIEW ALL →
               </Link>

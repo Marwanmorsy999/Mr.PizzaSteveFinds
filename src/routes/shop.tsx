@@ -1,206 +1,121 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
-import { X } from "lucide-react";
-import { Header, Footer, Marquee } from "@/components/site-chrome";
-import { products, type Product } from "@/lib/products";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 
-export const Route = createFileRoute("/shop")({
-  head: () => ({
-    meta: [
-      { title: "Shop — Mr. Pizza Steve Finds" },
-      { name: "description", content: "Browse the current drop: tees, jorts, eyewear, Harley Davidson and more." },
-      { property: "og:title", content: "Shop — Mr. Pizza Steve Finds" },
-      { property: "og:description", content: "The current drop, fresh off the Zamalek rack." },
-    ],
-  }),
-  component: Shop,
-});
+const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 
-function Shop() {
-  const [selected, setSelected] = useState<Product | null>(null);
-
-  return (
-    <div className="min-h-screen">
-      <Header />
-      <Marquee text="NEW DROP AVAILABLE 🍕" />
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="border-b border-border pb-8">
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
-          <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            DM <a className="text-primary underline" href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer">@mr.pizzastevefinds</a> to reserve, or come grab it at the shop.
-          </p>
-        </div>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Card key={p.id} p={p} onSelect={() => setSelected(p)} />
-          ))}
-        </div>
-      </section>
-      <Footer />
-
-      {selected && (
-        <QuickViewModal product={selected} onClose={() => setSelected(null)} />
-      )}
-    </div>
-  );
+interface Product {
+  id: string; name: string; size?: string; price?: number; priceLabel?: string;
+  status: string; emoji?: string; tag?: string; imageUrl?: string; condition?: string;
 }
 
-/* ─── Product Card ─── */
+export const Route = createFileRoute("/shop")({ component: ShopPage });
 
-function Card({ p, onSelect }: { p: Product; onSelect: () => void }) {
-  const sold = p.status === "sold";
-  return (
-    <article
-      onClick={onSelect}
-      className={`group relative cursor-pointer overflow-hidden rounded-sm border border-border bg-card transition ${sold ? "opacity-80" : "hover:-translate-y-1 hover:border-primary"}`}
-    >
-      <div className="absolute left-3 top-3 z-10">
-        <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-widest ${sold ? "bg-destructive text-destructive-foreground" : "bg-success text-success-foreground"}`}>
-          {sold ? "Sold" : "Available"}
-        </span>
-      </div>
-      <div className="absolute right-3 top-3 z-10 rounded-sm border border-border bg-background/60 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground backdrop-blur">
-        {p.tag}
-      </div>
-      <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-        <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale" : ""}`}>{p.emoji}</span>
-        {sold && (
-          <div className="absolute inset-0 grid place-items-center">
-            <span className="rotate-[-12deg] border-4 border-destructive px-4 py-1 font-display text-3xl text-destructive">SOLD</span>
-          </div>
-        )}
-      </div>
-      <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">{p.name}</h3>
-        <div className="flex items-center justify-between border-t border-border pt-3">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">
-            {p.size ? `Size ${p.size}` : "One size"}
-          </span>
-          <span className={`font-display text-lg ${sold ? "text-muted-foreground line-through" : "text-primary"}`}>
-            {p.price ? `${p.price} EGP` : p.priceLabel}
-          </span>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* ─── Quick-View Modal ─── */
-
-function QuickViewModal({ product, onClose }: { product: Product; onClose: () => void }) {
-  const sold = product.status === "sold";
-
-  // Close on Escape
-  const handleKey = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose],
-  );
+function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tag, setTag] = useState("ALL");
+  const [search, setSearch] = useState("");
+  const [sizeFilter, setSizeFilter] = useState("ALL");
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [handleKey]);
-
-  // Lock body scroll
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    fetch(`${API}/api/products`).then(r => r.json()).then(d => { setProducts(d); setLoading(false); }).catch(() => setLoading(false));
   }, []);
 
+  const tags = ["ALL", ...Array.from(new Set(products.map(p => p.tag).filter(Boolean))) as string[]];
+  const sizes = ["ALL", ...Array.from(new Set(products.map(p => p.size).filter(Boolean))) as string[]];
+
+  const filtered = products.filter(p => {
+    if (tag !== "ALL" && p.tag !== tag) return false;
+    if (sizeFilter !== "ALL" && p.size !== sizeFilter) return false;
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const available = filtered.filter(p => p.status === "available");
+  const sold = filtered.filter(p => p.status === "sold");
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="relative mx-4 w-full max-w-lg animate-in fade-in zoom-in-95 overflow-hidden rounded-sm border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute right-3 top-3 z-20 rounded-sm border border-border bg-background/60 p-1.5 text-muted-foreground backdrop-blur transition hover:border-primary hover:text-primary"
-          aria-label="Close quick view"
-        >
-          <X className="size-4" />
-        </button>
+    <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-black tracking-widest mb-2 text-center">THE FINDS</h1>
+        <p className="text-zinc-500 text-center mb-8 text-sm tracking-widest">CURATED VINTAGE — ZAMALEK, CAIRO</p>
 
-        {/* Emoji hero */}
-        <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-          <span className={`text-[10rem] leading-none ${sold ? "grayscale" : ""}`}>
-            {product.emoji}
-          </span>
-          {sold && (
-            <div className="absolute inset-0 grid place-items-center">
-              <span className="rotate-[-12deg] border-4 border-destructive px-6 py-2 font-display text-5xl text-destructive">
-                SOLD
-              </span>
+        {/* Search */}
+        <div className="max-w-md mx-auto mb-6">
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search items..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:border-orange-500 outline-none text-sm" />
+        </div>
+
+        {/* Tag filters */}
+        <div className="flex gap-2 flex-wrap justify-center mb-3">
+          {tags.map(t => (
+            <button key={t} onClick={() => setTag(t)}
+              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${tag === t ? "bg-orange-500 border-orange-500 text-white" : "border-zinc-700 text-zinc-400 hover:border-orange-500 hover:text-orange-400"}`}>
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {/* Size filters */}
+        <div className="flex gap-2 flex-wrap justify-center mb-10">
+          {sizes.map(s => (
+            <button key={s} onClick={() => setSizeFilter(s)}
+              className={`text-xs font-bold tracking-widest px-3 py-1 rounded border transition-colors ${sizeFilter === s ? "bg-zinc-100 border-zinc-100 text-black" : "border-zinc-800 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"}`}>
+              {s}
+            </button>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(6)].map((_, i) => <div key={i} className="bg-zinc-900 rounded-xl aspect-square animate-pulse" />)}
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {available.map(p => <ProductCard key={p.id} product={p} />)}
             </div>
-          )}
-          {/* Status badge */}
-          <div className="absolute left-4 top-4">
-            <span
-              className={`rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-widest ${
-                sold
-                  ? "bg-destructive text-destructive-foreground"
-                  : "bg-success text-success-foreground"
-              }`}
-            >
-              {sold ? "Sold" : "Available"}
-            </span>
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="space-y-4 p-6">
-          {/* Tag */}
-          <div className="inline-block rounded-sm border border-border bg-background/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground backdrop-blur">
-            {product.tag}
-          </div>
-
-          {/* Name */}
-          <h2 className="font-display text-2xl uppercase leading-tight sm:text-3xl">
-            {product.name}
-          </h2>
-
-          {/* Size & Price row */}
-          <div className="flex items-center justify-between border-t border-border pt-4">
-            <span className="text-sm uppercase tracking-widest text-muted-foreground">
-              {product.size ? `Size ${product.size}` : "One size"}
-            </span>
-            <span
-              className={`font-display text-2xl ${
-                sold ? "text-muted-foreground line-through" : "text-primary"
-              }`}
-            >
-              {product.price ? `${product.price} EGP` : product.priceLabel}
-            </span>
-          </div>
-
-          {/* CTA */}
-          {sold ? (
-            <p className="text-center text-sm text-muted-foreground">
-              This piece has been sold — follow for the next drop.
-            </p>
-          ) : (
-            <a
-              href="https://instagram.com/mr.pizzastevefinds"
-              target="_blank"
-              rel="noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary"
-            >
-              DM to Reserve →
-            </a>
-          )}
-        </div>
+            {sold.length > 0 && (
+              <>
+                <p className="text-zinc-600 text-xs tracking-widest font-bold mt-10 mb-4">SOLD</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {sold.map(p => <ProductCard key={p.id} product={p} />)}
+                </div>
+              </>
+            )}
+            {filtered.length === 0 && <p className="text-center text-zinc-600 py-20">No items found</p>}
+          </>
+        )}
       </div>
     </div>
+  );
+}
+
+function ProductCard({ product: p }: { product: Product }) {
+  return (
+    <Link to="/product/$id" params={{ id: p.id }}
+      className={`group block bg-zinc-900 rounded-xl overflow-hidden border transition-all ${p.status === "sold" ? "border-zinc-800 opacity-50" : "border-zinc-800 hover:border-orange-500 hover:-translate-y-1"}`}>
+      <div className="aspect-square bg-zinc-800 relative flex items-center justify-center overflow-hidden">
+        {p.imageUrl
+          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          : <span className="text-6xl">{p.emoji}</span>}
+        {p.status === "sold" && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <span className="text-white font-black text-xl tracking-widest border-2 border-white px-3 py-1 rotate-[-20deg]">SOLD</span>
+          </div>
+        )}
+        {p.tag && <span className="absolute top-2 left-2 text-xs font-bold bg-black/70 text-orange-400 px-2 py-0.5 rounded tracking-widest">{p.tag}</span>}
+        {p.condition && <span className="absolute top-2 right-2 text-xs bg-zinc-900/80 text-zinc-300 px-2 py-0.5 rounded">{p.condition}</span>}
+      </div>
+      <div className="p-3">
+        <p className="text-white font-bold text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-zinc-500 text-xs">{p.size || "One size"}</span>
+          <span className={`text-sm font-black ${p.status === "sold" ? "text-zinc-600" : "text-orange-400"}`}>
+            {p.status === "sold" ? "SOLD" : p.price ? `${p.price} EGP` : p.priceLabel || "—"}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

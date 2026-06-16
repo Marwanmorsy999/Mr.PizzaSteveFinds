@@ -1,0 +1,7 @@
+ALTER TABLE products ADD COLUMN images TEXT;
+ALTER TABLE products ADD COLUMN condition TEXT;
+ALTER TABLE products ADD COLUMN description TEXT;
+CREATE TABLE IF NOT EXISTS newsletter (
+  email TEXT PRIMARY KEY,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

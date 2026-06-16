@@ -26,56 +26,60 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-display: "GT America", "Helvetica Neue", "Akzidenz Grotesk", sans-serif;
-  --font-sans: "GT America", "Helvetica Neue", "Akzidenz Grotesk", system-ui, sans-serif;
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --font-display: "Archivo Black", "Impact", sans-serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.25rem;
-  --background: #111827; /* bg-zinc-900 */
-  --foreground: #f4f4f5; /* text-zinc-100 */
-  --card: #0f1720; /* slightly lighter card */
-  --card-foreground: #f4f4f5;
-  --primary: #e6e7eb; /* accents -> zinc-200 */
-  --primary-foreground: #0b0b0b;
-  --secondary: #27272a; /* muted zinc */
-  --secondary-foreground: #f4f4f5;
-  --muted: #18181b;
-  --muted-foreground: #9ca3af;
-  --accent: #e6e7eb;
-  --accent-foreground: #0b0b0b;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #e6e7eb; /* border-zinc-200 */
-  --input: #27272a;
-  --ring: #374151; /* zinc-700 */
+  /* near-black background, pizza orange accent, cheese-yellow secondary, tomato red destructive */
+  --background: oklch(0.14 0.012 60);
+  --foreground: oklch(0.98 0.01 90);
+  --card: oklch(0.19 0.015 60);
+  --card-foreground: oklch(0.98 0.01 90);
+  --primary: oklch(0.72 0.21 45); /* pizza orange */
+  --primary-foreground: oklch(0.14 0.012 60);
+  --secondary: oklch(0.85 0.18 90); /* cheese yellow */
+  --secondary-foreground: oklch(0.14 0.012 60);
+  --muted: oklch(0.24 0.012 60);
+  --muted-foreground: oklch(0.72 0.02 80);
+  --accent: oklch(0.62 0.24 27); /* tomato red */
+  --accent-foreground: oklch(0.98 0.01 90);
+  --destructive: oklch(0.55 0.24 27);
+  --destructive-foreground: oklch(0.98 0.01 90);
+  --success: oklch(0.72 0.18 145);
+  --success-foreground: oklch(0.14 0.012 60);
+  --border: oklch(0.28 0.015 60);
+  --input: oklch(0.28 0.015 60);
+  --ring: oklch(0.72 0.21 45);
+}
+
+.dark {
+  --background: oklch(0.14 0.012 60);
+  --foreground: oklch(0.98 0.01 90);
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    min-height: 100vh;
+    font-family: var(--font-sans);
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.01em;
-    line-height: 1;
   }
 }
 
 @utility marquee {
   animation: marquee 28s linear infinite;
 }
-
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
@@ -83,23 +87,6 @@
 
 @utility noise-bg {
   background-image:
-    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--color-primary) 25%, transparent), transparent 40%),
-    radial-gradient(circle at 80% 60%, rgba(251, 146, 60, 0.2), transparent 45%);
-}
-
-/* Remap legacy orange/amber Tailwind utilities to zinc palette for a neutral collectible aesthetic */
-.bg-orange-500, .bg-orange-600, .bg-amber-500, .bg-amber-600 {
-  background-color: var(--muted) !important; /* hover/secondary use muted zinc */
-}
-.text-orange-400, .text-orange-500, .text-amber-400, .text-amber-500 {
-  color: var(--foreground) !important; /* neutral text */
-}
-.border-orange-500, .border-amber-500 {
-  border-color: var(--border) !important;
-}
-.hover\:bg-orange-500:hover, .hover\:bg-amber-500:hover {
-  background-color: #27272a !important; /* hover:bg-zinc-800 */
-}
-.hover\:text-orange-400:hover, .hover\:text-amber-400:hover {
-  color: var(--foreground) !important;
+    radial-gradient(circle at 20% 20%, oklch(0.72 0.21 45 / 0.18), transparent 40%),
+    radial-gradient(circle at 80% 60%, oklch(0.62 0.24 27 / 0.15), transparent 45%);
 }

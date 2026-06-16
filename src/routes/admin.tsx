@@ -93,6 +93,14 @@ function AdminPage() {
     setTimeout(() => setMsg(""), 3000);
   }
 
+  function logout() {
+    setAuthed(false);
+    setPass("");
+    setProducts([]);
+    setOrders([]);
+    showMsg("Logged out");
+  }
+
   async function load() {
     const res = await fetch(`${API}/api/products`);
     const data = await res.json();
@@ -292,11 +300,17 @@ function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black tracking-widest">🍕 ADMIN</h1>
-          {msg && (
-            <span className={`text-sm px-3 py-1 rounded-full border ${msgType === "ok" ? "text-zinc-100 bg-zinc-800/10 border-zinc-200/20" : "text-red-400 bg-red-500/10 border-red-500/20"}`}>
-              {msg}
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {msg && (
+              <span className={`text-sm px-3 py-1 rounded-full border ${msgType === "ok" ? "text-zinc-100 bg-zinc-800/10 border-zinc-200/20" : "text-red-400 bg-red-500/10 border-red-500/20"}`}>
+                {msg}
+              </span>
+            )}
+            <button onClick={logout}
+              className="text-xs px-3 py-1.5 border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 font-bold rounded-lg transition-colors">
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -317,7 +331,7 @@ function AdminPage() {
         <div className="flex gap-2 mb-8">
           {(["products", "orders", "settings"] as const).map(t => (
             <button key={t} onClick={() => setActiveTab(t)}
-              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${activeTab === t ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-200"}`}>
+              className={`text-xs font-bold tracking-widest px-4 py-2 rounded-full border transition-colors ${activeTab === t ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-200 hover:text-zinc-100"}`}>
               {t.toUpperCase()}
             </button>
           ))}
@@ -364,7 +378,7 @@ function AdminPage() {
                         <p className="font-bold text-white text-base">{order.customerName}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <a href={`tel:${order.customerPhone}`} className="text-zinc-400 hover:text-white underline">{order.customerPhone}</a>
-                          <a href={customerWaLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:text-emerald-300 font-bold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-colors">
+                          <a href={customerWaLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:text-emerald-300 font-bold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded">
                             💬 Message
                           </a>
                         </div>
@@ -515,27 +529,27 @@ function AdminPage() {
                     <input placeholder="Name *" value={form.name}
                       onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                       onKeyDown={e => e.key === "Enter" && addProduct()}
-                      className="col-span-2 bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
+                      className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
                     <input placeholder="Size (e.g. L, XL, OS)" value={form.size}
                       onChange={e => setForm(f => ({ ...f, size: e.target.value }))}
-                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
+                      className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
                     <input placeholder="Price (EGP)" value={form.price} type="number"
                       onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
+                      className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
                     <select value={form.tag} onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}
-                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
+                      className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
                       {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
                     </select>
                     <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))}
-                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
+                      className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
                       {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
                     </select>
                     <textarea placeholder="Description (optional)" value={form.description}
                       onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                      className="col-span-2 bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm h-16 resize-none" />
+                      className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm h-16 resize-none" />
                   </div>
                   <div className="flex items-center gap-3 mb-4">
-                    <label className="cursor-pointer bg-zinc-805 border border-dashed border-zinc-600 hover:border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-100 transition-colors">
+                    <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-100 transition-colors">
                       {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "✓ Change image" : "Upload main image"}
                       <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
                     </label>
@@ -554,14 +568,14 @@ function AdminPage() {
                         {/* Remove button */}
                         {bulkItems.length > 1 && (
                           <button onClick={() => removeBulkItem(item.id)}
-                            className="absolute -top-1.5 -right-1.5 md:static w-6 h-6 rounded-full border border-red-900/60 bg-red-950/20 text-red-500 hover:bg-red-900 hover:text-white transition-colors flex items-center justify-center text-xs font-bold flex-shrink-0">
+                            className="absolute -top-1.5 -right-1.5 md:static w-6 h-6 rounded-full border border-red-900/60 bg-red-950/20 text-red-500 hover:bg-red-900 hover:text-white transition-colors text-xs font-bold flex items-center justify-center">
                             ✕
                           </button>
                         )}
 
                         {/* Thumbnail & Upload */}
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <label className="cursor-pointer w-11 h-11 border border-dashed border-zinc-700 hover:border-zinc-200 rounded-lg flex items-center justify-center transition-colors text-zinc-500 hover:text-zinc-100 relative overflow-hidden bg-zinc-900">
+                          <label className="cursor-pointer w-11 h-11 border border-dashed border-zinc-700 hover:border-zinc-200 rounded-lg flex items-center justify-center transition-colors text-xs text-zinc-500 hover:text-zinc-100">
                             {uploadingBulk[item.id] ? (
                               <span className="text-[10px]">...</span>
                             ) : item.imageUrl ? (
@@ -587,7 +601,7 @@ function AdminPage() {
                         {/* Price */}
                         <input placeholder="Price" value={item.price} type="number"
                           onChange={e => updateBulkItem(item.id, { price: e.target.value })}
-                          className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-650 text-xs" />
+                          className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-xs" />
 
                         {/* Tag */}
                         <select value={item.tag} onChange={e => updateBulkItem(item.id, { tag: e.target.value })}
@@ -610,7 +624,7 @@ function AdminPage() {
                       + ADD ANOTHER ITEM
                     </button>
                     <button onClick={publishBulkDrop} disabled={bulkPublishing}
-                      className="bg-zinc-800 hover:bg-orange-400 active:scale-95 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-xs tracking-wider uppercase">
+                      className="bg-zinc-800 hover:bg-orange-400 active:scale-95 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-xs tracking-widest">
                       {bulkPublishing ? "Publishing Drop..." : `Publish Drop (${bulkItems.filter(i => i.name.trim() !== "").length} Items) ✓`}
                     </button>
                   </div>
@@ -626,7 +640,7 @@ function AdminPage() {
                 {bulkMode ? "✕ Cancel bulk" : "Bulk sold"}
               </button>
               <button onClick={() => { setReorderMode(r => !r); setDragOrder(available); }}
-                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${reorderMode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "border-zinc-700 text-zinc-400 hover:border-blue-500 hover:text-blue-400"}`}>
+                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${reorderMode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "border-zinc-700 text-zinc-400 hover:border-zinc-200 hover:text-zinc-100"}`}>
                 {reorderMode ? "✕ Cancel" : "⠿ Reorder"}
               </button>
               {bulkMode && bulkSelected.size > 0 && (
@@ -654,7 +668,7 @@ function AdminPage() {
                     onDragEnter={() => onDragEnter(i)}
                     onDragEnd={onDragEnd}
                     onDragOver={e => e.preventDefault()}
-                    className="flex items-center gap-3 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 cursor-grab active:cursor-grabbing active:border-blue-500 active:bg-zinc-800 transition-colors select-none">
+                    className="flex items-center gap-3 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 cursor-grab active:cursor-grabbing active:border-blue-500 active:bg-zinc-800 transition-colors">
                     <span className="text-zinc-600 text-lg">⠿</span>
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
                       {p.imageUrl
@@ -738,7 +752,7 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
   const allImgs = [p.imageUrl, ...(p.images || [])].filter(Boolean);
 
   return (
-    <div className={`bg-zinc-900 border rounded-2xl overflow-hidden transition-colors ${bulkSelected ? "border-zinc-200" : p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-zinc-700"}`}>
+    <div className={`bg-zinc-900 border rounded-2xl overflow-hidden transition-colors ${bulkSelected ? "border-zinc-200" : p.status === "sold" ? "border-zinc-800" : "border-zinc-800 hover:border-zinc-200/20"}`}>
       <div className="flex gap-3 p-4 items-center">
 
         {/* Bulk checkbox */}
@@ -825,13 +839,13 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
                   {i === 0 && <span className="absolute bottom-1 left-1 text-[9px] bg-zinc-800 text-white px-1 rounded font-bold">MAIN</span>}
                   {i > 0 && (
                     <button onClick={() => onRemoveImg(i - 1)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center font-bold">
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       ✕
                     </button>
                   )}
                 </div>
               ))}
-              <label className="w-16 h-16 border-2 border-dashed border-zinc-700 hover:border-zinc-200 rounded-xl flex items-center justify-center cursor-pointer transition-colors text-zinc-500 hover:text-zinc-100 text-2xl">
+              <label className="w-16 h-16 border-2 border-dashed border-zinc-700 hover:border-zinc-200 rounded-xl flex items-center justify-center cursor-pointer transition-colors text-zinc-500 hover:text-zinc-100">
                 {uploading === p.id || uploading === p.id + "-extra" ? <span className="text-xs">...</span> : "+"}
                 <input type="file" accept="image/*" className="hidden"
                   onChange={e => { if (!allImgs[0]) onMainImg(e); else onExtraImg(e); }} />
@@ -847,4 +861,3 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
     </div>
   );
 }
-

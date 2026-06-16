@@ -140,6 +140,40 @@ export default {
       });
     }
 
+    // POST /api/products/bulk
+    if (url.pathname === "/api/products/bulk" && request.method === "POST") {
+      if (!isAdmin(request)) return new Response("Unauthorized", { status: 401, headers: CORS });
+      const items: any[] = await request.json();
+      if (!Array.isArray(items) || items.length === 0) {
+        return new Response("Invalid payload", { status: 400, headers: CORS });
+      }
+
+      // Shift existing products' sort_order down
+      await env.pizzasteve_db
+        .prepare("UPDATE products SET sort_order = sort_order + ?")
+        .bind(items.length)
+        .run();
+
+      const stmts = items.map((body, index) => {
+        const id = body.id || (body.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") + "-" + Math.floor(1000 + Math.random() * 9000));
+        return env.pizzasteve_db.prepare(
+          "INSERT INTO products (id,name,size,price,price_label,status,emoji,tag,image_url,images,condition,description,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        ).bind(
+          id, body.name, body.size || null, body.price ? parseInt(body.price) : null,
+          body.priceLabel || null, body.status || "available",
+          body.emoji || "🍕", body.tag || "TEE",
+          body.imageUrl || null, JSON.stringify(body.images || []),
+          body.condition || "Good", body.description || null,
+          index
+        );
+      });
+
+      await env.pizzasteve_db.batch(stmts);
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...CORS, "Content-Type": "application/json" },
+      });
+    }
+
     // PATCH /api/products/:id
     const patchMatch = url.pathname.match(/^\/api\/products\/([^/]+)$/);
     if (patchMatch && request.method === "PATCH") {

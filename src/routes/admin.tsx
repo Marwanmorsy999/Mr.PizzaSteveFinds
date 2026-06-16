@@ -34,6 +34,57 @@ function AdminPage() {
     name: "", size: "", price: "", tag: "TEE", emoji: "🍕",
     status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[]
   });
+  const [addMode, setAddMode] = useState<"single" | "bulk">("single");
+  const [bulkItems, setBulkItems] = useState<any[]>([{ id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
+  const [uploadingBulk, setUploadingBulk] = useState<Record<number, boolean>>({});
+  const [bulkPublishing, setBulkPublishing] = useState(false);
+
+  function addBulkItemRow() {
+    setBulkItems(prev => [...prev, { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
+  }
+
+  function removeBulkItem(id: number) {
+    setBulkItems(prev => prev.filter(i => i.id !== id));
+  }
+
+  function updateBulkItem(id: number, patch: any) {
+    setBulkItems(prev => prev.map(item => item.id === id ? { ...item, ...patch } : item));
+  }
+
+  async function handleBulkImgUpload(e: React.ChangeEvent<HTMLInputElement>, itemId: number) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setUploadingBulk(prev => ({ ...prev, [itemId]: true }));
+    try {
+      const url = await uploadImg(file);
+      updateBulkItem(itemId, { imageUrl: url });
+      showMsg("Image uploaded successfully");
+    } catch {
+      showMsg("Upload failed", "err");
+    }
+    setUploadingBulk(prev => ({ ...prev, [itemId]: false }));
+  }
+
+  async function publishBulkDrop() {
+    const valid = bulkItems.filter(i => i.name.trim() !== "");
+    if (valid.length === 0) return showMsg("At least one item with a name is required", "err");
+    setBulkPublishing(true);
+    try {
+      const res = await fetch(`${API}/api/products/bulk`, {
+        method: "POST", headers,
+        body: JSON.stringify(valid)
+      });
+      if (res.ok) {
+        showMsg(`✓ Drop published: ${valid.length} items live`);
+        setBulkItems([{ id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
+        load();
+      } else {
+        showMsg("Publish failed", "err");
+      }
+    } catch {
+      showMsg("Publish failed", "err");
+    }
+    setBulkPublishing(false);
+  }
 
   const headers = { "Content-Type": "application/json", "X-Admin-Key": "pizzasteve2024" };
 
@@ -444,41 +495,127 @@ function AdminPage() {
           <>
             {/* Add product form */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
-              <h2 className="text-orange-400 font-bold tracking-widest mb-4">ADD PRODUCT</h2>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <input placeholder="Name *" value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  onKeyDown={e => e.key === "Enter" && addProduct()}
-                  className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
-                <input placeholder="Size (e.g. L, XL, OS)" value={form.size}
-                  onChange={e => setForm(f => ({ ...f, size: e.target.value }))}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
-                <input placeholder="Price (EGP)" value={form.price} type="number"
-                  onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
-                <select value={form.tag} onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
-                  {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
-                </select>
-                <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
-                  {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
-                </select>
-                <textarea placeholder="Description (optional)" value={form.description}
-                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm h-16 resize-none" />
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-orange-400 font-bold tracking-widest uppercase text-sm">ADD PRODUCT</h2>
+                <div className="flex bg-zinc-800 rounded-lg p-0.5 border border-zinc-700">
+                  <button onClick={() => setAddMode("single")}
+                    className={`text-[10px] font-bold px-3 py-1.5 rounded-md transition-colors tracking-wider ${addMode === "single" ? "bg-orange-500 text-white" : "text-zinc-400 hover:text-white"}`}>
+                    SINGLE ITEM
+                  </button>
+                  <button onClick={() => setAddMode("bulk")}
+                    className={`text-[10px] font-bold px-3 py-1.5 rounded-md transition-colors tracking-wider ${addMode === "bulk" ? "bg-orange-500 text-white" : "text-zinc-400 hover:text-white"}`}>
+                    BULK DROP
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-3 mb-4">
-                <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-orange-500 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-orange-400 transition-colors">
-                  {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "✓ Change image" : "Upload main image"}
-                  <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
-                </label>
-                {form.imageUrl && <img src={form.imageUrl} className="w-14 h-14 object-cover rounded-xl border border-zinc-700" alt="" />}
-              </div>
-              <button onClick={addProduct}
-                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 active:scale-95 text-white font-bold px-8 py-3 rounded-xl transition-all text-sm tracking-widest">
-                + ADD PRODUCT
-              </button>
+
+              {addMode === "single" ? (
+                <>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <input placeholder="Name *" value={form.name}
+                      onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                      onKeyDown={e => e.key === "Enter" && addProduct()}
+                      className="col-span-2 bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
+                    <input placeholder="Size (e.g. L, XL, OS)" value={form.size}
+                      onChange={e => setForm(f => ({ ...f, size: e.target.value }))}
+                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
+                    <input placeholder="Price (EGP)" value={form.price} type="number"
+                      onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm" />
+                    <select value={form.tag} onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}
+                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
+                      {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                    <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))}
+                      className="bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 text-sm">
+                      {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                    </select>
+                    <textarea placeholder="Description (optional)" value={form.description}
+                      onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                      className="col-span-2 bg-zinc-805 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-orange-500 placeholder-zinc-500 text-sm h-16 resize-none" />
+                  </div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <label className="cursor-pointer bg-zinc-805 border border-dashed border-zinc-600 hover:border-orange-500 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-orange-400 transition-colors">
+                      {uploading === "new-main" ? "Uploading..." : form.imageUrl ? "✓ Change image" : "Upload main image"}
+                      <input type="file" accept="image/*" className="hidden" onChange={e => handleMainImg(e)} />
+                    </label>
+                    {form.imageUrl && <img src={form.imageUrl} className="w-14 h-14 object-cover rounded-xl border border-zinc-700" alt="" />}
+                  </div>
+                  <button onClick={addProduct}
+                    className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 active:scale-95 text-white font-bold px-8 py-3 rounded-xl transition-all text-sm tracking-widest">
+                    + ADD PRODUCT
+                  </button>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+                    {bulkItems.map((item) => (
+                      <div key={item.id} className="relative bg-zinc-950/80 p-4 rounded-xl border border-zinc-800/80 space-y-3 md:space-y-0 md:flex md:items-center md:gap-3">
+                        {/* Remove button */}
+                        {bulkItems.length > 1 && (
+                          <button onClick={() => removeBulkItem(item.id)}
+                            className="absolute -top-1.5 -right-1.5 md:static w-6 h-6 rounded-full border border-red-900/60 bg-red-950/20 text-red-500 hover:bg-red-900 hover:text-white transition-colors flex items-center justify-center text-xs font-bold flex-shrink-0">
+                            ✕
+                          </button>
+                        )}
+
+                        {/* Thumbnail & Upload */}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <label className="cursor-pointer w-11 h-11 border border-dashed border-zinc-700 hover:border-orange-500 rounded-lg flex items-center justify-center transition-colors text-zinc-500 hover:text-orange-400 relative overflow-hidden bg-zinc-900">
+                            {uploadingBulk[item.id] ? (
+                              <span className="text-[10px]">...</span>
+                            ) : item.imageUrl ? (
+                              <img src={item.imageUrl} className="w-full h-full object-cover" alt="" />
+                            ) : (
+                              <span className="text-xl font-light">+</span>
+                            )}
+                            <input type="file" accept="image/*" className="hidden"
+                              onChange={e => handleBulkImgUpload(e, item.id)} />
+                          </label>
+                        </div>
+
+                        {/* Name */}
+                        <input placeholder="Item Name *" value={item.name}
+                          onChange={e => updateBulkItem(item.id, { name: e.target.value })}
+                          className="w-full md:flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-xs" />
+
+                        {/* Size */}
+                        <input placeholder="Size" value={item.size}
+                          onChange={e => updateBulkItem(item.id, { size: e.target.value })}
+                          className="w-full md:w-20 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-orange-500 placeholder-zinc-600 text-xs" />
+
+                        {/* Price */}
+                        <input placeholder="Price" value={item.price} type="number"
+                          onChange={e => updateBulkItem(item.id, { price: e.target.value })}
+                          className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-orange-500 placeholder-zinc-650 text-xs" />
+
+                        {/* Tag */}
+                        <select value={item.tag} onChange={e => updateBulkItem(item.id, { tag: e.target.value })}
+                          className="w-full md:w-28 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-orange-500 text-xs">
+                          {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
+                        </select>
+
+                        {/* Condition */}
+                        <select value={item.condition} onChange={e => updateBulkItem(item.id, { condition: e.target.value })}
+                          className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-orange-500 text-xs">
+                          {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 mt-4 items-center justify-between">
+                    <button onClick={addBulkItemRow}
+                      className="text-xs font-bold text-orange-400 hover:text-orange-300 border border-orange-500/30 hover:border-orange-500 px-4 py-2 rounded-xl transition-colors">
+                      + ADD ANOTHER ITEM
+                    </button>
+                    <button onClick={publishBulkDrop} disabled={bulkPublishing}
+                      className="bg-orange-500 hover:bg-orange-400 active:scale-95 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-xs tracking-wider uppercase">
+                      {bulkPublishing ? "Publishing Drop..." : `Publish Drop (${bulkItems.filter(i => i.name.trim() !== "").length} Items) ✓`}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Toolbar */}

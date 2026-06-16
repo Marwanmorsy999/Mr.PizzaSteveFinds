@@ -4,6 +4,7 @@ import { RotatingBanner } from "@/components/site-chrome";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 import { products } from "@/lib/products";
 
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+
 function Home() {
   const featured = products.filter((p) => p.status === "available").slice(0, 3);
   return (
@@ -34,8 +36,10 @@ function Home() {
       <Header />
       <RotatingBanner />
 
+
       <section className="noise-bg relative overflow-hidden border-b border-border">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
+
 
           <div className="inline-flex items-center gap-2 tilt-r bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg"
             style={{ borderRadius: "2px" }}>
@@ -43,15 +47,18 @@ function Home() {
             yeah we're open rn · 3pm – 11pm 🕒
           </div>
 
+
           <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
             Mr. Pizza<br />
             <span className="text-primary">Steve</span><br />
             Finds<span className="text-secondary">.</span>
           </h1>
 
+
           <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
             Loud vintage. Bolder thrift. Curated by Steve dos Santos out of a tiny shop on Hassan Assem — Zamalek's worst-kept secret. Don't tell everyone.
           </p>
+
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -61,7 +68,7 @@ function Home() {
               shop the damn drop →
             </Link>
             
-              href="https://instagram.com/mr.pizzastevefinds"
+            <a href="https://instagram.com/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 border border-border px-6 py-3 font-display text-sm uppercase tracking-widest text-foreground transition hover:border-primary hover:text-primary"
@@ -69,6 +76,7 @@ function Home() {
               @mr.pizzastevefinds
             </a>
           </div>
+
 
           <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-3">
             <Stat emoji="📍" label="where tf are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
@@ -78,6 +86,7 @@ function Home() {
         </div>
       </section>
 
+
       {/* Fresh on the rack */}
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-end justify-between">
@@ -86,7 +95,7 @@ function Home() {
             <p className="mt-1 text-sm text-muted-foreground">these won't last long, stop sleeping fr</p>
           </div>
           <Link to="/shop" className="text-sm font-bold uppercase tracking-widest text-primary hover:underline">
-            see all →
+           instagram dm
           </Link>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -119,6 +128,7 @@ function Home() {
         </div>
       </section>
 
+
       {/* Jacket rack vibe photo */}
       <section className="mx-auto max-w-4xl px-4 pb-8">
         <img
@@ -127,6 +137,7 @@ function Home() {
           className="w-full rounded-sm border border-border object-cover"
         />
       </section>
+
 
       {/* Shop opening announcement video */}
       <section className="mx-auto max-w-4xl px-4 pb-16">
@@ -139,6 +150,7 @@ function Home() {
           poster="/rack.jpg"
         />
       </section>
+
 
       {/* callout strip */}
       <div className="border-y border-border bg-zinc-900 py-6 text-center">
@@ -154,11 +166,13 @@ function Home() {
         </p>
       </div>
 
+
       <InstagramFeed />
       <Footer />
     </div>
   );
 }
+
 
 function Stat({ emoji, label, value, sub }: { emoji: string; label: string; value: string; sub: string }) {
   return (

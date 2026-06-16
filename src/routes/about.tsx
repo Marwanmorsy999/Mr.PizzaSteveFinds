@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header, Footer, Marquee } from "@/components/site-chrome";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 
+
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/about")({
   component: About,
 });
 
+
 function About() {
   return (
     <div className="min-h-screen">
@@ -25,6 +27,7 @@ function About() {
         <h1 className="mt-2 text-5xl sm:text-7xl">
           One <span className="text-primary">slice</span> of Cairo street culture.
         </h1>
+
 
         <div className="mt-10 grid gap-8 text-lg leading-relaxed text-muted-foreground sm:grid-cols-[2fr_1fr]">
           <div className="space-y-5">
@@ -38,19 +41,21 @@ function About() {
               Pop in between 3PM and 11PM, or slide into the DMs. Don't be shy, we don't bite. New drops post first on Instagram — follow or miss out, honestly.
             </p>
 
+
             {/* Cairo market sourcing photo */}
             <div className="rounded-sm border border-border overflow-hidden">
               <img src="/market.jpg" alt="Steve sourcing at Cairo market" className="w-full object-cover" />
               <p className="text-xs text-muted-foreground px-4 py-2">steve on the hunt · cairo outdoor market</p>
             </div>
 
-            
+
+            <a
               href="https://instagram.com/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
             >
-              follow @mr.pizzastevefinds or else →
+              follow @mr.pizzastevefinds or else
             </a>
           </div>
           <aside className="rounded-sm border border-border bg-card p-6">
@@ -65,6 +70,7 @@ function About() {
           </aside>
         </div>
 
+
         <div className="mt-12 overflow-hidden rounded-sm border border-border">
           <iframe
             title="Mr. Pizza Steve Finds location"
@@ -76,6 +82,7 @@ function About() {
             className="block w-full grayscale"
           />
         </div>
+
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           <div className="rounded-sm border border-border bg-card p-6">
@@ -91,13 +98,13 @@ function About() {
             <p className="mt-3 text-sm text-muted-foreground">
               got a question about a piece? wanna hold something before someone else snatches it? just dm us, we're not scary.
             </p>
-            
+            <a
               href="https://ig.me/m/mr.pizzastevefinds"
               target="_blank"
               rel="noreferrer"
               className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
             >
-              instagram dm →
+              instagram dm 
             </a>
           </div>
         </div>

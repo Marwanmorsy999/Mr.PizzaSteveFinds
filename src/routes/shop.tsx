@@ -15,6 +15,7 @@ const searchSchema = z.object({
   size:   z.string().optional().default("ALL"),
   q:      z.string().optional().default(""),
   sold:   z.boolean().optional().default(false),
+  maxPrice: z.number().optional().nullable().default(null),
 });
 
 export const Route = createFileRoute("/shop")({

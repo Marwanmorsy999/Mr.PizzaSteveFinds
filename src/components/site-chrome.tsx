@@ -140,7 +140,7 @@ export function Footer() {
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">the gram</h4>
           
-            href="https://instagram.com/mr.pizzastevefinds"
+            <a href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-primary hover:bg-secondary px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground transition-colors"

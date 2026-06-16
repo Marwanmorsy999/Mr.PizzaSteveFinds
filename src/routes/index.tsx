@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { InstagramFeed } from "../components/ui/instagram-feed";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const IG = "https://instagram.com/mr.pizzastevefinds";
@@ -194,9 +193,6 @@ function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Instagram Feed */}
-      <InstagramFeed />
 
       {/* About */}
       <section className="bg-white border-y border-zinc-300 px-4 py-20">

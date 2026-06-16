@@ -3,10 +3,10 @@ import { Link } from "@tanstack/react-router";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+   <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-0">
         <Link to="/" className="flex items-center gap-3 font-display text-lg uppercase">
-         <img src={logo} alt="Mr. Pizza Steve" className="h-28 w-auto" />
+        <img src={logo} alt="Mr. Pizza Steve" className="h-24 w-auto -my-2" />
         </Link>
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">
           {[

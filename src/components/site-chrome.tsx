@@ -4,11 +4,13 @@ import { useCart } from "../context/CartContext";
 import { useEffect, useRef, useState } from "react";
 
 const BANNERS = [
-  { label: "omg new drop just dropped 🫶", },
-  { label: "fresh off the rack fr fr 🔥", },
-  { label: "zamalek's worst kept secret 🤫", },
-  { label: "dm to hold pls !!", },
-  { label: "no returns but it's worth it trust 🍕", },
+  { label: "omg new drop just dropped 🫶" },
+  { label: "fresh off the rack fr fr 🔥" },
+  { label: "zamalek's worst kept secret 🤫" },
+  { label: "dm to hold pls or someone else will snatch it 😤" },
+  { label: "no returns but it's worth it trust 🍕" },
+  { label: "these pieces are too good to be sitting here wtf" },
+  { label: "buy it before ur friend does 💀" },
 ];
 
 export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
@@ -110,7 +112,7 @@ export function Footer() {
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             curated vintage & thrift by steve dos santos. cairo 🍕
           </p>
-          <p className="mt-2 text-xs text-zinc-600">not responsible for ur obsession</p>
+          <p className="mt-2 text-xs text-zinc-600">not our fault ur obsessed</p>
         </div>
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">come visit</h4>

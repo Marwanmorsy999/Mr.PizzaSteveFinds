@@ -35,7 +35,7 @@ function Shop() {
             <a className="text-primary underline" href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer">
               @mr.pizzastevefinds
             </a>{" "}
-            to reserve before it's gone, or just come grab it 🏃
+            to reserve before some other guy takes it. or just show up, idc 🏃
           </p>
         </div>
 

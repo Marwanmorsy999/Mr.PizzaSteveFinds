@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logo from "@/assets/logo-transparent.png";
+import logo from "@/assets/../../../public/favicon_io/android-chrome-512x512.png";
 
 const MESSAGES = [
   "Preheating the oven...",

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 function NotFoundComponent() {
   return (
@@ -59,18 +60,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-
   useEffect(() => {
-    // Inject Google Fonts into <head>
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap";
     document.head.appendChild(link);
   }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <LoadingScreen>
+        <Outlet />
+      </LoadingScreen>
     </QueryClientProvider>
   );
 }

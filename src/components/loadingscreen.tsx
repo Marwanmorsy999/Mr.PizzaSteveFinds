@@ -63,9 +63,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
       className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-700 ${
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
-      style={{
-        background: "radial-gradient(circle at top, #f7f0e1 0%, #d7c6aa 35%, #8b5e3c 100%)",
-      }}
+      style={{ background: "#0f0f0f" }}
     >
       <div className="relative flex flex-col items-center gap-6 px-6 pt-20">
         <ThriftTag />
@@ -74,19 +72,41 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
         {/* Floating Badges */}
         <div className="absolute -left-12 top-36 rotate-[-12deg]">
           <div
-            className="bg-red-400 border-4 border-black px-3 py-1 rounded-md text-xs font-black shadow-lg"
-            style={{ animation: "float 3.2s ease-in-out infinite" }}
+            style={{
+              background: "#ff6a00",
+              border: "3px solid #fff",
+              color: "#fff",
+              fontFamily: "Impact, Arial Black, sans-serif",
+              fontSize: "0.75rem",
+              fontWeight: 900,
+              letterSpacing: "1px",
+              padding: "4px 10px",
+              borderRadius: 6,
+              boxShadow: "3px 3px 0 #fff",
+              animation: "float 3.2s ease-in-out infinite",
+            }}
           >
-            vintage
+            VINTAGE
           </div>
         </div>
 
         <div className="absolute -right-12 bottom-6 rotate-[10deg]">
           <div
-            className="bg-emerald-300 border-4 border-black px-3 py-1 rounded-md text-xs font-black shadow-lg"
-            style={{ animation: "float 2.7s ease-in-out infinite 0.4s" }}
+            style={{
+              background: "#fff",
+              border: "3px solid #ff6a00",
+              color: "#ff6a00",
+              fontFamily: "Impact, Arial Black, sans-serif",
+              fontSize: "0.75rem",
+              fontWeight: 900,
+              letterSpacing: "1px",
+              padding: "4px 10px",
+              borderRadius: 6,
+              boxShadow: "3px 3px 0 #ff6a00",
+              animation: "float 2.7s ease-in-out infinite 0.4s",
+            }}
           >
-            one of one
+            ONE OF ONE
           </div>
         </div>
       </div>
@@ -113,10 +133,10 @@ function ThriftTag() {
         position: "relative",
         width: 280,
         height: 200,
-        background: "#f8e7c3",
-        border: "4px solid #000",
+        background: "#1a1a1a",
+        border: "3px solid #ff6a00",
         borderRadius: 22,
-        boxShadow: "8px 8px 0 #000",
+        boxShadow: "6px 6px 0 #ff6a00",
         animation: "tagSpin 4s ease-in-out infinite",
       }}
     >
@@ -130,7 +150,7 @@ function ThriftTag() {
           width: "165px",
           height: "auto",
           zIndex: 10,
-          filter: "drop-shadow(5px 5px 0px rgba(0,0,0,0.2))", mixBlendMode: "multiply",
+          filter: "drop-shadow(4px 4px 0px rgba(255,106,0,0.5))",
         }}
       />
 
@@ -139,9 +159,10 @@ function ThriftTag() {
         style={{
           position: "absolute",
           top: 14, left: 14, right: 14, bottom: 14,
-          border: "3px dashed #000",
+          border: "2px dashed #ff6a00",
           borderRadius: 16,
           pointerEvents: "none",
+          opacity: 0.4,
         }}
       />
 
@@ -152,8 +173,8 @@ function ThriftTag() {
           top: 22, right: 22,
           width: 22, height: 22,
           borderRadius: "50%",
-          border: "4px solid #000",
-          background: "#fff",
+          border: "3px solid #ff6a00",
+          background: "#0f0f0f",
         }}
       />
       <div
@@ -162,7 +183,7 @@ function ThriftTag() {
           top: 30, right: 30,
           width: 8, height: 8,
           borderRadius: "50%",
-          background: "#000",
+          background: "#ff6a00",
         }}
       />
 
@@ -174,7 +195,7 @@ function ThriftTag() {
           fontFamily: "Impact, Arial Black, sans-serif",
           fontSize: "2.6rem",
           lineHeight: 1,
-          color: "#d44a2d",
+          color: "#ff6a00",
           textShadow: "2px 2px #000",
         }}
       >
@@ -188,8 +209,8 @@ function ThriftTag() {
           left: 24, top: 104,
           fontFamily: "Arial, sans-serif",
           fontWeight: 900,
-          fontSize: "0.95rem",
-          color: "#000",
+          fontSize: "0.85rem",
+          color: "#aaa",
           letterSpacing: "1px",
           textTransform: "uppercase",
         }}
@@ -204,12 +225,12 @@ function ThriftTag() {
           left: 24, bottom: 18,
           fontFamily: "Arial, sans-serif",
           fontWeight: 900,
-          fontSize: "1rem",
+          fontSize: "0.9rem",
           color: "#000",
-          background: "#f4d35e",
-          border: "3px solid #000",
-          borderRadius: 12,
-          padding: "6px 12px",
+          background: "#ff6a00",
+          border: "none",
+          borderRadius: 10,
+          padding: "5px 12px",
           display: "inline-block",
         }}
       >
@@ -226,30 +247,29 @@ function BrandText({ messageIndex }: { messageIndex: number }) {
         style={{
           fontFamily: "Impact, Arial Black, sans-serif",
           fontSize: "2rem",
-          color: "#1f1a17",
-          textShadow: "2px 2px #f4d35e",
+          color: "#fff",
           margin: 0,
-          letterSpacing: "1px",
+          letterSpacing: "2px",
           textTransform: "uppercase",
           textAlign: "center",
         }}
       >
-        Pizza Steve's Thrift
+        MR. PIZZA STEVE <span style={{ color: "#ff6a00" }}>FINDS</span>
       </h1>
 
       <p
         key={messageIndex}
         style={{
           fontFamily: "Arial, sans-serif",
-          background: "#fff8ea",
-          border: "3px solid #000",
-          borderRadius: 14,
+          background: "#1a1a1a",
+          border: "2px solid #ff6a00",
+          borderRadius: 10,
           padding: "8px 14px",
-          color: "#000",
+          color: "#fff",
           margin: 0,
-          fontSize: "0.95rem",
-          fontWeight: 800,
-          boxShadow: "4px 4px 0 #000",
+          fontSize: "0.9rem",
+          fontWeight: 700,
+          boxShadow: "3px 3px 0 #ff6a00",
         }}
       >
         {MESSAGES[messageIndex]}
@@ -257,4 +277,3 @@ function BrandText({ messageIndex }: { messageIndex: number }) {
     </div>
   );
 }
-

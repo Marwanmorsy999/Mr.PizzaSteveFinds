@@ -130,7 +130,7 @@ function ThriftTag() {
           width: "165px",
           height: "auto",
           zIndex: 10,
-          filter: "drop-shadow(5px 5px 0px rgba(0,0,0,0.2))",
+          filter: "drop-shadow(5px 5px 0px rgba(0,0,0,0.2))", mixBlendMode: "multiply",
         }}
       />
 
@@ -257,3 +257,4 @@ function BrandText({ messageIndex }: { messageIndex: number }) {
     </div>
   );
 }
+

@@ -127,7 +127,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="logo-pop relative z-10">
                 <img
-                  src={logo.url}
+                  src={logo}
                   alt="Mr. Pizza Steve Finds"
                   className="h-14 w-auto sm:h-20"
                 />

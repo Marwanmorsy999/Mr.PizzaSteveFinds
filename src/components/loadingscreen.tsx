@@ -1,13 +1,11 @@
-
 import { useState, useEffect } from "react";
-
 
 const MESSAGES = [
   "Preheating the oven...",
-  "Digging through the racks...",
-  "Kneading the dough...",
-  "Finding gems...",
+  "Sprinkling extra cheese...",
   "Slicing it up...",
+  "Serving fresh slices...",
+  "Pizza magic loading...",
 ];
 
 export function LoadingScreen({ children }: { children: React.ReactNode }) {
@@ -19,15 +17,15 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const msgInterval = setInterval(() => {
       setMessageIndex((i) => (i + 1) % MESSAGES.length);
-    }, 500);
+    }, 600);
 
     const endTimer = setTimeout(() => {
       setFading(true);
       setTimeout(() => {
         setLoading(false);
-        setTimeout(() => setShowContent(true), 50);
-      }, 800);
-    }, 2800);
+        setTimeout(() => setShowContent(true), 80);
+      }, 1000);
+    }, 3000);
 
     return () => {
       clearInterval(msgInterval);
@@ -38,9 +36,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
   if (!loading) {
     return (
       <div
-        className={`transition-opacity duration-700 ${
-          showContent ? "opacity-100" : "opacity-0"
-        }`}
+        className={`transition-opacity duration-1000 ${showContent ? "opacity-100" : "opacity-0"}`}
       >
         {children}
       </div>
@@ -50,12 +46,12 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-opacity duration-800 ${
+        className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ${
           fading ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
-        {/* Subtle warm glow behind pizza */}
-        <div className="pointer-events-none absolute inset-0 noise-bg opacity-40" />
+        {/* Warm oven glow */}
+        <div className="pointer-events-none absolute inset-0 noise-bg opacity-50" />
 
         <div className="relative flex flex-col items-center gap-8">
           {/* Pizza slices spinner */}
@@ -82,21 +78,20 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
                   transform: `rotate(${i * 72}deg)`,
                 }}
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  className="h-full w-full overflow-visible"
-                >
+                <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible">
                   <defs>
-                    <pattern
-                      id={`pattern-${i}`}
-                      patternUnits="userSpaceOnUse"
-                      width="8"
-                      height="8"
-                    >
+                    <pattern id={`pattern-${i}`} patternUnits="userSpaceOnUse" width="8" height="8">
                       {i % 3 === 0 && (
                         <>
                           <rect width="8" height="8" fill="oklch(0.72 0.21 45)" />
-                          <line x1="0" y1="4" x2="8" y2="4" stroke="oklch(0.14 0.012 60)" strokeWidth="1.5" />
+                          <line
+                            x1="0"
+                            y1="4"
+                            x2="8"
+                            y2="4"
+                            stroke="oklch(0.14 0.012 60)"
+                            strokeWidth="1.5"
+                          />
                         </>
                       )}
                       {i % 3 === 1 && (
@@ -109,7 +104,14 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
                       {i % 3 === 2 && (
                         <>
                           <rect width="8" height="8" fill="oklch(0.85 0.18 90)" />
-                          <line x1="0" y1="0" x2="8" y2="8" stroke="oklch(0.14 0.012 60)" strokeWidth="1" />
+                          <line
+                            x1="0"
+                            y1="0"
+                            x2="8"
+                            y2="8"
+                            stroke="oklch(0.14 0.012 60)"
+                            strokeWidth="1"
+                          />
                         </>
                       )}
                     </pattern>
@@ -123,8 +125,6 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
                 </svg>
               </div>
             ))}
-
-            
           </div>
 
           {/* Brand text */}
@@ -132,10 +132,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
             <h1 className="font-display text-xl uppercase tracking-[0.2em] text-foreground sm:text-2xl">
               Mr. Pizza Steve
             </h1>
-            <p
-              key={messageIndex}
-              className="font-sans text-sm text-muted-foreground sm:text-base"
-            >
+            <p key={messageIndex} className="font-sans text-sm text-muted-foreground sm:text-base">
               {MESSAGES[messageIndex]}
             </p>
           </div>
@@ -143,11 +140,6 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
       </div>
 
       <style>{`
-        @keyframes loadBar {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
-        }
-
         .slice {
           opacity: 0;
           animation: sliceIn 0.6s ease-out forwards;
@@ -175,36 +167,28 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
         .slice-3 { --base-rot: 216deg; }
         .slice-4 { --base-rot: 288deg; }
 
-        .logo-pop {
-          opacity: 0;
-          transform: scale(0.5);
-          animation: logoPop 0.5s ease-out 1.4s forwards;
-        }
-
-        @keyframes logoPop {
-          0% { opacity: 0; transform: scale(0.5); }
-          60% { opacity: 1; transform: scale(1.1); }
-          100% { opacity: 1; transform: scale(1); }
+        .noise-bg {
+          background: radial-gradient(circle, oklch(0.85 0.18 90 / 0.2), transparent);
         }
 
         .steam-particle {
           position: absolute;
-          width: 8px;
-          height: 20px;
-          background: oklch(0.98 0.01 90 / 0.15);
+          width: 10px;
+          height: 24px;
+          background: oklch(0.98 0.01 90 / 0.2);
           border-radius: 50%;
-          filter: blur(4px);
-          animation: steamRise 2s ease-out infinite;
+          filter: blur(6px);
+          animation: steamRise 2.5s ease-out infinite;
           left: 50%;
           transform: translateX(-50%);
         }
         .steam-delay-1 {
-          animation-delay: 0.6s;
-          left: calc(50% - 12px);
+          animation-delay: 0.8s;
+          left: calc(50% - 14px);
         }
         .steam-delay-2 {
-          animation-delay: 1.2s;
-          left: calc(50% + 12px);
+          animation-delay: 1.6s;
+          left: calc(50% + 14px);
         }
 
         @keyframes steamRise {
@@ -213,16 +197,14 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
             transform: translateX(-50%) translateY(0) scale(1);
           }
           30% {
-            opacity: 0.6;
+            opacity: 0.7;
           }
           100% {
             opacity: 0;
-            transform: translateX(-50%) translateY(-40px) scale(1.6);
+            transform: translateX(-50%) translateY(-50px) scale(1.6);
           }
         }
       `}</style>
     </>
   );
 }
-
-

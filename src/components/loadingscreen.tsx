@@ -124,16 +124,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
               </div>
             ))}
 
-            {/* Center logo */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="logo-pop relative z-10">
-                <img
-
-                  alt="Mr. Pizza Steve Finds"
-                  className="h-20 w-auto sm:h-28"
-                />
-              </div>
-            </div>
+            
           </div>
 
           {/* Brand text */}
@@ -233,4 +224,5 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
     </>
   );
 }
+
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logo from "@/assets/mr-pizzasteve-logo.png.asset.json";
+import logo from "@/assets/logo-transparent.png";
 
 const MESSAGES = [
   "Preheating the oven...",

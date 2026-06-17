@@ -1,12 +1,22 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const MESSAGES = [
-  "Preheating the oven...",
-  "Sprinkling extra cheese...",
-  "Slicing it up...",
-  "Serving fresh slices...",
-  "Pizza magic loading...",
+  "Rummaging for gems...",
+  "Sorting vintage heat...",
+  "Fresh racks incoming...",
+  "Deadstock loading...",
+  "Pulling your next find...",
+  "Rare pieces only...",
+  "Curating the rack...",
+  "Thrift treasure on deck...",
 ];
+
+const TIMINGS = {
+  messageInterval: 1100,
+  fadeStart: 4200,
+  fadeDuration: 700,
+  contentDelay: 100,
+};
 
 export function LoadingScreen({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -15,196 +25,235 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    const msgInterval = setInterval(() => {
-      setMessageIndex((i) => (i + 1) % MESSAGES.length);
-    }, 600);
+    let hideTimer: number;
+    let showTimer: number;
 
-    const endTimer = setTimeout(() => {
+    const intervalId = window.setInterval(() => {
+      setMessageIndex((i) => (i + 1) % MESSAGES.length);
+    }, TIMINGS.messageInterval);
+
+    const fadeTimer = window.setTimeout(() => {
       setFading(true);
-      setTimeout(() => {
+      hideTimer = window.setTimeout(() => {
         setLoading(false);
-        setTimeout(() => setShowContent(true), 80);
-      }, 1000);
-    }, 3000);
+        showTimer = window.setTimeout(() => {
+          setShowContent(true);
+        }, TIMINGS.contentDelay);
+      }, TIMINGS.fadeDuration);
+    }, TIMINGS.fadeStart);
 
     return () => {
-      clearInterval(msgInterval);
-      clearTimeout(endTimer);
+      window.clearInterval(intervalId);
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(showTimer);
     };
   }, []);
 
   if (!loading) {
     return (
-      <div
-        className={`transition-opacity duration-1000 ${showContent ? "opacity-100" : "opacity-0"}`}
-      >
+      <div className={`transition-opacity duration-700 ${showContent ? "opacity-100" : "opacity-0"}`}>
         {children}
       </div>
     );
   }
 
   return (
-    <>
-      <div
-        className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ${
-          fading ? "pointer-events-none opacity-0" : "opacity-100"
-        }`}
-      >
-        {/* Warm oven glow */}
-        <div className="pointer-events-none absolute inset-0 noise-bg opacity-50" />
+    <div
+      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-700 ${
+        fading ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+      style={{
+        background: "radial-gradient(circle at top, #f7f0e1 0%, #d7c6aa 35%, #8b5e3c 100%)",
+      }}
+    >
+      <div className="relative flex flex-col items-center gap-6 px-6 pt-20">
+        <ThriftTag />
+        <BrandText messageIndex={messageIndex} />
 
-        <div className="relative flex flex-col items-center gap-8">
-          {/* Pizza slices spinner */}
-          <div className="relative h-40 w-40 sm:h-52 sm:w-52">
-            {/* Steam particles */}
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-              <div className="steam-particle" />
-              <div className="steam-particle steam-delay-1" />
-              <div className="steam-particle steam-delay-2" />
-            </div>
-
-            {/* 5 pizza slices arranged as a pie */}
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className={`slice slice-${i}`}
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  width: "50%",
-                  height: "50%",
-                  transformOrigin: "0% 0%",
-                  transform: `rotate(${i * 72}deg)`,
-                }}
-              >
-                <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible">
-                  <defs>
-                    <pattern id={`pattern-${i}`} patternUnits="userSpaceOnUse" width="8" height="8">
-                      {i % 3 === 0 && (
-                        <>
-                          <rect width="8" height="8" fill="oklch(0.72 0.21 45)" />
-                          <line
-                            x1="0"
-                            y1="4"
-                            x2="8"
-                            y2="4"
-                            stroke="oklch(0.14 0.012 60)"
-                            strokeWidth="1.5"
-                          />
-                        </>
-                      )}
-                      {i % 3 === 1 && (
-                        <>
-                          <rect width="8" height="8" fill="oklch(0.62 0.24 27)" />
-                          <circle cx="2" cy="2" r="1" fill="oklch(0.85 0.18 90)" />
-                          <circle cx="6" cy="6" r="1" fill="oklch(0.85 0.18 90)" />
-                        </>
-                      )}
-                      {i % 3 === 2 && (
-                        <>
-                          <rect width="8" height="8" fill="oklch(0.85 0.18 90)" />
-                          <line
-                            x1="0"
-                            y1="0"
-                            x2="8"
-                            y2="8"
-                            stroke="oklch(0.14 0.012 60)"
-                            strokeWidth="1"
-                          />
-                        </>
-                      )}
-                    </pattern>
-                  </defs>
-                  <path
-                    d="M 0 0 L 100 0 A 100 100 0 0 1 30.9 95.1 Z"
-                    fill={`url(#pattern-${i})`}
-                    stroke="oklch(0.98 0.01 90 / 0.25)"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-            ))}
+        {/* Floating Badges */}
+        <div className="absolute -left-12 top-36 rotate-[-12deg]">
+          <div
+            className="bg-red-400 border-4 border-black px-3 py-1 rounded-md text-xs font-black shadow-lg"
+            style={{ animation: "float 3.2s ease-in-out infinite" }}
+          >
+            vintage
           </div>
+        </div>
 
-          {/* Brand text */}
-          <div className="flex flex-col items-center gap-3">
-            <h1 className="font-display text-xl uppercase tracking-[0.2em] text-foreground sm:text-2xl">
-              Mr. Pizza Steve
-            </h1>
-            <p key={messageIndex} className="font-sans text-sm text-muted-foreground sm:text-base">
-              {MESSAGES[messageIndex]}
-            </p>
+        <div className="absolute -right-12 bottom-6 rotate-[10deg]">
+          <div
+            className="bg-emerald-300 border-4 border-black px-3 py-1 rounded-md text-xs font-black shadow-lg"
+            style={{ animation: "float 2.7s ease-in-out infinite 0.4s" }}
+          >
+            one of one
           </div>
         </div>
       </div>
 
       <style>{`
-        .slice {
-          opacity: 0;
-          animation: sliceIn 0.6s ease-out forwards;
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-8px) rotate(1deg); }
         }
-        .slice-0 { animation-delay: 0.2s; }
-        .slice-1 { animation-delay: 0.4s; }
-        .slice-2 { animation-delay: 0.6s; }
-        .slice-3 { animation-delay: 0.8s; }
-        .slice-4 { animation-delay: 1.0s; }
-
-        @keyframes sliceIn {
-          0% {
-            opacity: 0;
-            transform: rotate(var(--base-rot, 0deg)) translateX(-30px) scale(0.8);
-          }
-          100% {
-            opacity: 1;
-            transform: rotate(var(--base-rot, 0deg)) translateX(0) scale(1);
-          }
-        }
-
-        .slice-0 { --base-rot: 0deg; }
-        .slice-1 { --base-rot: 72deg; }
-        .slice-2 { --base-rot: 144deg; }
-        .slice-3 { --base-rot: 216deg; }
-        .slice-4 { --base-rot: 288deg; }
-
-        .noise-bg {
-          background: radial-gradient(circle, oklch(0.85 0.18 90 / 0.2), transparent);
-        }
-
-        .steam-particle {
-          position: absolute;
-          width: 10px;
-          height: 24px;
-          background: oklch(0.98 0.01 90 / 0.2);
-          border-radius: 50%;
-          filter: blur(6px);
-          animation: steamRise 2.5s ease-out infinite;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .steam-delay-1 {
-          animation-delay: 0.8s;
-          left: calc(50% - 14px);
-        }
-        .steam-delay-2 {
-          animation-delay: 1.6s;
-          left: calc(50% + 14px);
-        }
-
-        @keyframes steamRise {
-          0% {
-            opacity: 0;
-            transform: translateX(-50%) translateY(0) scale(1);
-          }
-          30% {
-            opacity: 0.7;
-          }
-          100% {
-            opacity: 0;
-            transform: translateX(-50%) translateY(-50px) scale(1.6);
-          }
+        @keyframes tagSpin {
+          0% { transform: rotate(-8deg) scale(1); }
+          50% { transform: rotate(6deg) scale(1.03); }
+          100% { transform: rotate(-8deg) scale(1); }
         }
       `}</style>
-    </>
+    </div>
+  );
+}
+
+function ThriftTag() {
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: 280,
+        height: 200,
+        background: "#f8e7c3",
+        border: "4px solid #000",
+        borderRadius: 22,
+        boxShadow: "8px 8px 0 #000",
+        animation: "tagSpin 4s ease-in-out infinite",
+      }}
+    >
+      <img
+        src="/pizza-steve.png"
+        alt="Pizza Steve"
+        style={{
+          position: "absolute",
+          top: "-75px",
+          left: "-15px",
+          width: "165px",
+          height: "auto",
+          zIndex: 10,
+          filter: "drop-shadow(5px 5px 0px rgba(0,0,0,0.2))",
+        }}
+      />
+
+      {/* Dashed inner border */}
+      <div
+        style={{
+          position: "absolute",
+          top: 14, left: 14, right: 14, bottom: 14,
+          border: "3px dashed #000",
+          borderRadius: 16,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Grommet hole */}
+      <div
+        style={{
+          position: "absolute",
+          top: 22, right: 22,
+          width: 22, height: 22,
+          borderRadius: "50%",
+          border: "4px solid #000",
+          background: "#fff",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 30, right: 30,
+          width: 8, height: 8,
+          borderRadius: "50%",
+          background: "#000",
+        }}
+      />
+
+      {/* THRIFT text */}
+      <div
+        style={{
+          position: "absolute",
+          left: 22, top: 52,
+          fontFamily: "Impact, Arial Black, sans-serif",
+          fontSize: "2.6rem",
+          lineHeight: 1,
+          color: "#d44a2d",
+          textShadow: "2px 2px #000",
+        }}
+      >
+        THRIFT
+      </div>
+
+      {/* Subtitle */}
+      <div
+        style={{
+          position: "absolute",
+          left: 24, top: 104,
+          fontFamily: "Arial, sans-serif",
+          fontWeight: 900,
+          fontSize: "0.95rem",
+          color: "#000",
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+        }}
+      >
+        handpicked vintage finds
+      </div>
+
+      {/* Loading badge */}
+      <div
+        style={{
+          position: "absolute",
+          left: 24, bottom: 18,
+          fontFamily: "Arial, sans-serif",
+          fontWeight: 900,
+          fontSize: "1rem",
+          color: "#000",
+          background: "#f4d35e",
+          border: "3px solid #000",
+          borderRadius: 12,
+          padding: "6px 12px",
+          display: "inline-block",
+        }}
+      >
+        loading the rack...
+      </div>
+    </div>
+  );
+}
+
+function BrandText({ messageIndex }: { messageIndex: number }) {
+  return (
+    <div className="flex flex-col items-center gap-2 mt-2">
+      <h1
+        style={{
+          fontFamily: "Impact, Arial Black, sans-serif",
+          fontSize: "2rem",
+          color: "#1f1a17",
+          textShadow: "2px 2px #f4d35e",
+          margin: 0,
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+          textAlign: "center",
+        }}
+      >
+        Pizza Steve's Thrift
+      </h1>
+
+      <p
+        key={messageIndex}
+        style={{
+          fontFamily: "Arial, sans-serif",
+          background: "#fff8ea",
+          border: "3px solid #000",
+          borderRadius: 14,
+          padding: "8px 14px",
+          color: "#000",
+          margin: 0,
+          fontSize: "0.95rem",
+          fontWeight: 800,
+          boxShadow: "4px 4px 0 #000",
+        }}
+      >
+        {MESSAGES[messageIndex]}
+      </p>
+    </div>
   );
 }

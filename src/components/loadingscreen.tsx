@@ -1,3 +1,4 @@
+import logo from "@/assets/logo.png";
 import { useState, useEffect } from "react";
 
 
@@ -127,7 +128,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="logo-pop relative z-10">
                 <img
-                  src="/favicon_io/android-chrome-512x512.png"
+                  src={logo}
                   alt="Mr. Pizza Steve Finds"
                   className="h-14 w-auto sm:h-20"
                 />
@@ -232,3 +233,4 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
     </>
   );
 }
+

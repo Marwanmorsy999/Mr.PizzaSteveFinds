@@ -1,4 +1,4 @@
-import logo from "@/assets/logo.png";
+
 import { useState, useEffect } from "react";
 
 
@@ -128,7 +128,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="logo-pop relative z-10">
                 <img
-                  src={logo} style={{background: "white", borderRadius: "50%", padding: "6px"}}
+
                   alt="Mr. Pizza Steve Finds"
                   className="h-20 w-auto sm:h-28"
                 />

@@ -1,6 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
-import { products } from "@/lib/products";
+import { useState, useEffect } from "react";
+
+const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
+
+interface Product {
+  id: string;
+  name: string;
+  size?: string;
+  price?: number;
+  priceLabel?: string;
+  status: string;
+  emoji: string;
+  tag: string;
+  imageUrl?: string;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,7 +32,17 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const featured = products.filter((p) => p.status === "available").slice(0, 3);
+  const [featured, setFeatured] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch(`${API}/api/products`)
+      .then((r) => r.json())
+      .then((data: Product[]) => {
+        setFeatured(data.filter((p) => p.status === "available").slice(0, 3));
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -76,29 +100,37 @@ function Home() {
             see all
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {featured.map((p, i) => (
-            <Link key={p.id} to="/product/$id" params={{ id: p.id }}
-              className={`group relative overflow-hidden border border-border bg-card transition hover:-translate-y-1 hover:border-primary ${i === 1 ? "sm:mt-4" : ""}`}>
-              <div className="absolute right-2 top-2 z-10 bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
-                {p.tag}
-              </div>
-              <div className="grid aspect-square place-items-center bg-gradient-to-br from-muted to-card text-7xl transition-transform duration-300 group-hover:scale-105">
-                {p.emoji}
-              </div>
-              <div className="p-4">
-                <div className="mt-1 line-clamp-2 font-display text-sm uppercase">{p.name}</div>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{p.size ? `size ${p.size}` : "one size"}</span>
-                  <span className="font-display text-base text-primary">{p.price ? `${p.price} EGP` : p.priceLabel}</span>
+        {featured.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {featured.map((p, i) => (
+              <Link key={p.id} to="/product/$id" params={{ id: p.id }}
+                className={`group relative overflow-hidden border border-border bg-card transition hover:-translate-y-1 hover:border-primary ${i === 1 ? "sm:mt-4" : ""}`}>
+                <div className="absolute right-2 top-2 z-10 bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
+                  {p.tag}
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                <div className="relative grid aspect-square place-items-center bg-gradient-to-br from-muted to-card overflow-hidden">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <span className="text-7xl transition-transform duration-300 group-hover:scale-105">{p.emoji}</span>
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="mt-1 line-clamp-2 font-display text-sm uppercase">{p.name}</div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">{p.size ? `size ${p.size}` : "one size"}</span>
+                    <span className="font-display text-base text-primary">{p.price ? `${p.price} EGP` : p.priceLabel}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-sm text-muted-foreground">checking the rack...</div>
+        )}
       </section>
 
-      {/* Rack photo — vibe only */}
+      {/* Rack photo */}
       <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
         <img src="/rack.jpg" alt="the rack" className="w-full h-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />

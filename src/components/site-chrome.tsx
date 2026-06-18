@@ -45,6 +45,7 @@ export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
 export function Header() {
   const { count } = useCart();
   const [volume, setVolume] = useState(0.5);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const audio = getAudio();
@@ -54,6 +55,7 @@ export function Header() {
       if (audioStarted) return;
       audio.play().catch(() => {});
       audioStarted = true;
+      setPlaying(true);
     };
 
     document.addEventListener("click", play, { once: true });
@@ -84,6 +86,19 @@ export function Header() {
     getAudio().volume = v;
   };
 
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const audio = getAudio();
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+    } else {
+      audio.play().catch(() => {});
+      audioStarted = true;
+      setPlaying(true);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
@@ -111,6 +126,25 @@ export function Header() {
           ))}
 
           <div className="hidden sm:flex items-center gap-2 ml-2">
+            {/* Play/Pause button */}
+            <button
+              onClick={togglePlay}
+              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors"
+              title={playing ? "pause music" : "play music"}
+            >
+              {playing ? (
+                // Pause icon
+                <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                  <rect x="0" y="0" width="3" height="12" rx="1" />
+                  <rect x="7" y="0" width="3" height="12" rx="1" />
+                </svg>
+              ) : (
+                // Play icon
+                <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                  <path d="M0 0 L10 6 L0 12 Z" />
+                </svg>
+              )}
+            </button>
             <span className="text-muted-foreground text-xs">vol</span>
             <input
               type="range"

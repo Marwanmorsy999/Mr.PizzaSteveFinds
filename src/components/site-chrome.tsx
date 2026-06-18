@@ -1,7 +1,7 @@
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const BANNERS = [
   { label: "omg new drop just dropped" },
@@ -49,6 +49,7 @@ export function Header() {
   useEffect(() => {
     const audio = getAudio();
 
+    // Start on first interaction
     const play = () => {
       if (audioStarted) return;
       audio.play().catch(() => {});
@@ -58,9 +59,21 @@ export function Header() {
     document.addEventListener("click", play, { once: true });
     document.addEventListener("touchend", play, { once: true });
 
+    // Stop music when tab/window closes
+    const handleUnload = () => {
+      if (globalAudio) {
+        globalAudio.pause();
+        globalAudio.currentTime = 0;
+        audioStarted = false;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
     return () => {
       document.removeEventListener("click", play);
       document.removeEventListener("touchend", play);
+      window.removeEventListener("beforeunload", handleUnload);
     };
   }, []);
 
@@ -139,8 +152,8 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">the gram</h4>
-          
-            <a href="https://instagram.com/mr.pizzastevefinds"
+          <a
+            href="https://instagram.com/mr.pizzastevefinds"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-primary hover:bg-secondary px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground transition-colors"

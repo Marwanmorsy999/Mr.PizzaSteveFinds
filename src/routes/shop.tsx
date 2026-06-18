@@ -1,10 +1,24 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
-import { products } from "@/lib/products";
-import type { Product } from "@/lib/products";
-import { memo, useMemo } from "react";
+import { memo, useState, useEffect } from "react";
 
+const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
+
+interface Product {
+  id: string;
+  name: string;
+  size?: string;
+  price?: number;
+  priceLabel?: string;
+  status: string;
+  emoji: string;
+  tag: string;
+  imageUrl?: string;
+  images?: string[];
+  condition?: string;
+  description?: string;
+}
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -20,10 +34,16 @@ export const Route = createFileRoute("/shop")({
 });
 
 function Shop() {
-  const productCards = useMemo(
-    () => products.map((p) => <Card key={p.id} p={p} />),
-    [],
-  );
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}/api/products`)
+      .then((r) => r.json())
+      .then((data) => setProducts(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -41,9 +61,13 @@ function Shop() {
           </p>
         </div>
 
-        {productCards.length > 0 ? (
+        {loading ? (
+          <div className="mt-16 grid place-items-center">
+            <div className="w-8 h-8 border-2 border-zinc-800 border-t-orange-400 rounded-full animate-spin" />
+          </div>
+        ) : products.length > 0 ? (
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {productCards}
+            {products.map((p) => <Card key={p.id} p={p} />)}
           </div>
         ) : (
           <div className="mt-16 grid place-items-center text-center">
@@ -83,9 +107,17 @@ const Card = memo(function Card({ p }: { p: Product }) {
       </div>
 
       <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-muted via-card to-background">
-        <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale opacity-40" : ""}`}>
-          {p.emoji}
-        </span>
+        {p.imageUrl ? (
+          <img
+            src={p.imageUrl}
+            alt={p.name}
+            className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${sold ? "grayscale opacity-40" : ""}`}
+          />
+        ) : (
+          <span className={`text-8xl transition-transform duration-500 group-hover:scale-110 ${sold ? "grayscale opacity-40" : ""}`}>
+            {p.emoji}
+          </span>
+        )}
         {sold && (
           <div className="absolute inset-0 grid place-items-center">
             <span

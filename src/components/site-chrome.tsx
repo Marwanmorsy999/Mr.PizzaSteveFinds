@@ -99,6 +99,15 @@ export function Header() {
     }
   };
 
+  const stopAudio = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const audio = getAudio();
+    audio.pause();
+    audio.currentTime = 0;
+    audioStarted = false;
+    setPlaying(false);
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
@@ -125,11 +134,11 @@ export function Header() {
             </Link>
           ))}
 
-          <div className="hidden sm:flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-1.5 ml-2">
             {/* Play/Pause button */}
             <button
               onClick={togglePlay}
-              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors"
+              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors flex-shrink-0"
               title={playing ? "pause music" : "play music"}
             >
               {playing ? (
@@ -145,7 +154,20 @@ export function Header() {
                 </svg>
               )}
             </button>
-            <span className="text-muted-foreground text-xs">vol</span>
+
+            {/* Stop button */}
+            <button
+              onClick={stopAudio}
+              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors flex-shrink-0"
+              title="stop music"
+            >
+              {/* Stop icon (square) */}
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+                <rect x="0" y="0" width="8" height="8" rx="0.5" />
+              </svg>
+            </button>
+
+            <span className="hidden sm:inline text-muted-foreground text-xs">vol</span>
             <input
               type="range"
               min={0}
@@ -154,7 +176,7 @@ export function Header() {
               value={volume}
               onChange={handleVolumeChange}
               onClick={(e) => e.stopPropagation()}
-              className="w-20 accent-primary cursor-pointer"
+              className="hidden sm:block w-20 accent-primary cursor-pointer"
             />
           </div>
         </nav>

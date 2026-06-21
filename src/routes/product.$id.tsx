@@ -21,12 +21,6 @@ const SIZE_GUIDE = [
   { label: "XXL",chest: "47–50″", shoulder: "21″", length: "31″" },
 ];
 
-// ── Static testimonials ──────────────────────────────────────────────────────
-const REVIEWS = [
-  { name: "Ahmed K.", text: "Got a crazy vintage Nike tee, exactly as described. Steve packed it super carefully. Actually obsessed with this piece wtf.", stars: 5 },
-  { name: "Nour M.", text: "Fast DM reply, piece was even better in person. Can't stop wearing it fr. Will definitely be back.", stars: 5 },
-  { name: "Omar S.", text: "Sizing was spot on — the measurements listed saved me from guessing. No way this fits this good, I'm dead 💀", stars: 5 },
-];
 
 // ── Condition badge colors ───────────────────────────────────────────────────
 const CONDITION_COLORS: Record<string, string> = {
@@ -39,13 +33,6 @@ const CONDITION_COLORS: Record<string, string> = {
 
 export const Route = createFileRoute("/product/$id")({ component: ProductPage });
 
-function Stars({ n }: { n: number }) {
-  return (
-    <span className="text-zinc-100 text-sm">
-      {"★".repeat(n)}{"☆".repeat(5 - n)}
-    </span>
-  );
-}
 
 function SizeGuideModal({ onClose }: { onClose: () => void }) {
   return (
@@ -330,22 +317,6 @@ function ProductPage() {
           </button>
         </div>
 
-        {/* ── Reviews ── */}
-        <div className="mt-12">
-          <div className="flex items-baseline gap-4 mb-6">
-            <h2 className="text-sm font-black tracking-widest">what people are saying 👀</h2>
-            <span className="text-zinc-500 text-xs">★★★★★ 5.0 · 3 reviews (all real, no cap)</span>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            {REVIEWS.map((r, i) => (
-              <div key={i} className="bg-zinc-900 border border-zinc-800 p-5">
-                <Stars n={r.stars} />
-                <p className="text-zinc-300 text-sm mt-2 leading-relaxed">"{r.text}"</p>
-                <p className="text-zinc-500 text-xs mt-3 font-bold tracking-widest">— {r.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* ── Related products ── */}
         {related.length > 0 && (

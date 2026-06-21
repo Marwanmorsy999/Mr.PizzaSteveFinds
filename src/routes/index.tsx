@@ -33,6 +33,34 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [featured, setFeatured] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Array<{ name: string; text: string; rating: number; date: string }>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("ps_reviews") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const [revForm, setRevForm] = useState({ name: "", text: "", rating: 5 });
+  const [showForm, setShowForm] = useState(false);
+
+  function handleAddReview(e: React.FormEvent) {
+    e.preventDefault();
+    if (!revForm.name.trim() || !revForm.text.trim()) return;
+
+    const newRev = {
+      name: revForm.name,
+      text: revForm.text,
+      rating: revForm.rating,
+      date: new Date().toLocaleDateString(),
+    };
+
+    const updated = [newRev, ...reviews];
+    setReviews(updated);
+    localStorage.setItem("ps_reviews", JSON.stringify(updated));
+    setRevForm({ name: "", text: "", rating: 5 });
+    setShowForm(false);
+  }
 
   useEffect(() => {
     fetch(`${API}/api/products`)
@@ -136,6 +164,95 @@ function Home() {
         )}
       </section>
 
+      {/* Reviews Section */}
+      <section className="mx-auto max-w-6xl px-4 py-16 border-t border-border">
+        <div className="flex flex-wrap items-end justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-3xl sm:text-5xl font-display uppercase">Customer Reviews</h2>
+            <p className="mt-1 text-sm text-muted-foreground">real feedback from real people (no cap)</p>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="border border-zinc-700 hover:border-zinc-200 text-zinc-300 hover:text-white font-bold px-5 py-2.5 text-xs tracking-widest uppercase transition-colors"
+          >
+            {showForm ? "Cancel" : "Write a Review"}
+          </button>
+        </div>
+
+        {showForm && (
+          <form onSubmit={handleAddReview} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8 max-w-lg">
+            <h3 className="text-white font-black text-sm tracking-wider uppercase mb-4">Leave your review</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">Your Name</label>
+                <input
+                  required
+                  value={revForm.name}
+                  onChange={(e) => setRevForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="e.g. Ahmed K."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">Rating</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((stars) => (
+                    <button
+                      key={stars}
+                      type="button"
+                      onClick={() => setRevForm((f) => ({ ...f, rating: stars }))}
+                      className="text-2xl transition-transform hover:scale-110"
+                    >
+                      {stars <= revForm.rating ? "★" : "☆"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">Your Experience</label>
+                <textarea
+                  required
+                  value={revForm.text}
+                  onChange={(e) => setRevForm((f) => ({ ...f, text: e.target.value }))}
+                  placeholder="how was the fit, packaging, speed, etc..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-24 resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="bg-primary hover:bg-secondary text-primary-foreground font-black px-6 py-3 tracking-widest text-xs uppercase transition-colors"
+              >
+                Submit Review
+              </button>
+            </div>
+          </form>
+        )}
+
+        {reviews.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {reviews.map((r, i) => (
+              <div key={i} className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Stars n={r.rating} />
+                    <span className="text-zinc-500 text-[10px]">{r.date}</span>
+                  </div>
+                  <p className="text-zinc-300 text-sm leading-relaxed">"{r.text}"</p>
+                </div>
+                <p className="text-zinc-500 text-xs mt-4 font-bold tracking-widest">— {r.name}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-zinc-900/30 border border-dashed border-zinc-800 rounded-2xl">
+            <p className="text-muted-foreground text-sm">No reviews yet. Be the first to leave one fr!</p>
+          </div>
+        )}
+      </section>
+
       {/* Rack photo */}
       <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
         <img src="/rack.jpg" alt="the rack" className="w-full h-full object-cover object-center" />
@@ -162,6 +279,14 @@ function Home() {
 
       <Footer />
     </div>
+  );
+}
+
+function Stars({ n }: { n: number }) {
+  return (
+    <span className="text-zinc-100 text-sm">
+      {"★".repeat(n)}{"☆".repeat(5 - n)}
+    </span>
   );
 }
 

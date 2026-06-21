@@ -103,7 +103,6 @@ type Tab = "products" | "orders" | "settings";
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>("products");
-  const [activeTab, setActiveTab] = useState<Tab>("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [announcement, setAnnouncement] = useState("");

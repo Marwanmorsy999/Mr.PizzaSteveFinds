@@ -28,13 +28,11 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(!shouldSkipLoading);
   const [fading, setFading] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const [showContent, setShowContent] = useState(shouldSkipLoading);
 
   useEffect(() => {
     if (shouldSkipLoading) return;
 
     let hideTimer: number;
-    let showTimer: number;
 
     const intervalId = window.setInterval(() => {
       setMessageIndex((i) => (i + 1) % MESSAGES.length);
@@ -47,9 +45,6 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
         if (typeof window !== "undefined") {
           window.sessionStorage.setItem("pizza-steve-loaded", "true");
         }
-        showTimer = window.setTimeout(() => {
-          setShowContent(true);
-        }, TIMINGS.contentDelay);
       }, TIMINGS.fadeDuration);
     }, TIMINGS.fadeStart);
 
@@ -57,99 +52,95 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
       window.clearInterval(intervalId);
       window.clearTimeout(fadeTimer);
       window.clearTimeout(hideTimer);
-      window.clearTimeout(showTimer);
     };
   }, [shouldSkipLoading]);
 
-  if (!loading) {
-    return (
-      <div className={`transition-opacity duration-700 ${showContent ? "opacity-100" : "opacity-0"}`}>
-        {children}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-700 ${
-        fading ? "pointer-events-none opacity-0" : "opacity-100"
-      }`}
-      style={{ background: "#0f0f0f" }}
-    >
-      <div className="relative flex flex-col items-center gap-6 px-6 pt-20">
-        <ThriftTag />
-        <BrandText messageIndex={messageIndex} />
+    <>
+      {children}
+      {loading && (
+        <div
+          className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-700 ${
+            fading ? "pointer-events-none opacity-0" : "opacity-100"
+          }`}
+          style={{ background: "#0f0f0f" }}
+        >
+          <div className="relative flex flex-col items-center gap-6 px-6 pt-20">
+            <ThriftTag />
+            <BrandText messageIndex={messageIndex} />
 
-        {/* Floating Badges */}
-        <div className="absolute loading-badge-left top-36 rotate-[-12deg]">
-          <div
-            style={{
-              background: "#ff6a00",
-              border: "3px solid #fff",
-              color: "#fff",
-              fontFamily: "Impact, Arial Black, sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 900,
-              letterSpacing: "1px",
-              padding: "4px 10px",
-              borderRadius: 6,
-              boxShadow: "3px 3px 0 #fff",
-              animation: "float 3.2s ease-in-out infinite",
-            }}
-          >
-            VINTAGE
+            {/* Floating Badges */}
+            <div className="absolute loading-badge-left top-36 rotate-[-12deg]">
+              <div
+                style={{
+                  background: "#ff6a00",
+                  border: "3px solid #fff",
+                  color: "#fff",
+                  fontFamily: "Impact, Arial Black, sans-serif",
+                  fontSize: "0.75rem",
+                  fontWeight: 900,
+                  letterSpacing: "1px",
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  boxShadow: "3px 3px 0 #fff",
+                  animation: "float 3.2s ease-in-out infinite",
+                }}
+              >
+                VINTAGE
+              </div>
+            </div>
+
+            <div className="absolute loading-badge-right bottom-6 rotate-[10deg]">
+              <div
+                style={{
+                  background: "#fff",
+                  border: "3px solid #ff6a00",
+                  color: "#ff6a00",
+                  fontFamily: "Impact, Arial Black, sans-serif",
+                  fontSize: "0.75rem",
+                  fontWeight: 900,
+                  letterSpacing: "1px",
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  boxShadow: "3px 3px 0 #ff6a00",
+                  animation: "float 2.7s ease-in-out infinite 0.4s",
+                }}
+              >
+                ONE OF ONE
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="absolute loading-badge-right bottom-6 rotate-[10deg]">
-          <div
-            style={{
-              background: "#fff",
-              border: "3px solid #ff6a00",
-              color: "#ff6a00",
-              fontFamily: "Impact, Arial Black, sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 900,
-              letterSpacing: "1px",
-              padding: "4px 10px",
-              borderRadius: 6,
-              boxShadow: "3px 3px 0 #ff6a00",
-              animation: "float 2.7s ease-in-out infinite 0.4s",
-            }}
-          >
-            ONE OF ONE
-          </div>
+          <style>{`
+            @keyframes float {
+              0%, 100% { transform: translateY(0) rotate(0deg); }
+              50% { transform: translateY(-8px) rotate(1deg); }
+            }
+            @keyframes tagSpin {
+              0% { transform: rotate(-8deg) scale(1); }
+              50% { transform: rotate(6deg) scale(1.03); }
+              100% { transform: rotate(-8deg) scale(1); }
+            }
+            @media (max-width: 480px) {
+              .loading-badge-left {
+                left: -8px !important;
+              }
+              .loading-badge-right {
+                right: -8px !important;
+              }
+            }
+            @media (min-width: 481px) {
+              .loading-badge-left {
+                left: -48px !important;
+              }
+              .loading-badge-right {
+                right: -48px !important;
+              }
+            }
+          `}</style>
         </div>
-      </div>
-
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-8px) rotate(1deg); }
-        }
-        @keyframes tagSpin {
-          0% { transform: rotate(-8deg) scale(1); }
-          50% { transform: rotate(6deg) scale(1.03); }
-          100% { transform: rotate(-8deg) scale(1); }
-        }
-        @media (max-width: 480px) {
-          .loading-badge-left {
-            left: -8px !important;
-          }
-          .loading-badge-right {
-            right: -8px !important;
-          }
-        }
-        @media (min-width: 481px) {
-          .loading-badge-left {
-            left: -48px !important;
-          }
-          .loading-badge-right {
-            right: -48px !important;
-          }
-        }
-      `}</style>
-    </div>
+      )}
+    </>
   );
 }
 

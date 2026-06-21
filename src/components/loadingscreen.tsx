@@ -81,7 +81,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
         <BrandText messageIndex={messageIndex} />
 
         {/* Floating Badges */}
-        <div className="absolute -left-12 top-36 rotate-[-12deg]">
+        <div className="absolute loading-badge-left top-36 rotate-[-12deg]">
           <div
             style={{
               background: "#ff6a00",
@@ -101,7 +101,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="absolute -right-12 bottom-6 rotate-[10deg]">
+        <div className="absolute loading-badge-right bottom-6 rotate-[10deg]">
           <div
             style={{
               background: "#fff",
@@ -131,6 +131,22 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
           0% { transform: rotate(-8deg) scale(1); }
           50% { transform: rotate(6deg) scale(1.03); }
           100% { transform: rotate(-8deg) scale(1); }
+        }
+        @media (max-width: 480px) {
+          .loading-badge-left {
+            left: -8px !important;
+          }
+          .loading-badge-right {
+            right: -8px !important;
+          }
+        }
+        @media (min-width: 481px) {
+          .loading-badge-left {
+            left: -48px !important;
+          }
+          .loading-badge-right {
+            right: -48px !important;
+          }
         }
       `}</style>
     </div>

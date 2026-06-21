@@ -53,11 +53,7 @@ function Shop() {
           <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            dm{" "}
-            <a className="text-primary underline" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
-              @mr.pizzastevefinds
-            </a>{" "}
-            to reserve before some other guy takes it. or just show up, idc
+            add to cart to reserve before some other guy takes it. or just show up, idc
           </p>
         </div>
 
@@ -137,7 +133,11 @@ const Card = memo(function Card({ p }: { p: Product }) {
             {p.size ? `size ${p.size}` : "one size"}
           </span>
           <span className={`font-display text-lg ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
-            {p.price ? `${p.price} EGP` : p.priceLabel}
+            {p.price ? (
+              <>
+                {p.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+              </>
+            ) : p.priceLabel}
           </span>
         </div>
       </div>

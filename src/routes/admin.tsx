@@ -103,6 +103,7 @@ type Tab = "products" | "orders" | "settings";
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>("products");
+  const [activeTab, setActiveTab] = useState<Tab>("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [announcement, setAnnouncement] = useState("");
@@ -146,19 +147,19 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       const prods = data.products || data || [];
       setProducts(prods);
       setDragOrder(prods.filter((p: Product) => p.status === "available"));
-    } catch {}
+    } catch { }
     try {
       const oRes = await apiFetch("/api/orders");
       if (oRes.ok) { const d = await oRes.json(); setOrders(d.orders || d || []); }
-    } catch {}
+    } catch { }
     try {
       const a = await fetch(`${API}/api/announcement`);
       if (a.ok) { const d = await a.json(); setAnnouncement(d.text || ""); setSavedAnnouncement(d.text || ""); }
-    } catch {}
+    } catch { }
     try {
       const s = await fetch(`${API}/api/settings`);
       if (s.ok) { const d = await s.json(); setWhatsappInput(d.whatsapp || ""); setSavedWhatsapp(d.whatsapp || ""); }
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -406,21 +407,19 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 const createdAt = order.createdAt || order.created_at;
 
                 return (
-                  <div key={order.id} className={`bg-zinc-900 border rounded-2xl p-6 space-y-4 transition-colors ${
-                    status === "completed" || status === "confirmed" ? "border-zinc-800 bg-zinc-900/40 opacity-75" :
-                    status === "cancelled" ? "border-red-950/40 bg-zinc-900/20 opacity-50" :
-                    "border-zinc-200/35 shadow-lg shadow-orange-500/5"
-                  }`}>
+                  <div key={order.id} className={`bg-zinc-900 border rounded-2xl p-6 space-y-4 transition-colors ${status === "completed" || status === "confirmed" ? "border-zinc-800 bg-zinc-900/40 opacity-75" :
+                      status === "cancelled" ? "border-red-950/40 bg-zinc-900/20 opacity-50" :
+                        "border-zinc-200/35 shadow-lg shadow-orange-500/5"
+                    }`}>
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-zinc-100 font-black text-sm">{order.id}</span>
                         <span className="text-zinc-500 text-xs">{createdAt ? new Date(createdAt).toLocaleString() : ""}</span>
                       </div>
-                      <span className={`text-xs font-black tracking-widest px-3 py-1 rounded-full border ${
-                        status === "completed" || status === "confirmed" ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
-                        status === "cancelled" ? "text-red-400 bg-red-500/10 border-red-500/20" :
-                        "text-zinc-100 bg-zinc-800/10 border-zinc-200/20"
-                      }`}>{status.toUpperCase()}</span>
+                      <span className={`text-xs font-black tracking-widest px-3 py-1 rounded-full border ${status === "completed" || status === "confirmed" ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
+                          status === "cancelled" ? "text-red-400 bg-red-500/10 border-red-500/20" :
+                            "text-zinc-100 bg-zinc-800/10 border-zinc-200/20"
+                        }`}>{status.toUpperCase()}</span>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4 bg-zinc-950/50 p-4 rounded-xl border border-zinc-800/60 text-sm">
@@ -459,14 +458,20 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                                 {item.size && <p className="text-zinc-500 text-xs">Size: {item.size}</p>}
                               </div>
                               <span className="text-zinc-100 font-mono font-bold">
-                                {item.price ? `${item.price} EGP` : item.priceLabel || "DM price"}
+                                {item.price ? (
+                                  <>
+                                    {item.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-zinc-500 ml-0.5">EGP</span>
+                                  </>
+                                ) : item.priceLabel || "DM price"}
                               </span>
                             </div>
                           ))}
                           {order.total > 0 && (
                             <div className="flex justify-between items-center px-4 py-3 bg-zinc-950/70">
                               <span className="text-zinc-400 font-bold">Total</span>
-                              <span className="text-zinc-100 font-black font-mono">{order.total} EGP</span>
+                              <span className="text-zinc-100 font-black font-mono">
+                                {order.total} <span className="text-[0.65em] font-sans font-bold tracking-wider text-zinc-500 ml-0.5">EGP</span>
+                              </span>
                             </div>
                           )}
                         </div>
@@ -593,11 +598,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-500 text-sm" />
                     <select value={form.tag} onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}
                       className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
-                      {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
+                      {["TEE", "JORTS", "ACCESSORIES", "DROP", "GRAIL", "OUTERWEAR", "PANTS", "SHIRT"].map(t => <option key={t}>{t}</option>)}
                     </select>
                     <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))}
                       className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
-                      {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                      {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
                     </select>
                     <textarea placeholder="Description (optional)" value={form.description}
                       onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -627,7 +632,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                         <label className="cursor-pointer w-11 h-11 border border-dashed border-zinc-700 hover:border-zinc-200 rounded-lg flex items-center justify-center transition-colors text-xs text-zinc-500 hover:text-zinc-100 flex-shrink-0 overflow-hidden">
                           {uploadingBulk[item.id] ? <span className="text-[10px]">...</span>
                             : item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover" alt="" />
-                            : <span className="text-xl font-light">+</span>}
+                              : <span className="text-xl font-light">+</span>}
                           <input type="file" accept="image/*" className="hidden" onChange={e => handleBulkImgUpload(e, item.id)} />
                         </label>
                         <input placeholder="Item Name *" value={item.name}
@@ -641,11 +646,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-xs" />
                         <select value={item.tag} onChange={e => updateBulkItem(item.id, { tag: e.target.value })}
                           className="w-full md:w-28 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
-                          {["TEE","JORTS","ACCESSORIES","DROP","GRAIL","OUTERWEAR","PANTS","SHIRT"].map(t => <option key={t}>{t}</option>)}
+                          {["TEE", "JORTS", "ACCESSORIES", "DROP", "GRAIL", "OUTERWEAR", "PANTS", "SHIRT"].map(t => <option key={t}>{t}</option>)}
                         </select>
                         <select value={item.condition} onChange={e => updateBulkItem(item.id, { condition: e.target.value })}
                           className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
-                          {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                          {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
                         </select>
                       </div>
                     ))}
@@ -757,12 +762,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 <div className="space-y-3 opacity-60">
                   {filteredSold.map(p => (
                     <AdminRow key={p.id} product={p} uploading={uploading}
-                      bulkMode={false} bulkSelected={false} onBulkToggle={() => {}}
+                      bulkMode={false} bulkSelected={false} onBulkToggle={() => { }}
                       onMainImg={e => handleMainImg(e, p.id)}
                       onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
                       onRemoveImg={i => removeExtraImg(p.id, p.images || [], i)}
                       onToggle={() => toggleStatus(p.id, p.status)}
-                      onQuickSell={() => {}}
+                      onQuickSell={() => { }}
                       onDuplicate={() => duplicateProduct(p)}
                       onDelete={() => deleteProduct(p.id)}
                       onSave={async (price, label, condition, description) => {
@@ -809,7 +814,11 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             {p.tag && <span className="text-xs text-zinc-500">{p.tag}</span>}
             {p.size && <span className="text-xs text-zinc-600">{p.size}</span>}
-            {p.price && <span className="text-xs text-zinc-100 font-bold">{p.price} EGP</span>}
+            {p.price && (
+              <span className="text-xs text-zinc-100 font-bold">
+                {p.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-zinc-500 ml-0.5">EGP</span>
+              </span>
+            )}
             {p.condition && <span className="text-xs text-zinc-600">{p.condition}</span>}
             <span className="text-xs text-zinc-700">{allImgs.length} img{allImgs.length !== 1 ? "s" : ""}</span>
           </div>
@@ -844,7 +853,7 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-zinc-200 placeholder-zinc-600" />
             <select value={condition} onChange={e => setCondition(e.target.value)}
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-zinc-200">
-              {["Deadstock","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+              {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
           <textarea placeholder="Description" value={desc} onChange={e => setDesc(e.target.value)}

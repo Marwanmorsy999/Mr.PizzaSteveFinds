@@ -103,14 +103,20 @@ function CheckoutPage() {
                 {item.size && <p className="text-zinc-600 text-xs">Size: {item.size}</p>}
               </div>
               <span className="text-zinc-100 font-black text-sm flex-shrink-0">
-                {item.price ? `${item.price} EGP` : "—"}
+                {item.price ? (
+                  <>
+                    {item.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                  </>
+                ) : "—"}
               </span>
             </div>
           ))}
           {cart.total > 0 && (
             <div className="border-t border-zinc-800 mt-3 pt-3 flex justify-between">
               <span className="text-zinc-400 text-sm">Total</span>
-              <span className="text-white font-black">{cart.total} EGP</span>
+              <span className="text-white font-black">
+                {cart.total} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+              </span>
             </div>
           )}
         </div>

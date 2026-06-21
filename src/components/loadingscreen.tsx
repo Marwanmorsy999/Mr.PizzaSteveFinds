@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 
 const MESSAGES = [
   "Rummaging for gems...",
@@ -19,12 +20,19 @@ const TIMINGS = {
 };
 
 export function LoadingScreen({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith("/admin");
+  const hasLoadedBefore = typeof window !== "undefined" && window.sessionStorage.getItem("pizza-steve-loaded") === "true";
+  const shouldSkipLoading = isAdminPage || hasLoadedBefore;
+
+  const [loading, setLoading] = useState(!shouldSkipLoading);
   const [fading, setFading] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(shouldSkipLoading);
 
   useEffect(() => {
+    if (shouldSkipLoading) return;
+
     let hideTimer: number;
     let showTimer: number;
 
@@ -36,6 +44,9 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
       setFading(true);
       hideTimer = window.setTimeout(() => {
         setLoading(false);
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem("pizza-steve-loaded", "true");
+        }
         showTimer = window.setTimeout(() => {
           setShowContent(true);
         }, TIMINGS.contentDelay);
@@ -48,7 +59,7 @@ export function LoadingScreen({ children }: { children: React.ReactNode }) {
       window.clearTimeout(hideTimer);
       window.clearTimeout(showTimer);
     };
-  }, []);
+  }, [shouldSkipLoading]);
 
   if (!loading) {
     return (

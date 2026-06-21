@@ -49,7 +49,11 @@ function CartPage() {
                   <p className="font-bold text-sm line-clamp-1">{item.name}</p>
                   {item.size && <p className="text-zinc-500 text-xs">size: {item.size}</p>}
                   <p className="text-zinc-100 font-black text-sm mt-0.5">
-                    {item.price ? `${item.price} EGP` : item.priceLabel || "dm for price"}
+                    {item.price ? (
+                      <>
+                        {item.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                      </>
+                    ) : item.priceLabel || "dm for price"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -70,7 +74,11 @@ function CartPage() {
             <div className="flex justify-between items-center mb-2">
               <span className="text-zinc-400 text-sm">{cart.count} item{cart.count !== 1 ? "s" : ""} in ur cart</span>
               <span className="text-white font-bold">
-                {cart.total > 0 ? `${cart.total} EGP` : "price on request"}
+                {cart.total > 0 ? (
+                  <>
+                    {cart.total} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                  </>
+                ) : "price on request"}
               </span>
             </div>
             {cart.items.some(i => !i.price) && (

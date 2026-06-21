@@ -119,7 +119,13 @@ function Home() {
                   <div className="mt-1 line-clamp-2 font-display text-sm uppercase">{p.name}</div>
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{p.size ? `size ${p.size}` : "one size"}</span>
-                    <span className="font-display text-base text-primary">{p.price ? `${p.price} EGP` : p.priceLabel}</span>
+                    <span className="font-display text-base text-primary">
+                      {p.price ? (
+                        <>
+                          {p.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                        </>
+                      ) : p.priceLabel}
+                    </span>
                   </div>
                 </div>
               </Link>

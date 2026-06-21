@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useCart } from "../context/CartContext";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const IG = "https://ig.me/m/mr.pizzastevefinds";
@@ -87,6 +88,7 @@ function SizeGuideModal({ onClose }: { onClose: () => void }) {
 
 function ProductPage() {
   const { id } = Route.useParams();
+  const cart = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,6 +96,22 @@ function ProductPage() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [zoom, setZoom] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const isInCart = product ? cart.items.some((item) => item.id === product.id) : false;
+
+  function handleAddToCart() {
+    if (product) {
+      cart.add({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        priceLabel: product.priceLabel,
+        imageUrl: product.imageUrl,
+        size: product.size,
+        emoji: product.emoji,
+      });
+    }
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -209,7 +227,16 @@ function ProductPage() {
             {/* Price + stock indicator */}
             <div className="flex items-center gap-4 mb-2">
               <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-zinc-100"}`}>
-                {product.status === "sold" ? "SOLD" : product.price ? `${product.price} EGP` : product.priceLabel || "DM for price"}
+                {product.status === "sold" ? (
+                  "SOLD"
+                ) : product.price ? (
+                  <>
+                    {product.price}{" "}
+                    <span className="text-[0.6em] font-sans font-bold tracking-wider text-muted-foreground ml-1">EGP</span>
+                  </>
+                ) : (
+                  product.priceLabel || "DM for price"
+                )}
               </span>
             </div>
 
@@ -248,10 +275,17 @@ function ProductPage() {
 
             {/* CTA */}
             {product.status === "available" ? (
-              <a href={igLink} target="_blank" rel="noreferrer"
-                className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
-                I WANT THIS → DM TO RESERVE
-              </a>
+              isInCart ? (
+                <Link to="/cart"
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3 block">
+                  ADDED! VIEW CART →
+                </Link>
+              ) : (
+                <button onClick={handleAddToCart}
+                  className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                  ADD TO CART
+                </button>
+              )
             ) : (
               <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 tracking-widest text-sm mb-3">
                 GONE 💀 (someone was faster than u)
@@ -331,7 +365,16 @@ function ProductPage() {
                       : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
                   </div>
                   <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
-                  <p className="text-zinc-100 text-xs font-black">{p.price ? `${p.price} EGP` : "DM"}</p>
+                  <p className="text-zinc-100 text-xs font-black">
+                    {p.price ? (
+                      <>
+                        {p.price}{" "}
+                        <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                      </>
+                    ) : (
+                      "DM"
+                    )}
+                  </p>
                 </Link>
               ))}
             </div>

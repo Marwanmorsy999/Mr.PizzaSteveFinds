@@ -50,16 +50,23 @@ export function Header() {
   useEffect(() => {
     const audio = getAudio();
 
+    // Sync state with singleton audio instance
+    setPlaying(!audio.paused);
+    setVolume(audio.volume);
+
     // Start on first interaction
     const play = () => {
       if (audioStarted) return;
-      audio.play().catch(() => {});
-      audioStarted = true;
-      setPlaying(true);
+      audio.play().then(() => {
+        audioStarted = true;
+        setPlaying(true);
+      }).catch(() => {});
     };
 
-    document.addEventListener("click", play, { once: true });
-    document.addEventListener("touchend", play, { once: true });
+    if (!audioStarted) {
+      document.addEventListener("click", play, { once: true });
+      document.addEventListener("touchend", play, { once: true });
+    }
 
     // Stop music when tab/window closes
     const handleUnload = () => {
@@ -89,7 +96,7 @@ export function Header() {
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     const audio = getAudio();
-    if (playing) {
+    if (!audio.paused) {
       audio.pause();
       setPlaying(false);
     } else {

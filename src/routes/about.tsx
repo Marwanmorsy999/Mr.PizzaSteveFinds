@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Header, Footer, Marquee } from "@/components/site-chrome";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full overflow-x-hidden">
       <Header />
       <Marquee text="ZAMALEK · CAIRO · 3PM - 11PM · COME THRU ·" />
 

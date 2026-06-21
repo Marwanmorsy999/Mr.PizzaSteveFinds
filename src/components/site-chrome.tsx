@@ -54,20 +54,6 @@ export function Header() {
     setPlaying(!audio.paused);
     setVolume(audio.volume);
 
-    // Start on first interaction
-    const play = () => {
-      if (audioStarted) return;
-      audio.play().then(() => {
-        audioStarted = true;
-        setPlaying(true);
-      }).catch(() => {});
-    };
-
-    if (!audioStarted) {
-      document.addEventListener("click", play, { once: true });
-      document.addEventListener("touchend", play, { once: true });
-    }
-
     // Stop music when tab/window closes
     const handleUnload = () => {
       if (globalAudio) {
@@ -80,8 +66,6 @@ export function Header() {
     window.addEventListener("beforeunload", handleUnload);
 
     return () => {
-      document.removeEventListener("click", play);
-      document.removeEventListener("touchend", play);
       window.removeEventListener("beforeunload", handleUnload);
     };
   }, []);

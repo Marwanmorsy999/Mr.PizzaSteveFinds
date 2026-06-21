@@ -100,15 +100,16 @@ export function InstagramFeed() {
             </a>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full overflow-hidden">
             {POST_URLS.map((url) => (
-              <blockquote
-                key={url}
-                className="instagram-media !m-0 !min-w-0 !w-full !max-w-full"
-                data-instgrm-permalink={url}
-                data-instgrm-version="14"
-                style={{ background: "#000", border: 0 }}
-              />
+              <div key={url} className="w-full overflow-hidden flex justify-center">
+                <blockquote
+                  className="instagram-media !m-0 !min-w-0 !w-full !max-w-full"
+                  data-instgrm-permalink={url}
+                  data-instgrm-version="14"
+                  style={{ background: "#000", border: 0 }}
+                />
+              </div>
             ))}
           </div>
         )}

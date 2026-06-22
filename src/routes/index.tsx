@@ -75,45 +75,61 @@ function Home() {
     <div className="min-h-screen">
       <Header />
 
-      {/* Hero with video background */}
-      <section className="relative overflow-hidden border-b border-border" style={{ minHeight: "90vh" }}>
-        <video
-          src="/opening.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: 0.5 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
-        <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:py-32">
-          <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
-            yeah we are open rn · 3pm - 11pm
+      {/* Hero Bento Grid */}
+      <section className="mx-auto max-w-7xl px-4 py-4 sm:py-8" style={{ height: "calc(100vh - 80px)", minHeight: "600px" }}>
+        <div className="grid grid-cols-6 md:grid-cols-12 gap-3 md:gap-4 h-full auto-rows-fr">
+          
+          {/* Main Brand */}
+          <div className="col-span-6 md:col-span-8 row-span-2 md:row-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:p-10 flex flex-col justify-end relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
+            <video
+              src="/opening.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="relative z-20">
+              <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground mb-6 shadow-lg rounded-full w-max">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
+                yeah we are open rn
+              </div>
+              <h1 className="font-display text-5xl sm:text-7xl md:text-8xl leading-[0.85]">
+                Mr. Pizza<br />
+                <span className="text-primary">Steve</span> Finds<span className="text-secondary">.</span>
+              </h1>
+              <p className="mt-4 max-w-md text-sm sm:text-base text-zinc-400">
+                Loud vintage. Bolder thrift. Curated by Steve dos Santos out of a tiny shop on Hassan Assem - Zamalek's worst-kept secret.
+              </p>
+            </div>
           </div>
-          <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
-            Mr. Pizza<br />
-            <span className="text-primary">Steve</span><br />
-            Finds<span className="text-secondary">.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-            Loud vintage. Bolder thrift. Curated by Steve dos Santos out of a tiny shop on Hassan Assem - Zamalek's worst-kept secret. Don't tell everyone.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/shop" className="inline-flex items-center gap-2 bg-primary px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary">
-              shop the damn drop
-            </Link>
-            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-2 border border-border px-6 py-3 font-display text-sm uppercase tracking-widest text-foreground transition hover:border-primary hover:text-primary">
-              @mr.pizzastevefinds
-            </a>
+
+          {/* Shop */}
+          <div className="col-span-3 md:col-span-4 row-span-1 bg-primary rounded-3xl p-6 flex flex-col justify-center items-center text-center transition-transform hover:scale-[0.98] cursor-pointer relative overflow-hidden">
+            <Link to="/shop" className="absolute inset-0 z-10" />
+            <span className="font-display text-2xl md:text-4xl uppercase text-primary-foreground leading-none">Shop<br/>The<br/>Drop</span>
           </div>
-          <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-3">
-            <Stat label="where tf are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
-            <Stat label="hours" value="3PM - 11PM" sub="yes every damn day" />
-            <Stat label="the vibe" value="Streetwear x Thrift" sub="pizza steve energy only" />
+
+          {/* Instagram */}
+          <div className="col-span-3 md:col-span-4 row-span-1 border border-zinc-800 bg-card rounded-3xl p-6 flex flex-col justify-center items-center text-center transition-colors hover:border-primary cursor-pointer relative group overflow-hidden">
+            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="absolute inset-0 z-10" />
+            <span className="font-display text-lg md:text-2xl uppercase group-hover:text-primary transition-colors">@mr.pizza<br/>stevefinds</span>
           </div>
+
+          {/* Stats */}
+          <div className="col-span-6 md:col-span-4 row-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-4 md:p-6 flex flex-col justify-center">
+            <Stat label="where tf are we" value="30 Hassan Assem" sub="Zamalek, Cairo" />
+          </div>
+          
+          <div className="col-span-3 md:col-span-4 row-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-4 md:p-6 flex flex-col justify-center">
+            <Stat label="hours" value="3PM - 11PM" sub="every damn day" />
+          </div>
+          
+          <div className="col-span-3 md:col-span-4 row-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-4 md:p-6 flex flex-col justify-center">
+            <Stat label="the vibe" value="Street x Thrift" sub="pizza steve energy" />
+          </div>
+
         </div>
       </section>
 

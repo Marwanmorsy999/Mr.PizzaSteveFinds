@@ -53,6 +53,12 @@ function CheckoutPage() {
         }),
       });
 
+      if (res.status === 409) {
+        setError("Sorry — someone just grabbed that. It's gone 💀 Head back to the shop to see what's still available.");
+        setLoading(false);
+        return;
+      }
+
       const data = await res.json();
       if (!data.success) throw new Error("Order failed");
 

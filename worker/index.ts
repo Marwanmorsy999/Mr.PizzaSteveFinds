@@ -397,31 +397,56 @@ export default {
       const body: any = await request.json();
       if (!body.customerName || !body.customerPhone || !body.items || body.items.length === 0)
         return new Response("Invalid order payload", { status: 400, headers: CORS });
-      const productIds = body.items.map((i: any) => i.productId);
-      const placeholders = productIds.map(() => "?").join(",");
-      const { results } = await env.pizzasteve_db
-        .prepare(`SELECT id, status FROM products WHERE id IN (${placeholders})`).bind(...productIds).all();
-      const soldItems = results.filter((r: any) => r.status === "sold");
-      if (soldItems.length > 0) {
+
+      // Build status-flip statements for each item
+      const flipStmts = body.items.map((item: any) =>
+        env.pizzasteve_db.prepare("UPDATE products SET status = 'sold' WHERE id = ? AND status = 'available'").bind(item.productId)
+      );
+
+      // Execute status flips in a batch
+      const flipResults = await env.pizzasteve_db.batch(flipStmts);
+
+      const failedIds: string[] = [];
+      const successfulIds: string[] = [];
+
+      for (let i = 0; i < flipResults.length; i++) {
+        if (flipResults[i].meta.changes === 0) {
+          failedIds.push(body.items[i].productId);
+        } else {
+          successfulIds.push(body.items[i].productId);
+        }
+      }
+
+      // If any item failed to flip (sold out or not found), roll back the successful ones and fail
+      if (failedIds.length > 0) {
+        if (successfulIds.length > 0) {
+          const rollbackStmts = successfulIds.map(id =>
+            env.pizzasteve_db.prepare("UPDATE products SET status = 'available' WHERE id = ?").bind(id)
+          );
+          await env.pizzasteve_db.batch(rollbackStmts);
+        }
         return new Response(JSON.stringify({
           success: false,
-          error: "Some items are already sold: " + soldItems.map((s: any) => s.id).join(", ")
-        }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
+          error: "sold_out",
+          soldOutIds: failedIds
+        }), { status: 409, headers: { ...CORS, "Content-Type": "application/json" } });
       }
+
+      // All items were successfully marked as sold. Now insert the order and order items.
       const orderId = `PS-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-      const stmts = [
+      const insertStmts = [
         env.pizzasteve_db.prepare(
           "INSERT INTO orders (id, customer_name, customer_phone, address, notes, pickup, total) VALUES (?, ?, ?, ?, ?, ?, ?)"
         ).bind(orderId, body.customerName, body.customerPhone, body.address || null,
           body.notes || null, body.pickup ? 1 : 0, body.total || 0)
       ];
       for (const item of body.items) {
-        stmts.push(env.pizzasteve_db.prepare(
+        insertStmts.push(env.pizzasteve_db.prepare(
           "INSERT INTO order_items (order_id, product_id, name, size, price, price_label) VALUES (?, ?, ?, ?, ?, ?)"
         ).bind(orderId, item.productId, item.name, item.size || null, item.price || null, item.priceLabel || null));
-        stmts.push(env.pizzasteve_db.prepare("UPDATE products SET status = 'sold' WHERE id = ?").bind(item.productId));
       }
-      await env.pizzasteve_db.batch(stmts);
+
+      await env.pizzasteve_db.batch(insertStmts);
       return new Response(JSON.stringify({ success: true, orderId }), {
         headers: { ...CORS, "Content-Type": "application/json" },
       });

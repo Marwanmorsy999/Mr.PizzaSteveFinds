@@ -106,3 +106,17 @@
 .tilt-l { transform: rotate(-2deg); }
 .tilt-r { transform: rotate(2deg); }
 .tilt-l:hover, .tilt-r:hover { transform: rotate(0deg); transition: transform 0.2s ease; }
+
+@utility animate-fade-slide-up {
+  animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

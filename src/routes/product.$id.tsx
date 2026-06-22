@@ -129,7 +129,7 @@ function ProductPage() {
 
   if (loading) return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="w-10 h-10 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-2 border-zinc-800 border-t-orange-400 rounded-full animate-spin" />
     </div>
   );
 
@@ -159,9 +159,9 @@ function ProductPage() {
       <div className="max-w-5xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-zinc-500 mb-8 tracking-widest">
-          <Link to="/" className="hover:text-zinc-100 transition-colors">HOME</Link>
+          <Link to="/" className="hover:text-zinc-100 active:scale-95 transition-colors">HOME</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-zinc-100 transition-colors">SHOP</Link>
+          <Link to="/shop" className="hover:text-zinc-100 active:scale-95 transition-colors">SHOP</Link>
           <span>/</span>
           <span className="text-zinc-300 truncate max-w-[200px]">{product.name}</span>
         </nav>
@@ -184,7 +184,7 @@ function ProductPage() {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
-                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-zinc-200" : "border-zinc-700 hover:border-zinc-500"}`}>
+                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors active:scale-95 ${activeImg === i ? "border-zinc-200" : "border-zinc-700 hover:border-zinc-500"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -204,7 +204,7 @@ function ProductPage() {
                 )}
               </div>
               {/* Share button */}
-              <button onClick={copyLink} className="text-zinc-500 hover:text-zinc-100 text-xs tracking-widest transition-colors flex-shrink-0">
+              <button onClick={copyLink} className="text-zinc-500 hover:text-zinc-100 active:scale-95 text-xs tracking-widest transition-colors flex-shrink-0">
                 {copied ? "✓ COPIED" : "SHARE"}
               </button>
             </div>
@@ -241,7 +241,7 @@ function ProductPage() {
                   <span className="text-zinc-500 text-xs tracking-widest w-24">SIZE</span>
                   <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
                   <button onClick={() => setShowSizeGuide(true)}
-                    className="text-xs text-zinc-100 hover:text-zinc-100 underline transition-colors tracking-widest">
+                    className="text-xs text-zinc-100 hover:text-zinc-100 active:scale-95 underline transition-colors tracking-widest">
                     SIZE GUIDE
                   </button>
                 </div>
@@ -264,12 +264,12 @@ function ProductPage() {
             {product.status === "available" ? (
               isInCart ? (
                 <Link to="/cart"
-                  className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3 block">
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3 block">
                   ADDED! VIEW CART →
                 </Link>
               ) : (
                 <button onClick={handleAddToCart}
-                  className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
                   ADD TO CART
                 </button>
               )
@@ -280,7 +280,7 @@ function ProductPage() {
             )}
 
             <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="w-full border border-zinc-700 hover:border-zinc-200 text-zinc-400 hover:text-zinc-100 font-bold text-center py-3 tracking-widest transition-colors text-sm">
+              className="w-full border border-zinc-700 hover:border-zinc-200 active:scale-95 text-zinc-400 hover:text-zinc-100 font-bold text-center py-3 tracking-widest transition-colors text-sm">
               FOLLOW @mr.pizzastevefinds
             </a>
 
@@ -312,7 +312,7 @@ function ProductPage() {
             </p>
           </div>
           <button onClick={() => setShowSizeGuide(true)}
-            className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white font-black px-5 py-2 text-xs tracking-widest transition-colors">
+            className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white active:scale-95 font-black px-5 py-2 text-xs tracking-widest transition-colors">
             VIEW SIZE GUIDE
           </button>
         </div>
@@ -323,14 +323,14 @@ function ProductPage() {
           <div className="mt-16">
             <div className="flex items-baseline justify-between mb-6">
               <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
-              <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 text-xs font-bold tracking-widest transition-colors">
+              <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 active:scale-95 text-xs font-bold tracking-widest transition-colors">
                 VIEW ALL →
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {related.map(p => (
-                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group">
-                  <div className="aspect-square bg-zinc-900 border border-zinc-800 overflow-hidden mb-2 hover:border-zinc-600 transition-colors">
+                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
+                  <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
                     {p.imageUrl
                       ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
                       : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}

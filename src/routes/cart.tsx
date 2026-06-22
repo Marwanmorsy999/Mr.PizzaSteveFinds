@@ -16,7 +16,7 @@ function CartPage() {
         <h1 className="text-2xl font-black tracking-widest mb-2">YOUR CART IS EMPTY</h1>
         <p className="text-zinc-500 text-sm mb-2">bro what are you doing, go find something fire.</p>
         <p className="text-zinc-600 text-xs mb-8">seriously, the rack is waiting for you</p>
-        <Link to="/shop" className="bg-primary hover:bg-secondary text-primary-foreground font-black px-8 py-4 tracking-widest transition-colors text-sm">
+        <Link to="/shop" className="bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black px-8 py-4 tracking-widest transition-colors text-sm">
           BROWSE THE FINDS
         </Link>
       </div>
@@ -31,7 +31,7 @@ function CartPage() {
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-black tracking-widest">YOUR CART</h1>
-            <button onClick={cart.clear} className="text-xs text-zinc-600 hover:text-red-400 transition-colors tracking-widest">
+            <button onClick={cart.clear} className="text-xs text-zinc-600 hover:text-red-400 active:scale-95 transition-colors tracking-widest">
               nuke it all
             </button>
           </div>
@@ -46,7 +46,7 @@ function CartPage() {
                     : <div className="w-full h-full flex items-center justify-center text-2xl">{item.emoji}</div>}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm line-clamp-1">{item.name}</p>
+                  <p className="font-bold text-sm line-clamp-2">{item.name}</p>
                   {item.size && <p className="text-zinc-500 text-xs">size: {item.size}</p>}
                   <p className="text-zinc-100 font-black text-sm mt-0.5">
                     {item.price ? (
@@ -58,11 +58,11 @@ function CartPage() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <Link to="/product/$id" params={{ id: item.id }}
-                    className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
+                    className="text-xs text-zinc-600 hover:text-zinc-400 active:scale-95 transition-colors">
                     view
                   </Link>
                   <button onClick={() => cart.remove(item.id)}
-                    className="w-7 h-7 rounded-lg border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 transition-colors flex items-center justify-center text-xs">
+                    className="w-7 h-7 rounded-lg border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 active:scale-95 transition-colors flex items-center justify-center text-xs">
                     ✕
                   </button>
                 </div>
@@ -90,11 +90,11 @@ function CartPage() {
           </div>
 
           <button onClick={() => navigate({ to: "/checkout" })}
-            className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black py-4 tracking-widest transition-all text-sm">
+            className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black py-4 tracking-widest transition-all text-sm">
             YEAH I WANT THIS
           </button>
           <Link to="/shop"
-            className="block text-center mt-4 text-zinc-600 hover:text-zinc-400 text-sm transition-colors">
+            className="block text-center mt-4 text-zinc-600 hover:text-zinc-400 active:scale-95 text-sm transition-colors">
             keep looking, there's more good stuff
           </Link>
         </div>

@@ -40,7 +40,7 @@ function ProductPage() {
     fetch(`${API}/api/products/${id}`).then(r => r.json()).then(d => { setProduct(d); setLoading(false); }).catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-10 h-10 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-10 h-10 border-2 border-zinc-800 border-t-orange-400 rounded-full animate-spin" /></div>;
   if (!product) return <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center"><p>item not found 😔 probably sold already</p></div>;
 
   const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
@@ -51,7 +51,7 @@ function ProductPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
       <div className="max-w-5xl mx-auto">
-        <Link to="/shop" className="text-zinc-500 hover:text-zinc-100 text-sm tracking-widest mb-8 inline-block transition-colors">
+        <Link to="/shop" className="text-zinc-500 hover:text-zinc-100 active:scale-95 text-sm tracking-widest mb-8 inline-block transition-colors">
           BACK TO SHOP
         </Link>
 
@@ -67,7 +67,7 @@ function ProductPage() {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${activeImg === i ? "border-zinc-200" : "border-zinc-700"}`}>
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors active:scale-95 ${activeImg === i ? "border-zinc-200" : "border-zinc-700"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -117,12 +117,12 @@ function ProductPage() {
             {product.status === "available" ? (
               isInCart ? (
                 <Link to="/cart"
-                  className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm block">
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm block">
                   ADDED! VIEW CART →
                 </Link>
               ) : (
                 <button onClick={handleAddToCart}
-                  className="w-full bg-primary hover:bg-secondary text-primary-foreground font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm">
+                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-4 rounded-xl tracking-widest transition-colors text-sm">
                   ADD TO CART
                 </button>
               )

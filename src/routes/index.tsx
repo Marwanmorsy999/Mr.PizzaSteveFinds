@@ -167,7 +167,6 @@ function Home() {
           <div className="flex flex-wrap items-end justify-between mb-8 gap-4">
             <div>
               <h2 className="text-3xl sm:text-5xl font-display uppercase">Customer Reviews</h2>
-              <p className="mt-1 text-sm text-muted-foreground">real feedback from real people (no cap)</p>
             </div>
             <button
               onClick={() => setShowForm(!showForm)}
@@ -246,7 +245,7 @@ function Home() {
             </div>
           ) : (
             <div className="text-center py-12 bg-zinc-900/30 border border-dashed border-zinc-800 rounded-2xl">
-              <p className="text-muted-foreground text-sm">No reviews yet. Be the first to leave one fr!</p>
+              <p className="text-muted-foreground text-sm">No reviews yet.</p>
             </div>
           )}
         </div>

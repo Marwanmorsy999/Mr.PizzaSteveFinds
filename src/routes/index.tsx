@@ -85,7 +85,7 @@ function Home() {
       <section className="relative min-h-[100svh] w-full overflow-hidden">
         {/* Background photo — right-biased so market scene stays visible */}
         <img
-          src="https://res.cloudinary.com/dnggmrgmu/image/upload/w_1200,f_auto,q_auto/market.jpg"
+          src="https://res.cloudinary.com/dnggmrgmu/image/upload/w_1200,f_auto,q_auto/v1782221"
           alt="Mr. Pizza Steve thrift market stand"
           className="absolute inset-0 h-full w-full object-cover object-right"
           fetchPriority="high"
@@ -176,7 +176,7 @@ function Home() {
                       <img
                         src={cloudImg(p.imageUrl ?? '')}
                         alt={p.name}
-                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        className="h-full w-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <span className="text-7xl transition-transform duration-300 group-hover:scale-105">

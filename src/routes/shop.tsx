@@ -126,7 +126,7 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
         {p.tag}
       </div>
 
-      <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-[#0a0a0a] border border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+      <div className="relative grid aspect-[3/4] place-items-center overflow-hidden bg-[#0a0a0a] border border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
         {p.imageUrl ? (
           <img
             src={cloudImg(p.imageUrl ?? '')}

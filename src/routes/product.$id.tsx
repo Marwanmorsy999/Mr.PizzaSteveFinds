@@ -22,11 +22,12 @@ const CONDITION_COLORS: Record<string, string> = {
 
 export const Route = createFileRoute("/product/$id")({ component: ProductPage });
 
-function ProductPage() {
 function cloudImg(url: string, width = 600) {
   if (!url || !url.includes("cloudinary.com")) return url;
   return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
 }
+
+function ProductPage() {
   const { id } = Route.useParams();
   const cart = useCart();
   const [product, setProduct] = useState<Product | null>(null);
@@ -207,7 +208,7 @@ function cloudImg(url: string, width = 600) {
             {product.status === "available" ? (
               isInCart ? (
                 <Link to="/cart"
-                  onClick={() => setQty(1)}
+                  onClick={() => {}}
                   className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-3 tracking-widest transition-colors text-xs mb-2 block">
                   ADDED! VIEW CART →
                 </Link>

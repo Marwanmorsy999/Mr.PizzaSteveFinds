@@ -11,17 +11,6 @@ interface Product {
   images?: string[]; condition?: string; description?: string;
 }
 
-// ── Size guide data ─────────────────────────────────────────────────────────
-const SIZE_GUIDE = [
-  { label: "XS", chest: "32–34″", shoulder: "16″", length: "26″" },
-  { label: "S",  chest: "35–37″", shoulder: "17″", length: "27″" },
-  { label: "M",  chest: "38–40″", shoulder: "18″", length: "28″" },
-  { label: "L",  chest: "41–43″", shoulder: "19″", length: "29″" },
-  { label: "XL", chest: "44–46″", shoulder: "20″", length: "30″" },
-  { label: "XXL",chest: "47–50″", shoulder: "21″", length: "31″" },
-];
-
-
 // ── Condition badge colors ───────────────────────────────────────────────────
 const CONDITION_COLORS: Record<string, string> = {
   "Deadstock": "text-emerald-400 bg-emerald-900/40 border-emerald-700",
@@ -33,46 +22,6 @@ const CONDITION_COLORS: Record<string, string> = {
 
 export const Route = createFileRoute("/product/$id")({ component: ProductPage });
 
-
-function SizeGuideModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4" onClick={onClose}>
-      <div className="bg-zinc-900 border border-zinc-700 max-w-lg w-full p-6 rounded-xl" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-white font-black tracking-widest text-sm">VINTAGE SIZE GUIDE</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl leading-none">×</button>
-        </div>
-        <p className="text-zinc-400 text-xs mb-4 leading-relaxed">
-          Vintage sizing runs differently from modern tags. Always trust the measurements below over the label — a vintage "L" often fits like a modern "M".
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-zinc-700">
-                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">SIZE</th>
-                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">CHEST</th>
-                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2 pr-4">SHOULDER</th>
-                <th className="text-left text-zinc-400 text-xs tracking-widest pb-2">LENGTH</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SIZE_GUIDE.map(row => (
-                <tr key={row.label} className="border-b border-zinc-800">
-                  <td className="py-2 pr-4 font-black text-white">{row.label}</td>
-                  <td className="py-2 pr-4 text-zinc-300">{row.chest}</td>
-                  <td className="py-2 pr-4 text-zinc-300">{row.shoulder}</td>
-                  <td className="py-2 text-zinc-300">{row.length}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-zinc-500 text-xs mt-4">Measurements in inches. DM Steve if you need exact measurements on a specific piece.</p>
-      </div>
-    </div>
-  );
-}
-
 function ProductPage() {
   const { id } = Route.useParams();
   const cart = useCart();
@@ -80,9 +29,7 @@ function ProductPage() {
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
-  const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [zoom, setZoom] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const isInCart = product ? cart.items.some((item) => item.id === product.id) : false;
 
@@ -121,12 +68,6 @@ function ProductPage() {
       .catch(() => setLoading(false));
   }, [id]);
 
-  function copyLink() {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
   if (loading) return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
       <div className="w-10 h-10 border-2 border-zinc-800 border-t-orange-400 rounded-full animate-spin" />
@@ -147,8 +88,6 @@ function ProductPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      {showSizeGuide && <SizeGuideModal onClose={() => setShowSizeGuide(false)} />}
-
       {/* Zoom overlay */}
       {zoom && allImages.length > 0 && (
         <div className="fixed inset-0 z-50 bg-black flex items-center justify-center cursor-zoom-out" onClick={() => setZoom(false)}>
@@ -178,24 +117,6 @@ function ProductPage() {
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </Link>
-
-              {/* share replaces the text "SHARE" button */}
-              <button
-                onClick={(e) => { e.stopPropagation(); copyLink(); }}
-                className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-black/55 active:scale-90 transition-transform"
-                aria-label="Copy link to this item"
-              >
-                {copied ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" />
-                    <path d="M8.2 10.7l7.6-4.4M8.2 13.3l7.6 4.4" />
-                  </svg>
-                )}
-              </button>
             </div>
 
             {allImages.length > 1 && (
@@ -212,10 +133,6 @@ function ProductPage() {
 
           {/* ── Info ── */}
           <div className="flex flex-col px-4 pt-5 md:px-0 md:pt-0">
-            {product.tag && (
-              <p className="text-zinc-500 text-xs tracking-widest mb-2">{product.tag}</p>
-            )}
-
             {product.condition && (
               <span className={`inline-block self-start text-xs font-bold px-2 py-0.5 border mb-3 ${condColorClass}`}>
                 {product.condition}
@@ -242,18 +159,14 @@ function ProductPage() {
             {product.status === "available" && (
               <p className="text-xs text-zinc-100 font-bold tracking-widest mb-5 flex items-center gap-1.5">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                ONLY 1 LEFT — 1 OF 1 (don't sleep on this)
+                ONLY 1 LEFT
               </p>
             )}
 
-            {/* Size (condition is shown as the badge above, no separate row) */}
+            {/* Size */}
             {product.size && (
               <div className="flex items-center gap-3 mb-5">
                 <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
-                <button onClick={() => setShowSizeGuide(true)}
-                  className="text-xs text-zinc-400 hover:text-white underline underline-offset-2 active:scale-95 transition-colors tracking-widest">
-                  SIZE GUIDE
-                </button>
               </div>
             )}
 
@@ -281,80 +194,42 @@ function ProductPage() {
                 GONE 💀 (someone was faster than u)
               </div>
             )}
+          </div>
+        </div>
 
-            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="w-full border border-zinc-700 hover:border-zinc-200 active:scale-95 text-zinc-400 hover:text-zinc-100 font-bold text-center py-3 tracking-widest transition-colors text-sm">
-              FOLLOW @mr.pizzastevefinds
-            </a>
-
-            {/* Trust badges */}
-            <div className="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-zinc-800">
-              {[
-                { icon: "🔒", label: "SECURE", sub: "no sketchy bs" },
-                { icon: "📦", label: "CAREFUL", sub: "packed with actual love" },
-                { icon: "✅", label: "AUTHENTIC", sub: "hand-verified by steve" },
-              ].map(b => (
-                <div key={b.label} className="text-center">
-                  <div className="text-xl mb-1">{b.icon}</div>
-                  <p className="text-white text-[10px] font-black tracking-widest">{b.label}</p>
-                  <p className="text-zinc-500 text-[10px]">{b.sub}</p>
-                </div>
+        {/* ── Related products ── */}
+        {related.length > 0 && (
+          <div className="px-4 md:px-0 mt-16">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
+              <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 active:scale-95 text-xs font-bold tracking-widest transition-colors">
+                VIEW ALL →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {related.map(p => (
+                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
+                  <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
+                    {p.imageUrl
+                      ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
+                      : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
+                  </div>
+                  <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
+                  <p className="text-zinc-100 text-xs font-black">
+                    {p.price ? (
+                      <>
+                        {p.price}{" "}
+                        <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                      </>
+                    ) : (
+                      "DM"
+                    )}
+                  </p>
+                </Link>
               ))}
             </div>
-
-            <p className="text-zinc-600 text-xs text-center mt-4">pieces move fast. if u want it, dm now — don't wait around.</p>
           </div>
-        </div>
-
-        <div className="px-4 md:px-0">
-          {/* ── Size guide callout ── */}
-          <div className="mt-12 bg-zinc-900 border border-zinc-800 p-6 flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-white font-black text-sm tracking-widest mb-1">VINTAGE SIZING RUNS DIFFERENT</p>
-              <p className="text-zinc-400 text-xs leading-relaxed max-w-lg">
-                a vintage "L" often fits like a modern "M–S". always check the measurements before ordering, trust us — we've seen people get surprised.
-              </p>
-            </div>
-            <button onClick={() => setShowSizeGuide(true)}
-              className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white active:scale-95 font-black px-5 py-2 text-xs tracking-widest transition-colors">
-              VIEW SIZE GUIDE
-            </button>
-          </div>
-
-          {/* ── Related products ── */}
-          {related.length > 0 && (
-            <div className="mt-16">
-              <div className="flex items-baseline justify-between mb-6">
-                <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
-                <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 active:scale-95 text-xs font-bold tracking-widest transition-colors">
-                  VIEW ALL →
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {related.map(p => (
-                  <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
-                    <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
-                      {p.imageUrl
-                        ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
-                        : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
-                    </div>
-                    <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
-                    <p className="text-zinc-100 text-xs font-black">
-                      {p.price ? (
-                        <>
-                          {p.price}{" "}
-                          <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
-                        </>
-                      ) : (
-                        "DM"
-                      )}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

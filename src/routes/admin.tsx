@@ -126,7 +126,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[]
   });
   const [bulkItems, setBulkItems] = useState<any[]>([
-    { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] as string[] }
+  { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] as string[] }
   ]);
   const [uploadingBulk, setUploadingBulk] = useState<Record<string, boolean>>({});
   const [bulkPublishing, setBulkPublishing] = useState(false);

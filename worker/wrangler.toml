@@ -1,0 +1,21 @@
+name = "mr-pizzasteve-finds"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+routes = [
+  { pattern = "mr-pizzasteve-finds.m-2396.workers.dev", zone_name = "mr-pizzasteve-finds" }
+]
+
+[[d1_databases]]
+binding = "pizzasteve_db"
+database_name = "pizzasteve-db"
+database_id = "bc66758e-7768-4280-89d0-b87d3197d01c"
+
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "33a3bd916ab44470914268a7b012f190"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "dd00ace706ad4613b35a82dffc9990d4"

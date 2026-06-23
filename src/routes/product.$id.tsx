@@ -103,10 +103,11 @@ function ProductPage() {
             <div
               className="relative aspect-[3/4] md:aspect-square bg-zinc-900 overflow-hidden"
               onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+              onTouchMove={(e) => { if (touchStart !== null) e.preventDefault(); }}
               onTouchEnd={(e) => {
                 if (touchStart === null) return;
                 const diff = e.changedTouches[0].clientX - touchStart;
-                if (Math.abs(diff) > 50) {
+                if (Math.abs(diff) > 30) {
                   if (diff > 0 && activeImg > 0) setActiveImg(activeImg - 1);
                   else if (diff < 0 && activeImg < allImages.length - 1) setActiveImg(activeImg + 1);
                 }

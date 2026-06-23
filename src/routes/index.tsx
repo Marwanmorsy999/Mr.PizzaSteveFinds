@@ -136,7 +136,7 @@ function Home() {
 
       {/* ── FRESH ON THE RACK ────────────────────────────────────────────── */}
       <section className="w-full border-b border-border bg-[#161616] py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mx-auto max-w-6xl px-2 sm:px-6">
           <div className="mb-8 flex items-end justify-between">
             <div>
               <h2 className="text-3xl sm:text-5xl">Fresh on the rack</h2>
@@ -153,7 +153,7 @@ function Home() {
           </div>
 
           {featured.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {featured.map((p, i) => (
                 <Link
                   key={p.id}
@@ -210,7 +210,7 @@ function Home() {
 
       {/* ── REVIEWS ──────────────────────────────────────────────────────── */}
       <section className="w-full border-b border-border bg-[#0a0a0a] py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mx-auto max-w-6xl px-2 sm:px-6">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <h2 className="font-display text-3xl uppercase sm:text-5xl">Customer Reviews</h2>
             <button

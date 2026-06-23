@@ -85,7 +85,7 @@ function Home() {
       <section className="relative min-h-[100svh] w-full overflow-hidden">
         {/* Background photo — right-biased so market scene stays visible */}
         <img
-          src="https://res.cloudinary.com/dnggmrgmu/image/upload/w_1200,f_auto,q_auto/market"
+          src="https://res.cloudinary.com/dnggmrgmu/image/upload/w_1200,f_auto,q_auto/market.jpg"
           alt="Mr. Pizza Steve thrift market stand"
           className="absolute inset-0 h-full w-full object-cover object-right"
           fetchPriority="high"

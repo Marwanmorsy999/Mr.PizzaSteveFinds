@@ -35,11 +35,12 @@ export const Route = createFileRoute("/")({
 });
 
 // ── Page ───────────────────────────────────────────────────────────────────
-function Home() {
 function cloudImg(url: string, width = 600) {
   if (!url || !url.includes("cloudinary.com")) return url;
   return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
 }
+
+function Home() {
   const [featured, setFeatured] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Array<{ name: string; text: string; rating: number; date: string }>>(() => {
     try {

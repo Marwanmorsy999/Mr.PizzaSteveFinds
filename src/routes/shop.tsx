@@ -34,11 +34,12 @@ export const Route = createFileRoute("/shop")({
   component: Shop,
 });
 
-function Shop() {
 function cloudImg(url: string, width = 600) {
   if (!url || !url.includes("cloudinary.com")) return url;
   return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
 }
+
+function Shop() {
   const cart = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);

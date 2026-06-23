@@ -146,7 +146,7 @@ function Home() {
             <div>
               <h2 className="text-3xl sm:text-5xl">Fresh on the rack</h2>
               <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                these won't last long, stop sleeping fr
+                these won't last long, stop sleeping
               </p>
             </div>
             <Link

@@ -38,7 +38,13 @@ async function uploadImg(file: File): Promise<string> {
   fd.append("file", file);
   fd.append("upload_preset", UPLOAD_PRESET);
   const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: fd });
-  return (await res.json()).secure_url;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Upload failed (${res.status})`);
+  }
+  const data = await res.json();
+  if (!data.secure_url) throw new Error(data.error?.message || "No URL returned");
+  return data.secure_url;
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────

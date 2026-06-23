@@ -176,7 +176,7 @@ function Home() {
                       <img
                         src={cloudImg(p.imageUrl ?? '')}
                         alt={p.name}
-                        className="h-full w-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <span className="text-7xl transition-transform duration-300 group-hover:scale-105">

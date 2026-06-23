@@ -159,8 +159,10 @@ function ThriftTag() {
       }}
     >
       <img
-        src="/pizza-steve.png"
+        src="https://res.cloudinary.com/dnggmrgmu/image/upload/w_300,f_auto,q_auto/v1782223973/pizza-steve_yfhhfj.png"
         alt="Pizza Steve"
+        width={300}
+        height={300}
         style={{
           position: "absolute",
           top: "-75px",

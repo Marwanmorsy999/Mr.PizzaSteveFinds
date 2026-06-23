@@ -1,7 +1,12 @@
-import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
 import { useState, useEffect } from "react";
+
+const CLOUD_NAME = "dnggmrgmu";
+const UPLOAD_PRESET = "pizzasteve4";
+
+const LOGO_URL = "https://res.cloudinary.com/dnggmrgmu/image/upload/w_200,f_auto,q_auto/v1782224263/logo-transparent-DpiMWMB1_nkc6ji.png";
+const PIZZA_STEVE_URL = `https://res.cloudinary.com/` + CLOUD_NAME + `/image/upload/w_300,f_auto,q_auto/pizza-steve`;
 
 const BANNERS = [
   { label: "omg new drop just dropped" },
@@ -36,7 +41,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         <Link to="/">
-          <img src={logo} alt="Mr. Pizza Steve" className="h-16 w-auto sm:h-20" />
+          <img src={LOGO_URL} alt="Mr. Pizza Steve" width={200} height={80} className="h-16 w-auto sm:h-20" />
         </Link>
 
         <nav className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest sm:gap-4 sm:text-sm">

@@ -95,12 +95,12 @@ function ProductPage() {
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto md:px-4 md:py-12">
-        <div className="grid md:grid-cols-2 md:gap-10">
+      <div className="max-w-3xl mx-auto md:px-4 md:py-8">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* ── Image — full bleed on mobile, contained at md+ ── */}
           <div>
             <div
-              className="relative aspect-[4/5] md:aspect-square bg-zinc-900 overflow-hidden cursor-zoom-in"
+              className="relative aspect-[3/4] md:aspect-square bg-zinc-900 overflow-hidden cursor-zoom-in"
               onClick={() => allImages.length > 0 && setZoom(true)}
             >
               {allImages.length > 0
@@ -132,18 +132,18 @@ function ProductPage() {
           </div>
 
           {/* ── Info ── */}
-          <div className="flex flex-col px-4 pt-5 md:px-0 md:pt-0">
+          <div className="flex flex-col px-3 pt-4 md:px-0 md:pt-0">
             {product.condition && (
               <span className={`inline-block self-start text-xs font-bold px-2 py-0.5 border mb-3 ${condColorClass}`}>
                 {product.condition}
               </span>
             )}
 
-            <h1 className="text-3xl md:text-4xl font-black leading-[1.05] mb-3">{product.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-black leading-[1.05] mb-2">{product.name}</h1>
 
             {/* Price */}
             <div className="flex items-baseline gap-2 mb-1">
-              <span className={`text-4xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-primary"}`}>
+              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-primary"}`}>
                 {product.status === "sold"
                   ? "SOLD"
                   : product.price
@@ -177,23 +177,23 @@ function ProductPage() {
             )}
 
             {/* CTA */}
-            {product.status === "available" ? (
-              isInCart ? (
-                <Link to="/cart"
-                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-4 tracking-widest transition-colors text-base mb-3 block">
-                  ADDED! VIEW CART →
-                </Link>
-              ) : (
-                <button onClick={handleAddToCart}
-                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-base mb-3">
-                  ADD TO CART
-                </button>
-              )
-            ) : (
-              <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-4 tracking-widest text-sm mb-3">
-                GONE 💀 (someone was faster than u)
-              </div>
-            )}
+             {product.status === "available" ? (
+               isInCart ? (
+                 <Link to="/cart"
+                   className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-3 tracking-widest transition-colors text-xs mb-2 block">
+                   ADDED! VIEW CART →
+                 </Link>
+               ) : (
+                 <button onClick={handleAddToCart}
+                   className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-3 tracking-widest transition-colors text-xs mb-2">
+                   ADD TO CART
+                 </button>
+               )
+             ) : (
+               <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-3 tracking-widest text-xs mb-2">
+                 GONE 💀 (someone was faster than u)
+               </div>
+             )}
           </div>
         </div>
 

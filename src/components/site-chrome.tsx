@@ -189,6 +189,11 @@ export function Footer() {
              curated vintage & thrift by steve dos santos. cairo
            </p>
            <p className="mt-2 text-xs text-zinc-600">pieces wont last long babe</p>
+           <p className="mt-1 text-xs text-zinc-600">shipping with turbo · 3/5 working days</p>
+           <div className="mt-3 flex gap-4">
+             <Link to="/shop" className="text-[10px] text-zinc-500 hover:text-zinc-300 uppercase tracking-widest">all products</Link>
+             <Link to="/about" className="text-[10px] text-zinc-500 hover:text-zinc-300 uppercase tracking-widest">about</Link>
+           </div>
         </div>
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">come visit</h4>

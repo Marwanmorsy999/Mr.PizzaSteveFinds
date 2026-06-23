@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
 import { memo, useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 const INSTAGRAM_URL = "https://instagram.com/mr.pizzastevefinds" as const;
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/shop")({
 });
 
 function Shop() {
+  const cart = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -158,7 +160,7 @@ function Shop() {
                 {featuredProduct && (
                   <div className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-6">More Finds</div>
                 )}
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {remainingProducts.map((p, index) => <Card key={p.id} p={p} index={index} />)}
                 </div>
               </div>
@@ -178,6 +180,7 @@ function Shop() {
 const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
   const sold = p.status === "sold";
   const staggerDelay = Math.min(index * 50, 300);
+  const cart = useCart();
 
   return (
     <Link
@@ -229,13 +232,13 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
         )}
       </div>
 
-      <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight">{p.name}</h3>
-        <div className="flex items-center justify-between border-t border-border pt-3">
-          <span className="text-xs text-muted-foreground">
+      <div className="space-y-2 p-3">
+        <h3 className="line-clamp-2 font-display text-[11px] uppercase leading-tight">{p.name}</h3>
+        <div className="flex items-center justify-between border-t border-border pt-2">
+          <span className="text-[10px] text-muted-foreground">
             {p.size ? `size ${p.size}` : "one size"}
           </span>
-          <span className={`font-display text-lg ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
+          <span className={`font-display text-xs ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
             {p.price ? (
               <>
                 {p.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
@@ -243,6 +246,23 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
             ) : p.priceLabel}
           </span>
         </div>
+        {!sold && (
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); cart.add({ id: p.id, name: p.name, price: p.price, priceLabel: p.priceLabel, imageUrl: p.imageUrl, size: p.size, emoji: p.emoji }); }}
+              className="flex-1 bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-1.5 tracking-widest transition-colors text-[10px] uppercase"
+            >
+              add to cart
+            </button>
+            <Link
+              to="/checkout"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 border border-border hover:border-primary active:scale-95 text-foreground hover:text-primary font-black text-center py-1.5 tracking-widest transition-colors text-[10px] uppercase"
+            >
+              buy it now
+            </Link>
+          </div>
+        )}
       </div>
     </Link>
   );

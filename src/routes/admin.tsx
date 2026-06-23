@@ -120,7 +120,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[]
   });
   const [bulkItems, setBulkItems] = useState<any[]>([
-    { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }
+    { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "", images: [] as string[] }
   ]);
   const [uploadingBulk, setUploadingBulk] = useState<Record<number, boolean>>({});
   const [bulkPublishing, setBulkPublishing] = useState(false);
@@ -164,11 +164,24 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   useEffect(() => { load(); }, [load]);
 
   // ── Product actions ───────────────────────────────────────────────────────
+  async function handleExtraImgNew(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setUploading("new-extra");
+    try {
+      const url = await uploadImg(file);
+      setForm(f => ({ ...f, images: [...f.images, url] }));
+    } catch { showMsg("Upload failed", "err"); }
+    setUploading(null);
+  }
+  function removeExtraImgNew(idx: number) {
+    setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
+  }
+
   async function addProduct() {
     if (!form.name) return showMsg("Name required", "err");
     await apiFetch("/api/products", {
       method: "POST",
-      body: JSON.stringify({ ...form, price: form.price ? parseInt(form.price) : null })
+      body: JSON.stringify({ ...form, price: form.price ? parseInt(form.price) : null, images: form.images })
     });
     setForm({ name: "", size: "", price: "", tag: "TEE", emoji: "🍕", status: "available", condition: "Good", description: "", imageUrl: "", images: [] });
     showMsg("✓ Product added — it's live"); load();
@@ -264,12 +277,28 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   // Bulk drop
   function addBulkItemRow() {
-    setBulkItems(prev => [...prev, { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
+    setBulkItems(prev => [...prev, { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "", images: [] }]);
   }
   function removeBulkItem(id: number) { setBulkItems(prev => prev.filter(i => i.id !== id)); }
   function updateBulkItem(id: number, patch: any) {
     setBulkItems(prev => prev.map(item => item.id === id ? { ...item, ...patch } : item));
   }
+  async function handleBulkExtraImg(e: React.ChangeEvent<HTMLInputElement>, itemId: number) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setUploadingBulk(prev => ({ ...prev, [itemId + "-extra"]: true }));
+    try {
+      const url = await uploadImg(file);
+      const item = bulkItems.find(i => i.id === itemId);
+      if (item) updateBulkItem(itemId, { images: [...(item.images || []), url] });
+      showMsg("Extra image added");
+    } catch { showMsg("Upload failed", "err"); }
+    setUploadingBulk(prev => ({ ...prev, [itemId + "-extra"]: false }));
+  }
+  function removeBulkExtraImg(itemId: number, idx: number) {
+    const item = bulkItems.find(i => i.id === itemId);
+    if (item) updateBulkItem(itemId, { images: item.images.filter((_: any, i: number) => i !== idx) });
+  }
+
   async function handleBulkImgUpload(e: React.ChangeEvent<HTMLInputElement>, itemId: number) {
     const file = e.target.files?.[0]; if (!file) return;
     setUploadingBulk(prev => ({ ...prev, [itemId]: true }));
@@ -282,7 +311,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     if (valid.length === 0) return showMsg("At least one item required", "err");
     setBulkPublishing(true);
     try {
-      const res = await apiFetch("/api/products/bulk", { method: "POST", body: JSON.stringify(valid) });
+        const res = await apiFetch("/api/products/bulk", { method: "POST", body: JSON.stringify(valid.map(i => ({ ...i, images: i.images || [] }))) });
       if (res.ok) {
         showMsg(`✓ Drop published: ${valid.length} items live`);
         setBulkItems([{ id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
@@ -614,6 +643,20 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     </label>
                     {form.imageUrl && <img src={form.imageUrl} className="w-14 h-14 object-cover rounded-xl border border-zinc-700" alt="" />}
                   </div>
+                  {form.images.length > 0 && (
+                    <div className="flex gap-2 mb-3 flex-wrap">
+                      {form.images.map((img, i) => (
+                        <div key={i} className="relative w-14 h-14">
+                          <img src={img} className="w-full h-full object-cover rounded-xl border border-zinc-700" alt="" />
+                          <button onClick={() => removeExtraImgNew(i)} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-900 text-white text-[10px] font-bold flex items-center justify-center hover:bg-red-700">✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <label className="cursor-pointer bg-zinc-800 border border-dashed border-zinc-600 hover:border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-100 transition-colors inline-block mb-4">
+                    {uploading === "new-extra" ? "Uploading..." : "+ Add extra images"}
+                    <input type="file" accept="image/*" multiple className="hidden" onChange={handleExtraImgNew} />
+                  </label>
                   <button onClick={addProduct}
                     className="w-full sm:w-auto bg-zinc-800 hover:bg-orange-400 active:scale-95 text-white font-bold px-8 py-3 rounded-xl transition-all text-sm tracking-widest">
                     + ADD PRODUCT
@@ -633,6 +676,20 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                             : item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover" alt="" />
                               : <span className="text-xl font-light">+</span>}
                           <input type="file" accept="image/*" className="hidden" onChange={e => handleBulkImgUpload(e, item.id)} />
+                        </label>
+                        {(item.images || []).length > 0 && (
+                          <div className="flex gap-1 flex-shrink-0">
+                            {item.images.map((img: string, i: number) => (
+                              <div key={i} className="relative w-8 h-8">
+                                <img src={img} className="w-full h-full object-cover rounded border border-zinc-700" alt="" />
+                                <button onClick={() => removeBulkExtraImg(item.id, i)} className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-900 text-white text-[8px] font-bold flex items-center justify-center hover:bg-red-700">✕</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <label className="cursor-pointer w-8 h-8 border border-dashed border-zinc-700 hover:border-zinc-200 rounded flex items-center justify-center transition-colors text-zinc-500 hover:text-zinc-100 flex-shrink-0">
+                          {uploadingBulk[item.id + "-extra"] ? <span className="text-[10px]">...</span> : <span className="text-lg font-light">+</span>}
+                          <input type="file" accept="image/*" className="hidden" onChange={e => handleBulkExtraImg(e, item.id)} />
                         </label>
                         <input placeholder="Item Name *" value={item.name}
                           onChange={e => updateBulkItem(item.id, { name: e.target.value })}

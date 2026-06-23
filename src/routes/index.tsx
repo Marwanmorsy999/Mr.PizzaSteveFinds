@@ -153,7 +153,7 @@ function Home() {
           </div>
 
           {featured.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {featured.map((p, i) => (
                 <Link
                   key={p.id}
@@ -180,7 +180,7 @@ function Home() {
                     )}
                   </div>
                   <div className="p-4">
-                    <div className="mt-1 line-clamp-2 font-display text-sm uppercase">{p.name}</div>
+                    <div className="mt-1 line-clamp-2 font-display text-xs uppercase sm:text-sm">{p.name}</div>
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">
                         {p.size ? `size ${p.size}` : "one size"}

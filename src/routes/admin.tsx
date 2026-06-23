@@ -120,7 +120,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     status: "available", condition: "Good", description: "", imageUrl: "", images: [] as string[]
   });
   const [bulkItems, setBulkItems] = useState<any[]>([
-    { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "", images: [] as string[] }
+    { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] as string[] }
   ]);
   const [uploadingBulk, setUploadingBulk] = useState<Record<number, boolean>>({});
   const [bulkPublishing, setBulkPublishing] = useState(false);
@@ -277,7 +277,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   // Bulk drop
   function addBulkItemRow() {
-    setBulkItems(prev => [...prev, { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "", images: [] }]);
+    setBulkItems(prev => [...prev, { id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] }]);
   }
   function removeBulkItem(id: number) { setBulkItems(prev => prev.filter(i => i.id !== id)); }
   function updateBulkItem(id: number, patch: any) {
@@ -314,7 +314,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         const res = await apiFetch("/api/products/bulk", { method: "POST", body: JSON.stringify(valid.map(i => ({ ...i, images: i.images || [] }))) });
       if (res.ok) {
         showMsg(`✓ Drop published: ${valid.length} items live`);
-        setBulkItems([{ id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", imageUrl: "" }]);
+        setBulkItems([{ id: Date.now(), name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] }]);
         load();
       } else showMsg("Publish failed", "err");
     } catch { showMsg("Publish failed", "err"); }
@@ -704,11 +704,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           className="w-full md:w-28 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
                           {["TEE", "JORTS", "ACCESSORIES", "DROP", "GRAIL", "OUTERWEAR", "PANTS", "SHIRT"].map(t => <option key={t}>{t}</option>)}
                         </select>
-                        <select value={item.condition} onChange={e => updateBulkItem(item.id, { condition: e.target.value })}
-                          className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
-                          {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
-                        </select>
-                      </div>
+                         <select value={item.condition} onChange={e => updateBulkItem(item.id, { condition: e.target.value })}
+                           className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
+                           {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
+                         </select>
+                         <textarea placeholder="Description (optional)" value={item.description || ""}
+                           onChange={e => updateBulkItem(item.id, { description: e.target.value })}
+                           className="w-full md:col-span-5 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-xs" />
+                       </div>
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-3 items-center justify-between mt-4">

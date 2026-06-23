@@ -1,4 +1,4 @@
-﻿﻿﻿﻿export interface Env {
+﻿﻿export interface Env {
   pizzasteve_db: D1Database;
   ADMIN_PASSWORD: string;
   SESSION_SECRET: string;
@@ -83,6 +83,8 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
+
+    try {
 
     // POST /api/login
     if (url.pathname === "/api/login" && request.method === "POST") {
@@ -238,6 +240,18 @@ export default {
       const items: any[] = await request.json();
       if (!Array.isArray(items) || items.length === 0)
         return new Response("Invalid payload", { status: 400, headers: CORS });
+
+      // Validate every item has a usable name BEFORE touching the DB.
+      // This is what was crashing the whole request before (body.name.toLowerCase()
+      // on an undefined/blank name), which Cloudflare turned into a bare 500
+      // with no CORS headers — looking like a CORS error in the browser.
+      const badIndex = items.findIndex(b => !b.name || typeof b.name !== "string" || !b.name.trim());
+      if (badIndex !== -1) {
+        return new Response(JSON.stringify({
+          error: `Item at index ${badIndex} is missing a name`,
+        }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
+      }
+
       await env.pizzasteve_db.prepare("UPDATE products SET sort_order = sort_order + ?").bind(items.length).run();
       const stmts = items.map((body, index) => {
         const id = body.id || (body.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") + "-" + Math.floor(1000 + Math.random() * 9000));
@@ -547,5 +561,13 @@ export default {
     }
 
     return new Response("Not found", { status: 404, headers: CORS });
+
+    } catch (err: any) {
+      console.error("Unhandled error:", err);
+      return new Response(JSON.stringify({ error: err?.message || "Internal error" }), {
+        status: 500,
+        headers: { ...CORS, "Content-Type": "application/json" },
+      });
+    }
   },
 };

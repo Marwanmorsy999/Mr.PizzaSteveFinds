@@ -156,32 +156,50 @@ function ProductPage() {
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-zinc-500 mb-8 tracking-widest">
-          <Link to="/" className="hover:text-zinc-100 active:scale-95 transition-colors">HOME</Link>
-          <span>/</span>
-          <Link to="/shop" className="hover:text-zinc-100 active:scale-95 transition-colors">SHOP</Link>
-          <span>/</span>
-          <span className="text-zinc-300 truncate max-w-[200px]">{product.name}</span>
-        </nav>
-
-        <div className="grid md:grid-cols-2 gap-10">
-          {/* ── Images ── */}
+      <div className="max-w-5xl mx-auto md:px-4 md:py-12">
+        <div className="grid md:grid-cols-2 md:gap-10">
+          {/* ── Image — full bleed on mobile, contained at md+ ── */}
           <div>
             <div
-              className="aspect-square bg-zinc-900 overflow-hidden mb-3 cursor-zoom-in relative"
+              className="relative aspect-[4/5] md:aspect-square bg-zinc-900 overflow-hidden cursor-zoom-in"
               onClick={() => allImages.length > 0 && setZoom(true)}
             >
               {allImages.length > 0
-                ? <img src={allImages[activeImg]} alt={product.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                ? <img src={allImages[activeImg]} alt={product.name} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
-              {allImages.length > 0 && (
-                <span className="absolute bottom-3 right-3 text-[10px] bg-black/60 text-white px-2 py-1 tracking-widest">TAP TO ZOOM</span>
-              )}
+
+              {/* back button replaces breadcrumb nav */}
+              <Link
+                to="/shop"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-4 left-4 w-9 h-9 flex items-center justify-center bg-black/55 active:scale-90 transition-transform"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </Link>
+
+              {/* share replaces the text "SHARE" button */}
+              <button
+                onClick={(e) => { e.stopPropagation(); copyLink(); }}
+                className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-black/55 active:scale-90 transition-transform"
+                aria-label="Copy link to this item"
+              >
+                {copied ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" />
+                    <path d="M8.2 10.7l7.6-4.4M8.2 13.3l7.6 4.4" />
+                  </svg>
+                )}
+              </button>
             </div>
+
             {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto px-4 md:px-0 pt-3 pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
                     className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors active:scale-95 ${activeImg === i ? "border-zinc-200" : "border-zinc-700 hover:border-zinc-500"}`}>
@@ -193,66 +211,51 @@ function ProductPage() {
           </div>
 
           {/* ── Info ── */}
-          <div className="flex flex-col">
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                {product.tag && (
-                  <span className="text-zinc-100 text-xs font-bold tracking-widest">{product.tag}</span>
-                )}
-                {product.condition && (
-                  <span className={`text-xs font-bold px-2 py-0.5 border ${condColorClass}`}>{product.condition}</span>
-                )}
-              </div>
-              {/* Share button */}
-              <button onClick={copyLink} className="text-zinc-500 hover:text-zinc-100 active:scale-95 text-xs tracking-widest transition-colors flex-shrink-0">
-                {copied ? "✓ COPIED" : "SHARE"}
-              </button>
-            </div>
+          <div className="flex flex-col px-4 pt-5 md:px-0 md:pt-0">
+            {product.tag && (
+              <p className="text-zinc-500 text-xs tracking-widest mb-2">{product.tag}</p>
+            )}
 
-            <h1 className="text-2xl font-black leading-tight mb-4">{product.name}</h1>
-
-            {/* Price + stock indicator */}
-            <div className="flex items-center gap-4 mb-2">
-              <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-zinc-100"}`}>
-                {product.status === "sold" ? (
-                  "SOLD"
-                ) : product.price ? (
-                  <>
-                    {product.price}{" "}
-                    <span className="text-[0.6em] font-sans font-bold tracking-wider text-muted-foreground ml-1">EGP</span>
-                  </>
-                ) : (
-                  product.priceLabel || "DM for price"
-                )}
+            {product.condition && (
+              <span className={`inline-block self-start text-xs font-bold px-2 py-0.5 border mb-3 ${condColorClass}`}>
+                {product.condition}
               </span>
+            )}
+
+            <h1 className="text-3xl md:text-4xl font-black leading-[1.05] mb-3">{product.name}</h1>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className={`text-4xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-primary"}`}>
+                {product.status === "sold"
+                  ? "SOLD"
+                  : product.price
+                    ? product.price
+                    : (product.priceLabel || "DM for price")}
+              </span>
+              {product.status !== "sold" && product.price ? (
+                <span className="text-sm font-bold tracking-wider text-zinc-500">EGP</span>
+              ) : null}
             </div>
 
+            {/* Stock indicator */}
             {product.status === "available" && (
-              <p className="text-xs text-zinc-100 font-bold tracking-widest mb-6 flex items-center gap-1">
+              <p className="text-xs text-zinc-100 font-bold tracking-widest mb-5 flex items-center gap-1.5">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 ONLY 1 LEFT — 1 OF 1 (don't sleep on this)
               </p>
             )}
 
-            {/* Size + condition */}
-            <div className="space-y-3 mb-6">
-              {product.size && (
-                <div className="flex items-center gap-3">
-                  <span className="text-zinc-500 text-xs tracking-widest w-24">SIZE</span>
-                  <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
-                  <button onClick={() => setShowSizeGuide(true)}
-                    className="text-xs text-zinc-100 hover:text-zinc-100 active:scale-95 underline transition-colors tracking-widest">
-                    SIZE GUIDE
-                  </button>
-                </div>
-              )}
-              {product.condition && (
-                <div className="flex items-center gap-3">
-                  <span className="text-zinc-500 text-xs tracking-widest w-24">CONDITION</span>
-                  <span className="text-white text-sm font-bold">{product.condition}</span>
-                </div>
-              )}
-            </div>
+            {/* Size (condition is shown as the badge above, no separate row) */}
+            {product.size && (
+              <div className="flex items-center gap-3 mb-5">
+                <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
+                <button onClick={() => setShowSizeGuide(true)}
+                  className="text-xs text-zinc-400 hover:text-white underline underline-offset-2 active:scale-95 transition-colors tracking-widest">
+                  SIZE GUIDE
+                </button>
+              </div>
+            )}
 
             {product.description && (
               <p className="text-zinc-400 text-sm leading-relaxed mb-6 border-l-2 border-zinc-700 pl-4">
@@ -264,12 +267,12 @@ function ProductPage() {
             {product.status === "available" ? (
               isInCart ? (
                 <Link to="/cart"
-                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-4 tracking-widest transition-colors text-sm mb-3 block">
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-4 tracking-widest transition-colors text-base mb-3 block">
                   ADDED! VIEW CART →
                 </Link>
               ) : (
                 <button onClick={handleAddToCart}
-                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-sm mb-3">
+                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-4 tracking-widest transition-colors text-base mb-3">
                   ADD TO CART
                 </button>
               )
@@ -303,56 +306,56 @@ function ProductPage() {
           </div>
         </div>
 
-        {/* ── Size guide callout ── */}
-        <div className="mt-12 bg-zinc-900 border border-zinc-800 p-6 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <p className="text-white font-black text-sm tracking-widest mb-1">VINTAGE SIZING RUNS DIFFERENT</p>
-            <p className="text-zinc-400 text-xs leading-relaxed max-w-lg">
-              a vintage "L" often fits like a modern "M–S". always check the measurements before ordering, trust us — we've seen people get surprised.
-            </p>
-          </div>
-          <button onClick={() => setShowSizeGuide(true)}
-            className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white active:scale-95 font-black px-5 py-2 text-xs tracking-widest transition-colors">
-            VIEW SIZE GUIDE
-          </button>
-        </div>
-
-
-        {/* ── Related products ── */}
-        {related.length > 0 && (
-          <div className="mt-16">
-            <div className="flex items-baseline justify-between mb-6">
-              <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
-              <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 active:scale-95 text-xs font-bold tracking-widest transition-colors">
-                VIEW ALL →
-              </Link>
+        <div className="px-4 md:px-0">
+          {/* ── Size guide callout ── */}
+          <div className="mt-12 bg-zinc-900 border border-zinc-800 p-6 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-white font-black text-sm tracking-widest mb-1">VINTAGE SIZING RUNS DIFFERENT</p>
+              <p className="text-zinc-400 text-xs leading-relaxed max-w-lg">
+                a vintage "L" often fits like a modern "M–S". always check the measurements before ordering, trust us — we've seen people get surprised.
+              </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {related.map(p => (
-                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
-                  <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
-                    {p.imageUrl
-                      ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
-                      : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
-                  </div>
-                  <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
-                  <p className="text-zinc-100 text-xs font-black">
-                    {p.price ? (
-                      <>
-                        {p.price}{" "}
-                        <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
-                      </>
-                    ) : (
-                      "DM"
-                    )}
-                  </p>
+            <button onClick={() => setShowSizeGuide(true)}
+              className="flex-shrink-0 border border-zinc-200 text-zinc-100 hover:bg-zinc-800 hover:text-white active:scale-95 font-black px-5 py-2 text-xs tracking-widest transition-colors">
+              VIEW SIZE GUIDE
+            </button>
+          </div>
+
+          {/* ── Related products ── */}
+          {related.length > 0 && (
+            <div className="mt-16">
+              <div className="flex items-baseline justify-between mb-6">
+                <h2 className="text-sm font-black tracking-widest">don't sleep on these either 👇</h2>
+                <Link to="/shop" className="text-zinc-100 hover:text-zinc-100 active:scale-95 text-xs font-bold tracking-widest transition-colors">
+                  VIEW ALL →
                 </Link>
-              ))}
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {related.map(p => (
+                  <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
+                    <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
+                      {p.imageUrl
+                        ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
+                        : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
+                    </div>
+                    <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
+                    <p className="text-zinc-100 text-xs font-black">
+                      {p.price ? (
+                        <>
+                          {p.price}{" "}
+                          <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+                        </>
+                      ) : (
+                        "DM"
+                      )}
+                    </p>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 }
-

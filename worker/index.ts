@@ -1,9 +1,20 @@
-export interface Env {
+﻿﻿﻿﻿export interface Env {
   pizzasteve_db: D1Database;
   ADMIN_PASSWORD: string;
   SESSION_SECRET: string;
   SESSIONS: KVNamespace;
   RATE_LIMIT: KVNamespace;
+  RESEND_API_KEY?: string;
+}
+
+import { Resend } from "resend";
+
+let resendClient: any = null;
+function getResend(env: Env) {
+  if (!resendClient && env.RESEND_API_KEY) {
+    resendClient = new Resend(env.RESEND_API_KEY);
+  }
+  return resendClient;
 }
 
 const getAllowedOrigin = (env: Env) =>
@@ -447,6 +458,47 @@ export default {
       }
 
       await env.pizzasteve_db.batch(insertStmts);
+
+      try {
+        const r = getResend(env);
+        if (r) {
+          const itemsHtml = (body.items as any[]).map((it: any) => `
+            <tr>
+              <td style="padding:8px;border-bottom:1px solid #333">${it.name}</td>
+              <td style="padding:8px;border-bottom:1px solid #333">${it.size || '-'}</td>
+              <td style="padding:8px;border-bottom:1px solid #333">${it.price ?? it.priceLabel ?? '-'}</td>
+            </tr>
+          `).join('');
+          await (r as any).emails.send({
+            from: 'Mr. Pizza Steve Finds <orders@pizzastevefinds.com>',
+            to: ['ifarouk448@gmail.com'],
+            subject: `New order ${orderId}`,
+            html: `
+              <div style="background:#0a0a0a;color:#fff;font-family:sans-serif;padding:24px">
+                <h2 style="color:#f97316">New order ${orderId}</h2>
+                <p><strong>Customer:</strong> ${body.customerName} (${body.customerPhone})</p>
+                ${body.address ? `<p><strong>Address:</strong> ${body.address}</p>` : ''}
+                ${body.notes ? `<p><strong>Notes:</strong> ${body.notes}</p>` : ''}
+                <p><strong>Pickup:</strong> ${body.pickup ? 'Yes' : 'No'}</p>
+                <p><strong>Total:</strong> ${body.total} EGP</p>
+                <table style="width:100%;border-collapse:collapse;margin-top:16px">
+                  <thead>
+                    <tr style="background:#161616">
+                      <th style="padding:8px;text-align:left">Item</th>
+                      <th style="padding:8px;text-align:left">Size</th>
+                      <th style="padding:8px;text-align:left">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>${itemsHtml}</tbody>
+                </table>
+              </div>
+            `,
+          });
+        }
+      } catch (e) {
+        console.error('Resend error:', e);
+      }
+
       return new Response(JSON.stringify({ success: true, orderId }), {
         headers: { ...CORS, "Content-Type": "application/json" },
       });

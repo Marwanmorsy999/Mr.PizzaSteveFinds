@@ -30,11 +30,13 @@ function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const [qty, setQty] = useState(1);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const isInCart = product ? cart.items.some((item) => item.id === product.id) : false;
 
   function handleAddToCart() {
-    if (product) {
+    if (product && qty > 0) {
       cart.add({
         id: product.id,
         name: product.name,
@@ -43,7 +45,8 @@ function ProductPage() {
         imageUrl: product.imageUrl,
         size: product.size,
         emoji: product.emoji,
-      });
+      }, qty);
+      setQty(1);
     }
   }
 
@@ -97,30 +100,59 @@ function ProductPage() {
 
       <div className="max-w-3xl mx-auto md:px-4 md:py-8">
         <div className="grid md:grid-cols-2 md:gap-6">
-          {/* ── Image — full bleed on mobile, contained at md+ ── */}
+          {/* ── Image — swipeable carousel on mobile, thumbnails at md+ ── */}
           <div>
             <div
-              className="relative aspect-[3/4] md:aspect-square bg-zinc-900 overflow-hidden cursor-zoom-in"
-              onClick={() => allImages.length > 0 && setZoom(true)}
+              className="relative aspect-[3/4] md:aspect-square bg-zinc-900 overflow-hidden"
+              onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+              onTouchEnd={(e) => {
+                if (touchStart === null) return;
+                const diff = e.changedTouches[0].clientX - touchStart;
+                if (Math.abs(diff) > 50) {
+                  if (diff > 0 && activeImg > 0) setActiveImg(activeImg - 1);
+                  else if (diff < 0 && activeImg < allImages.length - 1) setActiveImg(activeImg + 1);
+                }
+                setTouchStart(null);
+              }}
             >
               {allImages.length > 0
                 ? <img src={allImages[activeImg]} alt={product.name} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
 
-              {/* back button replaces breadcrumb nav */}
+              {/* back button */}
               <Link
                 to="/shop"
                 onClick={(e) => e.stopPropagation()}
-                className="absolute top-4 left-4 w-9 h-9 flex items-center justify-center bg-black/55 active:scale-90 transition-transform"
+                className="absolute top-4 left-4 w-9 h-9 flex items-center justify-center bg-black/55 active:scale-90 transition-transform z-10"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </Link>
+
+              {/* zoom icon */}
+              <button onClick={() => allImages.length > 0 && setZoom(true)} className="absolute bottom-3 right-3 z-10 bg-black/50 hover:bg-black/70 rounded-full p-1.5 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="10.5" cy="10.5" r="7.5" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+              </button>
             </div>
 
+            {/* Dot indicators */}
             {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto px-4 md:px-0 pt-3 pb-1">
+              <div className="flex justify-center gap-1.5 pt-3">
+                {allImages.map((_, i) => (
+                  <button key={i} onClick={() => setActiveImg(i)}
+                    className={`w-2 h-2 rounded-full transition-colors ${activeImg === i ? "bg-white" : "bg-zinc-600 hover:bg-zinc-500"}`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Thumbnails — hidden on mobile */}
+            {allImages.length > 1 && (
+              <div className="hidden md:flex gap-2 overflow-x-auto px-0 pt-3 pb-1">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
                     className={`flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-colors active:scale-95 ${activeImg === i ? "border-zinc-200" : "border-zinc-700 hover:border-zinc-500"}`}>
@@ -157,10 +189,22 @@ function ProductPage() {
 
             {/* Stock indicator */}
             {product.status === "available" && (
-              <p className="text-xs text-zinc-100 font-bold tracking-widest mb-5 flex items-center gap-1.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                ONLY 1 LEFT
+              <p className="text-xs text-red-400 font-bold tracking-widest mb-4 flex items-center gap-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                LAST PIECE
               </p>
+            )}
+
+            {/* Quantity selector */}
+            {product.status === "available" && (
+              <div className="flex items-center gap-3 mb-5">
+                <span className="text-xs text-zinc-400 uppercase tracking-wider">Quantity</span>
+                <div className="flex items-center border border-zinc-700 rounded-lg">
+                  <button onClick={() => setQty(q => Math.max(1, q - 1))} className="px-3 py-1 text-zinc-300 hover:text-white transition-colors">−</button>
+                  <span className="px-3 py-1 text-sm font-bold text-white min-w-[2rem] text-center">{qty}</span>
+                  <button onClick={() => setQty(q => q + 1)} className="px-3 py-1 text-zinc-300 hover:text-white transition-colors">+</button>
+                </div>
+              </div>
             )}
 
             {/* Size */}
@@ -177,23 +221,24 @@ function ProductPage() {
             )}
 
             {/* CTA */}
-             {product.status === "available" ? (
-               isInCart ? (
-                 <Link to="/cart"
-                   className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-3 tracking-widest transition-colors text-xs mb-2 block">
-                   ADDED! VIEW CART →
-                 </Link>
-               ) : (
-                 <button onClick={handleAddToCart}
-                   className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-3 tracking-widest transition-colors text-xs mb-2">
-                   ADD TO CART
-                 </button>
-               )
-             ) : (
-               <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-3 tracking-widest text-xs mb-2">
-                 GONE 💀 (someone was faster than u)
-               </div>
-             )}
+            {product.status === "available" ? (
+              isInCart ? (
+                <Link to="/cart"
+                  onClick={() => setQty(1)}
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-3 tracking-widest transition-colors text-xs mb-2 block">
+                  ADDED! VIEW CART →
+                </Link>
+              ) : (
+                <button onClick={handleAddToCart}
+                  className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-3 tracking-widest transition-colors text-xs mb-2">
+                  ADD TO CART
+                </button>
+              )
+            ) : (
+              <div className="w-full bg-zinc-800 text-zinc-500 font-black text-center py-3 tracking-widest text-xs mb-2">
+                GONE 💀 (someone was faster than u)
+              </div>
+            )}
           </div>
         </div>
 

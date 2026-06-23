@@ -57,14 +57,17 @@ function CartPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center border border-zinc-700 rounded-lg">
+                    <button onClick={() => cart.remove(item.id)}
+                      className="px-2 py-0.5 text-zinc-300 hover:text-white transition-colors text-xs">−</button>
+                    <span className="px-2 py-0.5 text-xs font-bold text-white min-w-[1.5rem] text-center">{item.quantity}</span>
+                    <button onClick={() => { const ex = cart.items.find(i => i.id === item.id); if (ex) cart.add({ id: ex.id, name: ex.name, price: ex.price, priceLabel: ex.priceLabel, imageUrl: ex.imageUrl, size: ex.size, emoji: ex.emoji }); }}
+                      className="px-2 py-0.5 text-zinc-300 hover:text-white transition-colors text-xs">+</button>
+                  </div>
                   <Link to="/product/$id" params={{ id: item.id }}
                     className="text-xs text-zinc-600 hover:text-zinc-400 active:scale-95 transition-colors">
                     view
                   </Link>
-                  <button onClick={() => cart.remove(item.id)}
-                    className="w-7 h-7 rounded-lg border border-red-900/50 text-red-600 hover:bg-red-900/30 hover:text-red-400 active:scale-95 transition-colors flex items-center justify-center text-xs">
-                    ✕
-                  </button>
                 </div>
               </div>
             ))}

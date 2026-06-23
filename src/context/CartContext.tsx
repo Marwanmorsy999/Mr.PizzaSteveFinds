@@ -8,11 +8,12 @@ export interface CartItem {
   imageUrl?: string;
   size?: string;
   emoji?: string;
+  quantity?: number;
 }
 
 interface CartCtx {
   items: CartItem[];
-  add: (item: CartItem) => void;
+  add: (item: CartItem, qty?: number) => void;
   remove: (id: string) => void;
   clear: () => void;
   count: number;
@@ -32,14 +33,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("ps_cart", JSON.stringify(items));
   }, [items]);
 
-  function add(item: CartItem) {
-    setItems(prev => prev.find(i => i.id === item.id) ? prev : [...prev, item]);
+  function add(item: CartItem, qty: number = 1) {
+    const itemQty = item.quantity ?? qty;
+    setItems(prev => {
+      const existing = prev.find(i => i.id === item.id);
+      if (existing) {
+        return prev.map(i => i.id === item.id ? { ...i, quantity: (i.quantity || 1) + itemQty } : i);
+      }
+      return [...prev, { ...item, quantity: itemQty }];
+    });
   }
-  function remove(id: string) { setItems(prev => prev.filter(i => i.id !== id)); }
+  function remove(id: string) {
+    setItems(prev => {
+      const existing = prev.find(i => i.id === id);
+      if (existing && (existing.quantity || 1) > 1) {
+        return prev.map(i => i.id === existing.id ? { ...i, quantity: (i.quantity || 1) - 1 } : i);
+      }
+      return prev.filter(i => i.id !== id);
+    });
+  }
   function clear() { setItems([]); }
 
-  const count = items.length;
-  const total = items.reduce((sum, i) => sum + (i.price || 0), 0);
+  const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+  const total = items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
 
   return <Ctx.Provider value={{ items, add, remove, clear, count, total }}>{children}</Ctx.Provider>;
 }

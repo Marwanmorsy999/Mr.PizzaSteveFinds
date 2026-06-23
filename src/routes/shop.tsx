@@ -71,21 +71,21 @@ function Shop() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse border border-zinc-800 bg-[#161616] p-4 flex flex-col gap-4">
-                <div className="w-full aspect-square bg-[#0a0a0a] border border-zinc-800/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" />
-                <div className="space-y-3 py-2">
-                  <div className="h-4 bg-zinc-800 rounded w-2/3" />
-                  <div className="flex justify-between items-center pt-2">
-                    <div className="h-3 bg-zinc-800 rounded w-1/4" />
-                    <div className="h-4 bg-zinc-800 rounded w-1/4" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+         {loading ? (
+           <div className="mt-8 grid gap-4 grid-cols-2">
+             {Array.from({ length: 6 }).map((_, i) => (
+               <div key={i} className="animate-pulse border border-zinc-800 bg-[#161616] p-3 flex flex-col gap-3">
+                 <div className="w-full aspect-square bg-[#0a0a0a] border border-zinc-800/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" />
+                 <div className="space-y-2 py-2">
+                   <div className="h-3 bg-zinc-800 rounded w-2/3" />
+                   <div className="flex justify-between items-center pt-1">
+                     <div className="h-2.5 bg-zinc-800 rounded w-1/4" />
+                     <div className="h-3 bg-zinc-800 rounded w-1/4" />
+                   </div>
+                 </div>
+               </div>
+             ))}
+           </div>
         ) : products.length > 0 ? (
           <>
             {featuredProduct && (
@@ -160,7 +160,7 @@ function Shop() {
                 {featuredProduct && (
                   <div className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-6">More Finds</div>
                 )}
-                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid gap-3 grid-cols-2">
                   {remainingProducts.map((p, index) => <Card key={p.id} p={p} index={index} />)}
                 </div>
               </div>
@@ -190,19 +190,16 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
         animationDelay: `${staggerDelay}ms`,
       }}
       className={`group relative overflow-hidden border border-border bg-card transition duration-300 active:scale-95 animate-fade-slide-up ${
-        sold ? "opacity-75" : "hover:-translate-y-1 hover:border-primary"
+        sold ? "grayscale opacity-60" : "hover:-translate-y-1 hover:border-primary"
       }`}
     >
-      <div className="absolute left-3 top-3 z-10">
-        <span
-          className={`tilt-l px-2 py-1 text-[10px] font-black uppercase tracking-widest shadow ${
-            sold ? "bg-zinc-800 text-zinc-400" : "bg-success text-success-foreground"
-          }`}
-          style={{ borderRadius: "2px" }}
-        >
-          {sold ? "gone" : "available"}
-        </span>
-      </div>
+      {sold && (
+        <div className="absolute left-3 top-3 z-10">
+          <span className="px-2 py-1 text-[10px] font-black uppercase tracking-widest bg-teal-900 text-teal-200 shadow" style={{ borderRadius: "2px" }}>
+            SOLD OUT
+          </span>
+        </div>
+      )}
 
       <div className="absolute right-3 top-3 z-10 tilt-r bg-secondary px-2 py-1 text-[10px] font-black text-secondary-foreground shadow" style={{ borderRadius: "2px" }}>
         {p.tag}
@@ -220,25 +217,12 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
             {p.emoji}
           </span>
         )}
-        {sold && (
-          <div className="absolute inset-0 grid place-items-center">
-            <span
-              className="bg-zinc-900/80 px-5 py-2 font-display text-3xl text-zinc-400"
-              style={{ transform: "rotate(-10deg)", border: "3px solid currentColor" }}
-            >
-              SOLD
-            </span>
-          </div>
-        )}
       </div>
 
       <div className="space-y-2 p-3">
         <h3 className="line-clamp-2 font-display text-[11px] uppercase leading-tight">{p.name}</h3>
-        <div className="flex items-center justify-between border-t border-border pt-2">
-          <span className="text-[10px] text-muted-foreground">
-            {p.size ? `size ${p.size}` : "one size"}
-          </span>
-          <span className={`font-display text-xs ${sold ? "text-zinc-600 line-through" : "text-primary"}`}>
+        <div className="flex items-center justify-between">
+          <span className="font-display text-xs text-primary">
             {p.price ? (
               <>
                 {p.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>

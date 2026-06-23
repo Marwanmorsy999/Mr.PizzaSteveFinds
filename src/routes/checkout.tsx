@@ -37,6 +37,7 @@ function CheckoutPage() {
     try {
       const orderItems = cart.items.map(i => ({
         productId: i.id, name: i.name, size: i.size, price: i.price, priceLabel: i.priceLabel,
+        quantity: i.quantity,
       }));
 
       const res = await fetch(`${API}/api/orders`, {

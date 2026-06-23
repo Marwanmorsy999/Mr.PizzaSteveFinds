@@ -53,7 +53,7 @@ function Shop() {
   return (
     <div className="min-h-screen">
       <Header />
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-2 py-12">
         <div className="border-b border-border pb-8 mb-12">
           <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">The Shop</div>
           <h1 className="mt-2 text-5xl sm:text-7xl">Current Drop</h1>
@@ -63,7 +63,7 @@ function Shop() {
         </div>
 
          {loading ? (
-           <div className="mt-8 grid gap-4 grid-cols-2">
+           <div className="mt-8 grid gap-2 grid-cols-2 sm:grid-cols-3">
              {Array.from({ length: 6 }).map((_, i) => (
                <div key={i} className="animate-pulse border border-zinc-800 bg-[#161616] p-3 flex flex-col gap-3">
                  <div className="w-full aspect-square bg-[#0a0a0a] border border-zinc-800/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" />
@@ -78,7 +78,7 @@ function Shop() {
              ))}
            </div>
         ) : products.length > 0 ? (
-          <div className="grid gap-3 grid-cols-2">
+          <div className="grid gap-2 grid-cols-2 sm:grid-cols-3">
             {products.map((p, index) => <Card key={p.id} p={p} index={index} />)}
           </div>
         ) : (
@@ -121,7 +121,7 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
         {p.tag}
       </div>
 
-      <div className="relative grid aspect-square place-items-center overflow-hidden bg-[#0a0a0a] border border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+      <div className="relative grid aspect-[3/4] place-items-center overflow-hidden bg-[#0a0a0a] border border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
         {p.imageUrl ? (
           <img
             src={p.imageUrl}

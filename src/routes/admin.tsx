@@ -128,7 +128,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [bulkItems, setBulkItems] = useState<any[]>([
     { id: 1, name: "", size: "", price: "", tag: "TEE", condition: "Good", description: "", imageUrl: "", images: [] as string[] }
   ]);
-  const [uploadingBulk, setUploadingBulk] = useState<Record<number, boolean>>({});
+  const [uploadingBulk, setUploadingBulk] = useState<Record<string, boolean>>({});
   const [bulkPublishing, setBulkPublishing] = useState(false);
 
   // Product list controls
@@ -803,14 +803,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     onBulkToggle={() => {
                       setBulkSelected(prev => { const n = new Set(prev); n.has(p.id) ? n.delete(p.id) : n.add(p.id); return n; });
                     }}
-                    onMainImg={e => handleMainImg(e, p.id)}
-                    onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
-                    onRemoveImg={i => removeExtraImg(p.id, p.images || [], i)}
+                    onMainImg={(e: React.ChangeEvent<HTMLInputElement>) => handleMainImg(e, p.id)}
+                    onExtraImg={(e: React.ChangeEvent<HTMLInputElement>) => handleExtraImg(e, p.id, p.images || [])}
+                    onRemoveImg={(i: number) => removeExtraImg(p.id, p.images || [], i)}
                     onToggle={() => toggleStatus(p.id, p.status)}
                     onQuickSell={() => quickSell(p.id)}
                     onDuplicate={() => duplicateProduct(p)}
                     onDelete={() => deleteProduct(p.id)}
-                    onSave={async (price, label, condition, description) => {
+                    onSave={async (price: string, label: string, condition: string, description: string) => {
                       await apiFetch(`/api/products/${p.id}`, { method: "PATCH", body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
                       showMsg("Saved ✓"); load();
                     }}
@@ -828,14 +828,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   {filteredSold.map(p => (
                     <AdminRow key={p.id} product={p} uploading={uploading}
                       bulkMode={false} bulkSelected={false} onBulkToggle={() => { }}
-                      onMainImg={e => handleMainImg(e, p.id)}
-                      onExtraImg={e => handleExtraImg(e, p.id, p.images || [])}
-                      onRemoveImg={i => removeExtraImg(p.id, p.images || [], i)}
+                      onMainImg={(e: React.ChangeEvent<HTMLInputElement>) => handleMainImg(e, p.id)}
+                      onExtraImg={(e: React.ChangeEvent<HTMLInputElement>) => handleExtraImg(e, p.id, p.images || [])}
+                      onRemoveImg={(i: number) => removeExtraImg(p.id, p.images || [], i)}
                       onToggle={() => toggleStatus(p.id, p.status)}
                       onQuickSell={() => { }}
                       onDuplicate={() => duplicateProduct(p)}
                       onDelete={() => deleteProduct(p.id)}
-                      onSave={async (price, label, condition, description) => {
+                      onSave={async (price: string, label: string, condition: string, description: string) => {
                         await apiFetch(`/api/products/${p.id}`, { method: "PATCH", body: JSON.stringify({ price: price ? parseInt(price) : null, priceLabel: label || null, condition, description }) });
                         showMsg("Saved ✓"); load();
                       }}

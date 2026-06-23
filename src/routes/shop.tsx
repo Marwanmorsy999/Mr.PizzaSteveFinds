@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
 import { memo, useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
@@ -34,9 +34,7 @@ export const Route = createFileRoute("/shop")({
   component: Shop,
 });
 
-function Shop() {
-  const cart = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
+function Shop() {\n  const cart = useCart();\n  const navigate = useNavigate();\n  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -152,13 +150,12 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
             >
               add to cart
             </button>
-            <Link
-              to="/checkout"
-              onClick={(e) => e.stopPropagation()}
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); cart.add({ id: p.id, name: p.name, price: p.price, priceLabel: p.priceLabel, imageUrl: p.imageUrl, size: p.size, emoji: p.emoji }); navigate({ to: "/checkout" }); }}
               className="flex-1 border border-border hover:border-primary active:scale-95 text-foreground hover:text-primary font-black text-center py-1.5 tracking-widest transition-colors text-[10px] uppercase"
             >
               buy it now
-            </Link>
+            </button>
           </div>
         )}
       </div>

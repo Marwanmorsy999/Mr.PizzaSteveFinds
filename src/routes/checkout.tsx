@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
+import { Header } from "@/components/site-chrome";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 
@@ -12,17 +13,13 @@ function CheckoutPage() {
   const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "", pickup: true });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [steveWhatsapp, setSteveWhatsapp] = useState("201XXXXXXXXX"); // Fallback default
+  const [steveWhatsapp, setSteveWhatsapp] = useState("201XXXXXXXXX");
 
   useEffect(() => {
     fetch(`${API}/api/settings`)
       .then(res => res.json())
-      .then(data => {
-        if (data && data.whatsapp) {
-          setSteveWhatsapp(data.whatsapp);
-        }
-      })
-      .catch(err => console.error("Error loading settings:", err));
+      .then(data => { if (data?.whatsapp) setSteveWhatsapp(data.whatsapp); })
+      .catch(() => {});
   }, []);
 
   function f(patch: Partial<typeof form>) { setForm(p => ({ ...p, ...patch })); }
@@ -36,8 +33,8 @@ function CheckoutPage() {
 
     try {
       const orderItems = cart.items.map(i => ({
-        productId: i.id, name: i.name, size: i.size, price: i.price, priceLabel: i.priceLabel,
-        quantity: i.quantity,
+        productId: i.id, name: i.name, size: i.size, price: i.price,
+        priceLabel: i.priceLabel, quantity: i.quantity,
       }));
 
       const res = await fetch(`${API}/api/orders`, {
@@ -55,7 +52,7 @@ function CheckoutPage() {
       });
 
       if (res.status === 409) {
-        setError("Sorry — someone just grabbed that. It's gone 💀 Head back to the shop to see what's still available.");
+        setError("Someone just grabbed that. It's gone. Head back to the shop.");
         setLoading(false);
         return;
       }
@@ -63,8 +60,10 @@ function CheckoutPage() {
       const data = await res.json();
       if (!data.success) throw new Error("Order failed");
 
-      // Build WhatsApp message to Steve
-      const itemLines = cart.items.map(i => `• ${i.name}${i.size ? ` (${i.size})` : ""} — ${i.price ? `${i.price} EGP` : "DM price"}`).join("\n");
+      const itemLines = cart.items
+        .map(i => `• ${i.name}${i.size ? ` (${i.size})` : ""} — ${i.price ? `${i.price} EGP` : "DM price"}`)
+        .join("\n");
+
       const waMsg = encodeURIComponent(
         `🍕 NEW ORDER #${data.orderId}\n\n` +
         `Customer: ${form.name}\n` +
@@ -74,10 +73,9 @@ function CheckoutPage() {
         `\nItems:\n${itemLines}\n\n` +
         `Total: ${cart.total > 0 ? `${cart.total} EGP` : "Price TBC"}`
       );
-      const waLink = `https://wa.me/${steveWhatsapp}?text=${waMsg}`;
 
       cart.clear();
-      navigate({ to: "/order-confirmation", search: { orderId: data.orderId, waLink } });
+      navigate({ to: "/order-confirmation", search: { orderId: data.orderId, waLink: `https://wa.me/${steveWhatsapp}?text=${waMsg}` } });
     } catch {
       setError("Something went wrong. Please try again.");
     }
@@ -90,105 +88,177 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white px-4 py-12">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-black tracking-widest mb-2">CHECKOUT 🍕</h1>
-        <p className="text-zinc-500 text-sm mb-8">almost there — fill in ur details and steve will confirm everything. don't overthink it.</p>
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
+
+      <div className="mx-auto max-w-lg px-4 py-16 sm:py-20">
+
+        {/* Page title */}
+        <div className="mb-10 border-b border-border pb-6">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary mb-2">Checkout</p>
+          <h1 className="font-display text-4xl sm:text-5xl uppercase leading-none">Reserve Your Piece</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Fill in your details — Steve confirms everything personally. Don't overthink it.
+          </p>
+        </div>
 
         {/* Order summary */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6">
-          <p className="text-xs text-zinc-500 tracking-widest mb-3">ur order 🛒</p>
-          {cart.items.map(item => (
-            <div key={item.id} className="flex items-center gap-3 mb-2 last:mb-0">
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
-                {item.imageUrl
-                  ? <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                  : <span className="w-full h-full flex items-center justify-center text-lg">{item.emoji}</span>}
+        <div className="mb-8 border border-border bg-card">
+          <div className="border-b border-border px-5 py-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Your Order</p>
+          </div>
+          <div className="divide-y divide-border">
+            {cart.items.map(item => (
+              <div key={item.id} className="flex items-center gap-4 px-5 py-4">
+                <div className="w-12 h-12 overflow-hidden bg-[#0a0a0a] border border-zinc-800 flex-shrink-0">
+                  {item.imageUrl
+                    ? <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    : <span className="w-full h-full flex items-center justify-center text-xl">{item.emoji}</span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display text-sm uppercase tracking-wide truncate">{item.name}</p>
+                  {item.size && <p className="text-xs text-muted-foreground mt-0.5">Size {item.size}</p>}
+                </div>
+                <span className="font-display text-sm text-foreground flex-shrink-0">
+                  {item.price ? (
+                    <>{item.price} <span className="text-[0.65em] text-muted-foreground">EGP</span></>
+                  ) : "—"}
+                </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold truncate">{item.name}</p>
-                {item.size && <p className="text-zinc-600 text-xs">Size: {item.size}</p>}
-              </div>
-              <span className="text-zinc-100 font-black text-sm flex-shrink-0">
-                {item.price ? (
-                  <>
-                    {item.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
-                  </>
-                ) : "—"}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
           {cart.total > 0 && (
-            <div className="border-t border-zinc-800 mt-3 pt-3 flex justify-between">
-              <span className="text-zinc-400 text-sm">Total</span>
-              <span className="text-white font-black">
-                {cart.total} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
+            <div className="border-t border-border px-5 py-4 flex justify-between items-center">
+              <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Total</span>
+              <span className="font-display text-lg text-foreground">
+                {cart.total} <span className="text-[0.65em] text-muted-foreground">EGP</span>
               </span>
             </div>
           )}
         </div>
 
         {/* Form */}
-        <div className="space-y-4">
+        <div className="space-y-5">
+
+          {/* Name */}
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">ur name *</label>
-            <input value={form.name} onChange={e => f({ name: e.target.value })} placeholder="Ahmed Mohamed"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
-          </div>
-          <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">phone number * (so steve can reach u)</label>
-            <input value={form.phone} onChange={e => f({ phone: e.target.value })} placeholder="01012345678" type="tel"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm" />
+            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+              Full Name <span className="text-primary">*</span>
+            </label>
+            <input
+              value={form.name}
+              onChange={e => f({ name: e.target.value })}
+              placeholder="Ahmed Mohamed"
+              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors"
+            />
           </div>
 
-          {/* Pickup vs delivery */}
+          {/* Phone */}
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">how do u want it? 👀</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => f({ pickup: true })}
-                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${form.pickup ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
-                📍 Pickup (Zamalek)
+            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+              Phone Number <span className="text-primary">*</span>
+            </label>
+            <input
+              value={form.phone}
+              onChange={e => f({ phone: e.target.value })}
+              placeholder="01012345678"
+              type="tel"
+              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors"
+            />
+            <p className="mt-1.5 text-[10px] text-muted-foreground">Steve will contact you on this number to confirm.</p>
+          </div>
+
+          {/* Pickup vs Delivery */}
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+              Fulfilment
+            </label>
+            <div className="grid grid-cols-2 gap-px border border-border bg-border">
+              <button
+                onClick={() => f({ pickup: true })}
+                className={`py-3.5 text-xs font-black uppercase tracking-widest transition-colors ${
+                  form.pickup
+                    ? "bg-foreground text-background"
+                    : "bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Pickup · Zamalek
               </button>
-              <button onClick={() => f({ pickup: false })}
-                className={`py-3 rounded-xl text-sm font-bold border transition-colors ${!form.pickup ? "bg-zinc-800 border-zinc-200 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}>
-                🚚 Delivery
+              <button
+                onClick={() => f({ pickup: false })}
+                className={`py-3.5 text-xs font-black uppercase tracking-widest transition-colors ${
+                  !form.pickup
+                    ? "bg-foreground text-background"
+                    : "bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Delivery
               </button>
             </div>
+            {form.pickup && (
+              <p className="mt-1.5 text-[10px] text-muted-foreground">30 Hassan Assem St, Zamalek · Daily 3pm – 11pm</p>
+            )}
           </div>
 
+          {/* Delivery address */}
           {!form.pickup && (
             <div>
-              <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">delivery address * (be specific pls)</label>
-              <textarea value={form.address} onChange={e => f({ address: e.target.value })} placeholder="street, area, city..."
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-20 resize-none" />
+              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+                Delivery Address <span className="text-primary">*</span>
+              </label>
+              <textarea
+                value={form.address}
+                onChange={e => f({ address: e.target.value })}
+                placeholder="Street, area, city — be specific"
+                className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors h-20 resize-none"
+              />
             </div>
           )}
 
+          {/* Notes */}
           <div>
-            <label className="text-xs text-zinc-400 tracking-widest mb-1.5 block">any notes? (optional, but go off)</label>
-            <textarea value={form.notes} onChange={e => f({ notes: e.target.value })} placeholder="any special requests, size concerns, whatever..."
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-200 placeholder-zinc-600 text-sm h-16 resize-none" />
+            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+              Notes <span className="text-muted-foreground font-normal normal-case tracking-normal">(optional)</span>
+            </label>
+            <textarea
+              value={form.notes}
+              onChange={e => f({ notes: e.target.value })}
+              placeholder="Size concerns, special requests, anything else..."
+              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors h-20 resize-none"
+            />
           </div>
 
-          {/* Payment placeholder */}
-          <div className="bg-zinc-900 border border-dashed border-zinc-700 rounded-xl p-4 text-center">
-            <p className="text-zinc-500 text-xs tracking-widest">💳 ONLINE PAYMENT COMING SOON</p>
-            <p className="text-zinc-600 text-xs mt-1">steve will sort out payment when he hits u back, chill</p>
+          {/* Payment notice */}
+          <div className="border border-dashed border-border px-5 py-4 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">
+              💳 Online Payment Coming Soon
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Steve will sort out payment when he contacts you.
+            </p>
           </div>
 
-          {error && <p className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
+          {/* Error */}
+          {error && (
+            <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              {error}
+            </p>
+          )}
 
-          <button onClick={submit} disabled={loading}
-            className="w-full bg-zinc-800 hover:bg-zinc-800 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-black py-4 rounded-xl tracking-widest transition-all text-sm">
-            {loading ? "placing ur order..." : "YEAH, RESERVE THIS SHIT →"}
+          {/* Submit */}
+          <button
+            onClick={submit}
+            disabled={loading}
+            className="w-full bg-primary hover:bg-secondary disabled:opacity-50 text-primary-foreground font-display text-sm uppercase tracking-widest py-4 transition-colors active:scale-[0.99]"
+          >
+            {loading ? "Placing Your Order..." : "Reserve This →"}
           </button>
 
-          <p className="text-zinc-600 text-xs text-center">
-            by reserving u agree to let steve contact u to confirm. he's chill, don't worry about it.
+          <p className="text-[10px] text-center text-muted-foreground">
+            By reserving you agree to be contacted by Steve to confirm your order.
           </p>
         </div>
       </div>
     </div>
   );
 }
-

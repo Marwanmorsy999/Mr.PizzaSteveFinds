@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Header, Footer, Marquee } from "@/components/site-chrome";
+import { Header, Footer } from "@/components/site-chrome";
 import { InstagramFeed } from "@/components/ui/instagram-feed";
 
 export const Route = createFileRoute("/about")({
@@ -16,14 +16,16 @@ function About() {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Header />
-      <Marquee text="ZAMALEK · CAIRO · 3PM - 11PM · COME THRU ·" />
 
       {/* Market photo banner */}
-      <div className="relative w-full overflow-hidden" style={{ height: "55vh" }}>
-        <img src="/market.jpg" alt="Steve sourcing at Cairo market" loading="lazy" className="w-full h-full object-cover object-center grayscale" />
+      <div className="relative w-full overflow-hidden" style={{ height: "60vh" }}>
+        <img
+          src="/about.jpeg"
+          alt="Mr. Pizza Steve market stand"
+          loading="lazy"
+          className="w-full h-full object-cover object-center"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
-        <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-        </div>
       </div>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
@@ -37,8 +39,12 @@ function About() {
             <p>
               Pop in between 3PM and 11PM, or slide into the DMs. New drops post first on Instagram - follow or miss out, honestly.
             </p>
-            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary">
+            <a
+              href="https://instagram.com/mr.pizzastevefinds"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
+            >
               follow @mr.pizzastevefinds or else
             </a>
           </div>
@@ -78,13 +84,18 @@ function About() {
             <p className="mt-3 text-sm text-muted-foreground">
               got a question about a piece? wanna hold something before someone else snatches it? just dm us.
             </p>
-            <a href="https://ig.me/m/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary">
+            <a
+              href="https://ig.me/m/mr.pizzastevefinds"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:bg-secondary"
+            >
               instagram dm
             </a>
           </div>
         </div>
       </section>
+
       <InstagramFeed />
       <Footer />
     </div>

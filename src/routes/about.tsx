@@ -29,7 +29,6 @@ function About() {
       </div>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
-        <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary pt-2">The Story</div>
         <h1 className="mt-2 text-4xl sm:text-6xl lg:text-7xl leading-none">
           One <span className="text-primary">slice</span> of Cairo street culture.
         </h1>

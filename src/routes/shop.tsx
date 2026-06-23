@@ -1,4 +1,4 @@
-﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
 import { memo, useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
@@ -34,7 +34,10 @@ export const Route = createFileRoute("/shop")({
   component: Shop,
 });
 
-function Shop() {\n  const cart = useCart();\n  const navigate = useNavigate();\n  const [products, setProducts] = useState<Product[]>([]);
+function Shop() {
+  const cart = useCart();
+  const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -93,6 +96,7 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
   const sold = p.status === "sold";
   const staggerDelay = Math.min(index * 50, 300);
   const cart = useCart();
+  const navigate = useNavigate();
 
   return (
     <Link

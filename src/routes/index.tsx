@@ -166,7 +166,7 @@ function Home() {
                   <div className="absolute right-2 top-2 z-10 bg-secondary px-2 py-0.5 text-[10px] font-black text-secondary-foreground shadow">
                     {p.tag}
                   </div>
-                  <div className="relative grid aspect-square place-items-center overflow-hidden border border-zinc-800/80 bg-[#0a0a0a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+                  <div className="relative grid aspect-[3/4] place-items-center overflow-hidden border border-zinc-800/80 bg-[#0a0a0a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
                     {p.imageUrl ? (
                       <img
                         src={p.imageUrl}

@@ -23,6 +23,10 @@ const CONDITION_COLORS: Record<string, string> = {
 export const Route = createFileRoute("/product/$id")({ component: ProductPage });
 
 function ProductPage() {
+function cloudImg(url: string, width = 600) {
+  if (!url || !url.includes("cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
+}
   const { id } = Route.useParams();
   const cart = useCart();
   const [product, setProduct] = useState<Product | null>(null);
@@ -92,7 +96,7 @@ function ProductPage() {
       {/* Zoom overlay */}
       {zoom && allImages.length > 0 && (
         <div className="fixed inset-0 z-50 bg-black flex items-center justify-center cursor-zoom-out" onClick={() => setZoom(false)}>
-          <img src={allImages[activeImg]} alt={product.name} className="max-h-screen max-w-full object-contain" />
+          <img src={cloudImg(allImages[activeImg], 800)} alt={product.name} className="max-h-screen max-w-full object-contain" />
         </div>
       )}
 
@@ -115,7 +119,7 @@ function ProductPage() {
               }}
             >
               {allImages.length > 0
-                ? <img src={allImages[activeImg]} alt={product.name} className="w-full h-full object-cover" />
+                ? <img src={cloudImg(allImages[activeImg], 800)} alt={product.name} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
 
               {/* back button */}
@@ -235,7 +239,7 @@ function ProductPage() {
                 <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
                   <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
                     {p.imageUrl
-                      ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
+                      ? <img src={cloudImg(p.imageUrl ?? '')} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
                       : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
                   </div>
                   <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>

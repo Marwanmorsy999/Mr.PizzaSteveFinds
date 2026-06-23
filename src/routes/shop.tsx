@@ -35,6 +35,10 @@ export const Route = createFileRoute("/shop")({
 });
 
 function Shop() {
+function cloudImg(url: string, width = 600) {
+  if (!url || !url.includes("cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
+}
   const cart = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
@@ -124,7 +128,7 @@ const Card = memo(function Card({ p, index }: { p: Product; index: number }) {
       <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-[#0a0a0a] border border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
         {p.imageUrl ? (
           <img
-            src={p.imageUrl}
+            src={cloudImg(p.imageUrl ?? '')}
             alt={p.name}
             className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${sold ? "grayscale opacity-40" : ""}`}
           />

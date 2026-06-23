@@ -36,6 +36,10 @@ export const Route = createFileRoute("/")({
 
 // ── Page ───────────────────────────────────────────────────────────────────
 function Home() {
+function cloudImg(url: string, width = 600) {
+  if (!url || !url.includes("cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/w_${width},f_auto,q_auto/`);
+}
   const [featured, setFeatured] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Array<{ name: string; text: string; rating: number; date: string }>>(() => {
     try {
@@ -169,7 +173,7 @@ function Home() {
                   <div className="relative grid aspect-[3/4] place-items-center overflow-hidden border border-zinc-800/80 bg-[#0a0a0a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
                     {p.imageUrl ? (
                       <img
-                        src={p.imageUrl}
+                        src={cloudImg(p.imageUrl ?? '')}
                         alt={p.name}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />

@@ -13,7 +13,7 @@ Replace the hero, marquee, reviews, and footer callout on `src/routes/index.tsx`
 
 ### `src/routes/index.tsx`
 1. Replace hero section:
-   - Swap `<video>` for `<img src="/market.jpg">` with gradient overlays
+   - Swap `<video>` for `<img https://res.cloudinary.com/dnggmrgmu/image/upload/v1782221376/market_sbt1ij.jpg>` with gradient overlays
    - Replace badge text: `open now` → `Drop is live` (keep pulse dot)
    - Replace headline: `Mr. Pizza Steve Finds.` → `PREMIUM SLICE OF A THRIFT.`
    - Replace location stat with inline pill: `30 Hassan Assem St · Zamalek, Cairo · 3 pm – 11 pm daily`

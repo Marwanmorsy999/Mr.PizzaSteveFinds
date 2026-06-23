@@ -5,7 +5,7 @@ Update ONLY the hero/top section of `src/routes/index.tsx` with the new design. 
 
 ## Scope — what changes
 **`src/routes/index.tsx` — hero section only (lines ~78–113)**
-1. Swap `<video src="/opening.mp4">` → `<img src="/market.jpg">` with gradient overlays
+1. Swap `<video src="/opening.mp4">` → `<img https://res.cloudinary.com/dnggmrgmu/image/upload/v1782221376/market_sbt1ij.jpg>` with gradient overlays
 2. Badge: `open now` → `Drop is live` (keep pulse dot)
 3. Headline: `Mr. Pizza Steve Finds.` → `PREMIUM SLICE OF A THRIFT.`
 4. Location: remove `Stat` component row, replace with inline pill text: `30 Hassan Assem St · Zamalek, Cairo · 3 pm – 11 pm daily`

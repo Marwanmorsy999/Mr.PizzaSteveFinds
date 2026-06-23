@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Header, Footer } from "@/components/site-chrome";
+import { Header, Footer, Marquee } from "@/components/site-chrome";
 import { useState, useEffect } from "react";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
@@ -20,8 +20,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Mr. Pizza Steve Finds - Loud Vintage & Thrift | Zamalek, Cairo" },
-      { name: "description", content: "Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo." },
+      { name: "description", content: "Premium slice of a thrift. Loud vintage and thrift drops curated by Steve dos Santos in Zamalek, Cairo." },
       { name: "author", content: "Steve dos Santos" },
+      { name: "theme-color", content: "#0a0a0a" },
       { property: "og:title", content: "Mr. Pizza Steve Finds - Loud Vintage & Thrift | Zamalek, Cairo" },
       { property: "og:url", content: "https://mr.pizzastevefinds.com/" },
       { property: "og:image", content: "https://mr.pizzastevefinds.com/og-image.png" },
@@ -75,42 +76,70 @@ function Home() {
     <div className="min-h-screen">
       <Header />
 
-      {/* Hero with video background */}
-      <section className="relative overflow-hidden border-b border-border bg-[#0a0a0a]" style={{ minHeight: "90vh" }}>
-        <video
-          src="/opening.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: 0.5 }}
+      {/* Hero */}
+      <section className="relative min-h-[100svh] w-full overflow-hidden">
+        {/* Background photo */}
+        <img
+          src="/market.jpg"
+          alt="Mr. Pizza Steve thrift market stand"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
-        <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:py-32">
-          <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
-            open now
-          </div>
-          <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
-            Mr. Pizza<br />
-            <span className="text-primary">Steve</span><br />
-            Finds<span className="text-secondary">.</span>
+
+        {/* Overlays — dark bottom fade so text pops on mobile */}
+        <div className="absolute inset-0 bg-background/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
+
+        {/* Hero content */}
+        <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 py-24 text-center sm:px-8">
+          {/* Live badge */}
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-background/40 px-4 py-1.5 text-[11px] font-black uppercase tracking-widest text-foreground backdrop-blur-sm sm:mb-8 sm:text-xs">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+            Drop is live
+          </span>
+
+          {/* Headline */}
+          <h1
+            className="max-w-[22rem] text-[clamp(3.2rem,15vw,8rem)] leading-[0.9] tracking-tight text-foreground sm:max-w-2xl md:max-w-4xl"
+            style={{ fontFamily: "Archivo Black, Impact, sans-serif" }}
+          >
+            PREMIUM SLICE
+            <br />
+            OF A{" "}
+            <span className="text-primary">THRIFT.</span>
           </h1>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/shop" className="inline-flex items-center gap-2 bg-primary active:scale-95 px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary">
-              shop the drop
+
+          {/* Sub */}
+          <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em] text-foreground/80 sm:mt-8 sm:text-sm">
+            Once it's gone — it's gone.
+          </p>
+
+          {/* CTA row */}
+          <div className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">
+            <Link
+              to="/shop"
+              className="inline-flex w-full items-center justify-center bg-primary px-8 py-4 text-xs font-extrabold uppercase tracking-[0.2em] text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 sm:w-auto sm:px-10 sm:py-5 sm:text-sm"
+            >
+              Shop the Drop →
             </Link>
-            <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-2 border border-border active:scale-95 px-6 py-3 font-display text-sm uppercase tracking-widest text-foreground transition hover:border-primary hover:text-primary">
+            <a
+              href="https://instagram.com/mr.pizzastevefinds"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center border border-border px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-foreground/80 transition hover:border-primary hover:text-primary active:scale-95 sm:w-auto sm:px-10 sm:py-5 sm:text-sm"
+            >
               @mr.pizzastevefinds
             </a>
           </div>
-          <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-2">
-            <Stat label="where are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
-          </div>
+
+          {/* Location pill */}
+          <p className="mt-14 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/50 sm:mt-16">
+            30 Hassan Assem St · Zamalek, Cairo · 3 pm – 11 pm daily
+          </p>
         </div>
       </section>
+
+      <Marquee text="fresh off the rack · loud vintage & thrift · zamalek cairo · shop the drop" />
 
       {/* Fresh on the rack */}
       <section className="w-full bg-[#161616] border-b border-border py-16">
@@ -285,15 +314,5 @@ function Stars({ n }: { n: number }) {
     <span className="text-zinc-100 text-sm">
       {"★".repeat(n)}{"☆".repeat(5 - n)}
     </span>
-  );
-}
-
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div>
-      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-display text-xl uppercase">{value}</div>
-      <div className="text-xs text-muted-foreground">{sub}</div>
-    </div>
   );
 }

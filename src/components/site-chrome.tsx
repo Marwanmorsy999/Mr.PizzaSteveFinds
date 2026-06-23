@@ -1,6 +1,7 @@
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
+import { useState, useEffect } from "react";
 
 const BANNERS = [
   { label: "omg new drop just dropped" },

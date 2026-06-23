@@ -30,13 +30,12 @@ function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [zoom, setZoom] = useState(false);
-  const [qty, setQty] = useState(1);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const isInCart = product ? cart.items.some((item) => item.id === product.id) : false;
 
   function handleAddToCart() {
-    if (product && qty > 0) {
+    if (product) {
       cart.add({
         id: product.id,
         name: product.name,
@@ -45,8 +44,7 @@ function ProductPage() {
         imageUrl: product.imageUrl,
         size: product.size,
         emoji: product.emoji,
-      }, qty);
-      setQty(1);
+      });
     }
   }
 
@@ -186,26 +184,6 @@ function ProductPage() {
                 <span className="text-sm font-bold tracking-wider text-zinc-500">EGP</span>
               ) : null}
             </div>
-
-            {/* Stock indicator */}
-            {product.status === "available" && (
-              <p className="text-xs text-red-400 font-bold tracking-widest mb-4 flex items-center gap-1.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                LAST PIECE
-              </p>
-            )}
-
-            {/* Quantity selector */}
-            {product.status === "available" && (
-              <div className="flex items-center gap-3 mb-5">
-                <span className="text-xs text-zinc-400 uppercase tracking-wider">Quantity</span>
-                <div className="flex items-center border border-zinc-700 rounded-lg">
-                  <button onClick={() => setQty(q => Math.max(1, q - 1))} className="px-3 py-1 text-zinc-300 hover:text-white transition-colors">−</button>
-                  <span className="px-3 py-1 text-sm font-bold text-white min-w-[2rem] text-center">{qty}</span>
-                  <button onClick={() => setQty(q => q + 1)} className="px-3 py-1 text-zinc-300 hover:text-white transition-colors">+</button>
-                </div>
-              </div>
-            )}
 
             {/* Size */}
             {product.size && (

@@ -1,7 +1,6 @@
 import logo from "../assets/logo-transparent.png";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "../context/CartContext";
-import { useEffect, useState } from "react";
 
 const BANNERS = [
   { label: "omg new drop just dropped" },
@@ -12,19 +11,6 @@ const BANNERS = [
   { label: "these pieces are too good to be sitting here wtf" },
   { label: "buy it before ur friend does" },
 ];
-
-// Singleton audio — persists across route changes
-let globalAudio: HTMLAudioElement | null = null;
-let audioStarted = false;
-
-function getAudio() {
-  if (!globalAudio) {
-    globalAudio = new Audio("/site.mp3");
-    globalAudio.loop = true;
-    globalAudio.volume = 0.5;
-  }
-  return globalAudio;
-}
 
 export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
   const [idx, setIdx] = useState(0);
@@ -44,60 +30,6 @@ export function RotatingBanner({ interval = 3500 }: { interval?: number }) {
 
 export function Header() {
   const { count } = useCart();
-  const [volume, setVolume] = useState(0.5);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    const audio = getAudio();
-
-    // Sync state with singleton audio instance
-    setPlaying(!audio.paused);
-    setVolume(audio.volume);
-
-    // Stop music when tab/window closes
-    const handleUnload = () => {
-      if (globalAudio) {
-        globalAudio.pause();
-        globalAudio.currentTime = 0;
-        audioStarted = false;
-      }
-    };
-
-    window.addEventListener("beforeunload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
-  }, []);
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    const v = parseFloat(e.target.value);
-    setVolume(v);
-    getAudio().volume = v;
-  };
-
-  const togglePlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const audio = getAudio();
-    if (!audio.paused) {
-      audio.pause();
-      setPlaying(false);
-    } else {
-      audio.play().catch(() => {});
-      audioStarted = true;
-      setPlaying(true);
-    }
-  };
-
-  const stopAudio = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const audio = getAudio();
-    audio.pause();
-    audio.currentTime = 0;
-    audioStarted = false;
-    setPlaying(false);
-  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
@@ -124,52 +56,6 @@ export function Header() {
               {l.label}
             </Link>
           ))}
-
-          <div className="flex items-center gap-1.5 ml-2">
-            {/* Play/Pause button */}
-            <button
-              onClick={togglePlay}
-              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors flex-shrink-0"
-              title={playing ? "pause music" : "play music"}
-            >
-              {playing ? (
-                // Pause icon
-                <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                  <rect x="0" y="0" width="3" height="12" rx="1" />
-                  <rect x="7" y="0" width="3" height="12" rx="1" />
-                </svg>
-              ) : (
-                // Play icon
-                <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                  <path d="M0 0 L10 6 L0 12 Z" />
-                </svg>
-              )}
-            </button>
-
-            {/* Stop button */}
-            <button
-              onClick={stopAudio}
-              className="flex items-center justify-center w-7 h-7 rounded-full border border-zinc-700 text-zinc-400 hover:text-primary hover:border-primary transition-colors flex-shrink-0"
-              title="stop music"
-            >
-              {/* Stop icon (square) */}
-              <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
-                <rect x="0" y="0" width="8" height="8" rx="0.5" />
-              </svg>
-            </button>
-
-            <span className="hidden sm:inline text-muted-foreground text-xs">vol</span>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={handleVolumeChange}
-              onClick={(e) => e.stopPropagation()}
-              className="hidden sm:block w-20 accent-primary cursor-pointer"
-            />
-          </div>
         </nav>
       </div>
     </header>

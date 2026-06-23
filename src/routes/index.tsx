@@ -89,30 +89,26 @@ function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:py-32">
           <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
-            yeah we are open rn · 3pm - 11pm
+             <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
+             3pm - 11pm
           </div>
           <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
             Mr. Pizza<br />
             <span className="text-primary">Steve</span><br />
             Finds<span className="text-secondary">.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-            Loud vintage. Bolder thrift. Curated by Steve dos Santos out of a tiny shop on Hassan Assem - Zamalek's worst-kept secret. Don't tell everyone.
-          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/shop" className="inline-flex items-center gap-2 bg-primary active:scale-95 px-6 py-3 font-display text-sm uppercase tracking-widest text-primary-foreground transition hover:-translate-y-0.5 hover:bg-secondary">
-              shop the damn drop
+              shop the drop
             </Link>
             <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 border border-border active:scale-95 px-6 py-3 font-display text-sm uppercase tracking-widest text-foreground transition hover:border-primary hover:text-primary">
               @mr.pizzastevefinds
             </a>
           </div>
-          <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-3">
-            <Stat label="where tf are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
-            <Stat label="hours" value="3PM - 11PM" sub="yes every damn day" />
-            <Stat label="the vibe" value="Streetwear x Thrift" sub="pizza steve energy only" />
+          <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-2">
+            <Stat label="where are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
+            <Stat label="hours" value="3PM - 11PM" sub="yes every day" />
           </div>
         </div>
       </section>
@@ -277,7 +273,7 @@ function Home() {
           <a href="https://instagram.com/mr.pizzastevefinds" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4 active:scale-95 inline-block">
             @mr.pizzastevefinds
           </a>{" "}
-          or miss out. genuinely your loss, we don't care
+           or miss out. genuinely your loss
         </p>
       </div>
 

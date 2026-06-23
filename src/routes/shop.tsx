@@ -48,16 +48,6 @@ function Shop() {
   }, []);
 
   const availableProducts = products.filter((p) => p.status === "available");
-  const featuredProduct = availableProducts.find(
-    (p) => p.tag?.toLowerCase().includes("grail") || p.name?.toLowerCase().includes("grail")
-  ) || availableProducts[availableProducts.length - 1];
-
-  const isGrail = featuredProduct && (featuredProduct.tag?.toLowerCase().includes("grail") || featuredProduct.name?.toLowerCase().includes("grail"));
-  const badgeText = isGrail ? "GRAIL DROP" : "NEWEST FIND";
-
-  const remainingProducts = featuredProduct
-    ? products.filter((p) => p.id !== featuredProduct.id)
-    : products;
 
   return (
     <div className="min-h-screen">
@@ -87,85 +77,9 @@ function Shop() {
              ))}
            </div>
         ) : products.length > 0 ? (
-          <>
-            {featuredProduct && (
-              <div className="mb-12">
-                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Featured Drop</div>
-                <Link
-                  to="/product/$id"
-                  params={{ id: featuredProduct.id }}
-                  className="group block relative overflow-hidden border border-zinc-800 bg-[#161616] hover:border-primary active:scale-[0.99] transition duration-300"
-                >
-                  <div className="grid md:grid-cols-12 gap-0">
-                    {/* Image side */}
-                    <div className="md:col-span-7 relative aspect-square md:aspect-[4/3] bg-[#0a0a0a] overflow-hidden flex items-center justify-center border-b md:border-b-0 md:border-r border-zinc-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
-                      <div className="absolute left-4 top-4 z-10">
-                        <span className="tilt-l px-3 py-1.5 text-xs font-black uppercase tracking-widest bg-success text-success-foreground shadow" style={{ borderRadius: "2px" }}>
-                          {badgeText}
-                        </span>
-                      </div>
-                      <div className="absolute right-4 top-4 z-10 tilt-r bg-secondary px-2.5 py-1 text-[10px] font-black text-secondary-foreground shadow" style={{ borderRadius: "2px" }}>
-                        {featuredProduct.tag}
-                      </div>
-                      {featuredProduct.imageUrl ? (
-                        <img
-                          src={featuredProduct.imageUrl}
-                          alt={featuredProduct.name}
-                          className="h-full w-full object-cover transition-transform duration-750 group-hover:scale-105"
-                        />
-                      ) : (
-                        <span className="text-9xl transition-transform duration-750 group-hover:scale-110">
-                          {featuredProduct.emoji}
-                        </span>
-                      )}
-                    </div>
-                    {/* Info side */}
-                    <div className="md:col-span-5 p-8 flex flex-col justify-between bg-gradient-to-br from-card/30 to-background/30">
-                      <div className="space-y-4">
-                        <h2 className="font-display text-3xl sm:text-4xl uppercase leading-none tracking-tight text-white group-hover:text-primary transition-colors">
-                          {featuredProduct.name}
-                        </h2>
-                        {featuredProduct.description && (
-                          <p className="text-sm text-zinc-400 leading-relaxed line-clamp-4">
-                            {featuredProduct.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className="mt-8 pt-6 border-t border-zinc-800 flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Size</span>
-                          <span className="font-bold text-white mt-1 bg-zinc-850 border border-zinc-700 px-2 py-0.5 text-xs tracking-wider" style={{ borderRadius: "2px" }}>
-                            {featuredProduct.size || "One Size"}
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Price</span>
-                          <span className="font-display text-2xl text-primary mt-1">
-                            {featuredProduct.price ? (
-                              <>
-                                {featuredProduct.price} <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
-                              </>
-                            ) : featuredProduct.priceLabel || "DM for Price"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            )}
-
-            {remainingProducts.length > 0 && (
-              <div>
-                {featuredProduct && (
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-6">More Finds</div>
-                )}
-                <div className="grid gap-3 grid-cols-2">
-                  {remainingProducts.map((p, index) => <Card key={p.id} p={p} index={index} />)}
-                </div>
-              </div>
-            )}
-          </>
+          <div className="grid gap-3 grid-cols-2">
+            {products.map((p, index) => <Card key={p.id} p={p} index={index} />)}
+          </div>
         ) : (
           <div className="mt-16 grid place-items-center text-center">
             <p className="text-muted-foreground">The rack is empty right now. Check back soon - fresh drops land weekly.</p>

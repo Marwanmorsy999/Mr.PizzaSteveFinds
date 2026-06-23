@@ -89,8 +89,8 @@ function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:py-32">
           <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-lg" style={{ borderRadius: "2px" }}>
-             <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
-             3pm - 11pm
+            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-foreground" />
+            open now
           </div>
           <h1 className="mt-6 font-display text-6xl leading-[0.85] sm:text-8xl md:text-9xl">
             Mr. Pizza<br />
@@ -108,7 +108,6 @@ function Home() {
           </div>
           <div className="mt-16 grid gap-6 border-t border-border pt-8 text-sm sm:grid-cols-2">
             <Stat label="where are we" value="30 Hassan Assem St" sub="Zamalek, Cairo" />
-            <Stat label="hours" value="3PM - 11PM" sub="yes every day" />
           </div>
         </div>
       </section>

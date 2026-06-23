@@ -8,21 +8,20 @@ function CartPage() {
   const cart = useCart();
   const navigate = useNavigate();
 
-  if (cart.items.length === 0) return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-24">
-        <p className="text-6xl mb-6">🛒</p>
-        <h1 className="text-2xl font-black tracking-widest mb-2">YOUR CART IS EMPTY</h1>
-        <p className="text-zinc-500 text-sm mb-2">bro what are you doing, go find something fire.</p>
-        <p className="text-zinc-600 text-xs mb-8">seriously, the rack is waiting for you</p>
-        <Link to="/shop" className="bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black px-8 py-4 tracking-widest transition-colors text-sm">
-          BROWSE THE FINDS
-        </Link>
-      </div>
-      <Footer />
-    </div>
-  );
+   if (cart.items.length === 0) return (
+     <div className="min-h-screen flex flex-col">
+       <Header />
+       <div className="flex-1 flex flex-col items-center justify-center px-4 py-24">
+         <p className="text-6xl mb-6">🛒</p>
+         <h1 className="text-2xl font-black tracking-widest mb-2">YOUR CART IS EMPTY</h1>
+         <p className="text-zinc-500 text-sm mb-8">Browse our current drop to find something you like.</p>
+         <Link to="/shop" className="bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black px-8 py-4 tracking-widest transition-colors text-sm">
+           BROWSE THE FINDS
+         </Link>
+       </div>
+       <Footer />
+     </div>
+   );
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -32,10 +31,10 @@ function CartPage() {
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-black tracking-widest">YOUR CART</h1>
             <button onClick={cart.clear} className="text-xs text-zinc-600 hover:text-red-400 active:scale-95 transition-colors tracking-widest">
-              nuke it all
+              Clear all
             </button>
           </div>
-          <p className="text-zinc-500 text-xs mb-8">don't sleep on this, these pieces won't wait around</p>
+          <p className="text-zinc-500 text-xs mb-8">Review your items before checkout.</p>
 
           <div className="space-y-3 mb-8">
             {cart.items.map(item => (
@@ -75,7 +74,7 @@ function CartPage() {
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-zinc-400 text-sm">{cart.count} item{cart.count !== 1 ? "s" : ""} in ur cart</span>
+              <span className="text-zinc-400 text-sm">{cart.count} item{cart.count !== 1 ? "s" : ""} in your cart</span>
               <span className="text-white font-bold">
                 {cart.total > 0 ? (
                   <>
@@ -85,20 +84,20 @@ function CartPage() {
               </span>
             </div>
             {cart.items.some(i => !i.price) && (
-              <p className="text-zinc-600 text-xs mt-1">some items don't have a set price yet - steve will sort it out with you, don't stress</p>
+              <p className="text-zinc-600 text-xs mt-1">Some items have no set price — Steve will confirm with you directly.</p>
             )}
             <div className="border-t border-zinc-800 mt-4 pt-4">
-              <span className="text-zinc-500 text-xs">pickup or delivery in zamalek, ur call</span>
+              <span className="text-zinc-500 text-xs">Pickup or delivery available in Zamalek.</span>
             </div>
           </div>
 
           <button onClick={() => navigate({ to: "/checkout" })}
             className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black py-4 tracking-widest transition-all text-sm">
-            YEAH I WANT THIS
+            PROCEED TO CHECKOUT
           </button>
           <Link to="/shop"
             className="block text-center mt-4 text-zinc-600 hover:text-zinc-400 active:scale-95 text-sm transition-colors">
-            keep looking, there's more good stuff
+            Continue shopping
           </Link>
         </div>
       </div>

@@ -36,6 +36,12 @@ function ProductPage() {
   const [activeImg, setActiveImg] = useState(0);
   const [zoom, setZoom] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  function showToast(name: string) {
+    setToast(name);
+    setTimeout(() => setToast(null), 2000);
+  }
 
   const isInCart = product ? cart.items.some((item) => item.id === product.id) : false;
 
@@ -93,6 +99,13 @@ function ProductPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground font-black text-xs tracking-widest px-5 py-3 shadow-lg animate-fade-slide-up whitespace-nowrap">
+          ✓ ADDED TO CART
+        </div>
+      )}
+
       {zoom && allImages.length > 0 && (
         <div className="fixed inset-0 z-50 bg-black flex items-center justify-center cursor-zoom-out" onClick={() => setZoom(false)}>
           <img src={cloudImg(allImages[activeImg], 800)} alt={product.name} className="max-h-screen max-w-full object-contain" />
@@ -248,7 +261,10 @@ function ProductPage() {
                     </p>
                   </Link>
                   <button
-                    onClick={() => cart.add({ id: p.id, name: p.name, price: p.price, priceLabel: p.priceLabel, imageUrl: p.imageUrl, size: p.size, emoji: p.emoji })}
+                    onClick={() => {
+                      cart.add({ id: p.id, name: p.name, price: p.price, priceLabel: p.priceLabel, imageUrl: p.imageUrl, size: p.size, emoji: p.emoji });
+                      showToast(p.name);
+                    }}
                     className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-1.5 tracking-widest transition-colors text-[9px] uppercase mt-auto"
                   >
                     + ADD

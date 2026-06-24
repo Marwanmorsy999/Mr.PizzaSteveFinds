@@ -19,3 +19,6 @@ id = "33a3bd916ab44470914268a7b012f190"
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
 id = "dd00ace706ad4613b35a82dffc9990d4"
+
+[build]
+command = "npm install"

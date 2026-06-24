@@ -1,4 +1,4 @@
-﻿﻿export interface Env {
+export interface Env {
   pizzasteve_db: D1Database;
   ADMIN_PASSWORD: string;
   SESSION_SECRET: string;
@@ -241,10 +241,6 @@ export default {
       if (!Array.isArray(items) || items.length === 0)
         return new Response("Invalid payload", { status: 400, headers: CORS });
 
-      // Validate every item has a usable name BEFORE touching the DB.
-      // This is what was crashing the whole request before (body.name.toLowerCase()
-      // on an undefined/blank name), which Cloudflare turned into a bare 500
-      // with no CORS headers — looking like a CORS error in the browser.
       const badIndex = items.findIndex(b => !b.name || typeof b.name !== "string" || !b.name.trim());
       if (badIndex !== -1) {
         return new Response(JSON.stringify({
@@ -423,12 +419,10 @@ export default {
       if (!body.customerName || !body.customerPhone || !body.items || body.items.length === 0)
         return new Response("Invalid order payload", { status: 400, headers: CORS });
 
-      // Build status-flip statements for each item
       const flipStmts = body.items.map((item: any) =>
         env.pizzasteve_db.prepare("UPDATE products SET status = 'sold' WHERE id = ? AND status = 'available'").bind(item.productId)
       );
 
-      // Execute status flips in a batch
       const flipResults = await env.pizzasteve_db.batch(flipStmts);
 
       const failedIds: string[] = [];
@@ -442,7 +436,6 @@ export default {
         }
       }
 
-      // If any item failed to flip (sold out or not found), roll back the successful ones and fail
       if (failedIds.length > 0) {
         if (successfulIds.length > 0) {
           const rollbackStmts = successfulIds.map(id =>
@@ -457,7 +450,6 @@ export default {
         }), { status: 409, headers: { ...CORS, "Content-Type": "application/json" } });
       }
 
-      // All items were successfully marked as sold. Now insert the order and order items.
       const orderId = `PS-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
       const insertStmts = [
         env.pizzasteve_db.prepare(
@@ -484,7 +476,7 @@ export default {
             </tr>
           `).join('');
           await (r as any).emails.send({
-            from: 'Mr. Pizza Steve Finds <orders@pizzastevefinds.com>',
+            from: 'Mr. Pizza Steve Finds <onboarding@resend.dev>',
             to: ['ifarouk448@gmail.com'],
             subject: `New order ${orderId}`,
             html: `

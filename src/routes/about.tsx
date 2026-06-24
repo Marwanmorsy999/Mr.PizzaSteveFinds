@@ -30,13 +30,13 @@ function About() {
 
       <section className="mx-auto max-w-4xl px-4 py-16">
         <h1 className="mt-2 text-4xl sm:text-6xl lg:text-7xl leading-none">
-          One <span className="text-primary">slice</span> of Cairo street culture.
+          Pizza is your <span className="text-primary">gateway</span> for true vintage culture.
         </h1>
 
         <div className="mt-10 grid gap-8 text-lg leading-relaxed text-muted-foreground sm:grid-cols-[2fr_1fr]">
           <div className="space-y-5">
             <p>
-              Pop in between 3PM and 11PM, or slide into the DMs. New drops post first on Instagram - follow or miss out, honestly.
+              Pop in between 3pm to 11pm or slide into DMs for inquiries. New drops always post at the same time whether on the website or Instagram page — stay updated or it's your loss.
             </p>
             <a
               href="https://instagram.com/mr.pizzastevefinds"

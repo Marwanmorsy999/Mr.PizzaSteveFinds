@@ -106,7 +106,7 @@ function ProductPage() {
           {/* ── Image — swipeable carousel on mobile, thumbnails at md+ ── */}
           <div>
             <div
-              className="relative aspect-[3/4] md:aspect-square bg-zinc-900 overflow-hidden"
+              className="relative aspect-[4/5] md:aspect-[3/4] bg-zinc-900 overflow-hidden"
               onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
               onTouchMove={(e) => { if (touchStart !== null) e.preventDefault(); }}
               onTouchEnd={(e) => {
@@ -223,6 +223,11 @@ function ProductPage() {
                 GONE 💀 (someone was faster than u)
               </div>
             )}
+            {/* Keep browsing button */}
+            <Link to="/shop"
+              className="block w-full text-center border border-primary text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 font-black py-3 tracking-widest transition-colors text-xs mt-2">
+              ← KEEP BROWSING THE DROP
+            </Link>
           </div>
         </div>
 

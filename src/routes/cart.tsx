@@ -60,8 +60,6 @@ function CartPage() {
                     <button onClick={() => cart.remove(item.id)}
                       className="px-2 py-0.5 text-zinc-300 hover:text-white transition-colors text-xs">−</button>
                     <span className="px-2 py-0.5 text-xs font-bold text-white min-w-[1.5rem] text-center">{item.quantity}</span>
-                    <button onClick={() => { const ex = cart.items.find(i => i.id === item.id); if (ex) cart.add({ id: ex.id, name: ex.name, price: ex.price, priceLabel: ex.priceLabel, imageUrl: ex.imageUrl, size: ex.size, emoji: ex.emoji }); }}
-                      className="px-2 py-0.5 text-zinc-300 hover:text-white transition-colors text-xs">+</button>
                   </div>
                   <Link to="/product/$id" params={{ id: item.id }}
                     className="text-xs text-zinc-600 hover:text-zinc-400 active:scale-95 transition-colors">
@@ -87,17 +85,17 @@ function CartPage() {
               <p className="text-zinc-600 text-xs mt-1">Some items have no set price — Steve will confirm with you directly.</p>
             )}
             <div className="border-t border-zinc-800 mt-4 pt-4">
-              <span className="text-zinc-500 text-xs">Pickup or delivery available in Zamalek.</span>
+              <span className="text-zinc-500 text-xs">Pickup available in Zamalek via our shop.</span>
             </div>
           </div>
 
           <button onClick={() => navigate({ to: "/checkout" })}
-            className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black py-4 tracking-widest transition-all text-sm">
+            className="w-full bg-white hover:bg-zinc-100 active:scale-95 text-zinc-900 font-black py-4 tracking-widest transition-all text-sm">
             PROCEED TO CHECKOUT
           </button>
           <Link to="/shop"
-            className="block text-center mt-4 text-zinc-600 hover:text-zinc-400 active:scale-95 text-sm transition-colors">
-            Continue shopping
+            className="block text-center mt-4 border border-primary text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 text-sm transition-colors py-3 font-black tracking-widest">
+            Continue Shopping
           </Link>
         </div>
       </div>

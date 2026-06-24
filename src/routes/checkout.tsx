@@ -5,12 +5,20 @@ import { Header } from "@/components/site-chrome";
 
 const API = import.meta.env.VITE_API_URL || "https://pizzasteve-api.m-2396.workers.dev";
 
+const GOVERNORATES = [
+  "Cairo", "Giza", "Alexandria", "Qalyubia", "Sharqia", "Dakahlia",
+  "Gharbia", "Menoufia", "Beheira", "Kafr El Sheikh", "Damietta",
+  "Port Said", "Ismailia", "Suez", "North Sinai", "South Sinai",
+  "Faiyum", "Beni Suef", "Minya", "Asyut", "Sohag", "Qena",
+  "Luxor", "Aswan", "Red Sea", "New Valley", "Matruh",
+];
+
 export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
 
 function CheckoutPage() {
   const cart = useCart();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "", pickup: true });
+  const [form, setForm] = useState({ name: "", phone: "", address: "", governorate: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [steveWhatsapp, setSteveWhatsapp] = useState("201XXXXXXXXX");
@@ -27,7 +35,8 @@ function CheckoutPage() {
   async function submit() {
     if (!form.name.trim()) return setError("Name is required");
     if (!form.phone.trim()) return setError("Phone number is required");
-    if (!form.pickup && !form.address.trim()) return setError("Address is required for delivery");
+    if (!form.address.trim()) return setError("Address is required");
+    if (!form.governorate) return setError("Please select a governorate");
     setError("");
     setLoading(true);
 
@@ -43,9 +52,8 @@ function CheckoutPage() {
         body: JSON.stringify({
           customerName: form.name,
           customerPhone: form.phone,
-          address: form.pickup ? "PICKUP — Zamalek" : form.address,
-          notes: form.notes,
-          pickup: form.pickup,
+          address: `${form.address}, ${form.governorate}`,
+          pickup: false,
           items: orderItems,
           total: cart.total,
         }),
@@ -68,8 +76,7 @@ function CheckoutPage() {
         `🍕 NEW ORDER #${data.orderId}\n\n` +
         `Customer: ${form.name}\n` +
         `Phone: ${form.phone}\n` +
-        `${form.pickup ? "Pickup: Zamalek" : `Delivery: ${form.address}`}\n` +
-        (form.notes ? `Notes: ${form.notes}\n` : "") +
+        `Address: ${form.address}, ${form.governorate}\n` +
         `\nItems:\n${itemLines}\n\n` +
         `Total: ${cart.total > 0 ? `${cart.total} EGP` : "Price TBC"}`
       );
@@ -93,13 +100,10 @@ function CheckoutPage() {
 
       <div className="mx-auto max-w-lg px-4 py-16 sm:py-20">
 
-        {/* Page title */}
+        {/* Title */}
         <div className="mb-10 border-b border-border pb-6">
           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary mb-2">Checkout</p>
-          <h1 className="font-display text-4xl sm:text-5xl uppercase leading-none">Reserve Your Piece</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Fill in your details — Steve confirms everything personally. Don't overthink it.
-          </p>
+          <h1 className="font-display text-4xl sm:text-5xl uppercase leading-none">Your Details</h1>
         </div>
 
         {/* Order summary */}
@@ -165,77 +169,36 @@ function CheckoutPage() {
               type="tel"
               className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors"
             />
-            <p className="mt-1.5 text-[10px] text-muted-foreground">Steve will contact you on this number to confirm.</p>
           </div>
 
-          {/* Pickup vs Delivery */}
+          {/* Address */}
           <div>
             <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
-              Fulfilment
+              Address <span className="text-primary">*</span>
             </label>
-            <div className="grid grid-cols-2 gap-px border border-border bg-border">
-              <button
-                onClick={() => f({ pickup: true })}
-                className={`py-3.5 text-xs font-black uppercase tracking-widest transition-colors ${
-                  form.pickup
-                    ? "bg-foreground text-background"
-                    : "bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Pickup · Zamalek
-              </button>
-              <button
-                onClick={() => f({ pickup: false })}
-                className={`py-3.5 text-xs font-black uppercase tracking-widest transition-colors ${
-                  !form.pickup
-                    ? "bg-foreground text-background"
-                    : "bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Delivery
-              </button>
-            </div>
-            {form.pickup && (
-              <p className="mt-1.5 text-[10px] text-muted-foreground">30 Hassan Assem St, Zamalek · Daily 3pm – 11pm</p>
-            )}
-          </div>
-
-          {/* Delivery address */}
-          {!form.pickup && (
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
-                Delivery Address <span className="text-primary">*</span>
-              </label>
-              <textarea
-                value={form.address}
-                onChange={e => f({ address: e.target.value })}
-                placeholder="Street, area, city — be specific"
-                className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors h-20 resize-none"
-              />
-            </div>
-          )}
-
-          {/* Notes */}
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
-              Notes <span className="text-muted-foreground font-normal normal-case tracking-normal">(optional)</span>
-            </label>
-            <textarea
-              value={form.notes}
-              onChange={e => f({ notes: e.target.value })}
-              placeholder="Size concerns, special requests, anything else..."
-              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors h-20 resize-none"
+            <input
+              value={form.address}
+              onChange={e => f({ address: e.target.value })}
+              placeholder="Street, building, apartment..."
+              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:border-foreground transition-colors"
             />
           </div>
 
-          {/* Payment notice */}
-          <div className="border border-dashed border-border px-5 py-4 text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">
-              💳 Online Payment Coming Soon
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Steve will sort out payment when he contacts you.
-            </p>
+          {/* Governorate */}
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2">
+              Governorate <span className="text-primary">*</span>
+            </label>
+            <select
+              value={form.governorate}
+              onChange={e => f({ governorate: e.target.value })}
+              className="w-full bg-card border border-border px-4 py-3 text-sm text-foreground outline-none focus:border-foreground transition-colors appearance-none cursor-pointer"
+            >
+              <option value="" disabled>Select governorate</option>
+              {GOVERNORATES.map(g => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
           </div>
 
           {/* Error */}
@@ -251,11 +214,11 @@ function CheckoutPage() {
             disabled={loading}
             className="w-full bg-primary hover:bg-secondary disabled:opacity-50 text-primary-foreground font-display text-sm uppercase tracking-widest py-4 transition-colors active:scale-[0.99]"
           >
-            {loading ? "Placing Your Order..." : "Reserve This →"}
+            {loading ? "Sending..." : "Place Order →"}
           </button>
 
           <p className="text-[10px] text-center text-muted-foreground">
-            By reserving you agree to be contacted by Steve to confirm your order.
+            Steve will contact you to confirm your order.
           </p>
         </div>
       </div>

@@ -1,27 +1,33 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "mr-pizzasteve-finds",
-	"compatibility_date": "2026-06-15",
-	"observability": {
-		"enabled": true
-	},
-	"assets": {
-		"directory": "dist",
-		"not_found_handling": "single-page-application"
-	},
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
-	"kv_namespaces": [
-		{
-			"binding": "SESSIONS",
-			"id": "33a3bd916ab44470914268a7b012f190",
-			"remote": true
-		},
-		{
-			"binding": "RATE_LIMIT",
-			"id": "dd00ace706ad4613b35a82dffc9990d4",
-			"remote": true
-		}
-	]
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mr-pizzasteve-finds",
+  "compatibility_date": "2026-06-15",
+  "main": "worker/index.ts",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "dist",
+    "not_found_handling": "single-page-application"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "pizzasteve_db",
+      "database_name": "pizzasteve-db",
+      "database_id": "89826803-5d0f-48e4-b445-a576d287bda8"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSIONS",
+      "id": "33a3bd916ab44470914268a7b012f190"
+    },
+    {
+      "binding": "RATE_LIMIT",
+      "id": "dd00ace706ad4613b35a82dffc9990d4"
+    }
+  ]
 }

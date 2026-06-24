@@ -80,12 +80,12 @@ export function Footer() {
            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
              curated vintage & thrift by steve dos santos. cairo
            </p>
-           <p className="mt-2 text-xs text-zinc-600">pieces wont last long babe</p>
-           <p className="mt-1 text-sm text-zinc-600">shipping with turbo · 3/5 working days</p>
-           <div className="mt-3 flex gap-4">
-             <Link to="/shop" className="text-sm text-zinc-500 hover:text-zinc-300 uppercase tracking-widest">all products</Link>
-             <Link to="/about" className="text-sm text-zinc-500 hover:text-zinc-300 uppercase tracking-widest">about</Link>
-           </div>
+         
+	<p className="mt-3 text-xs font-bold text-zinc-400 uppercase tracking-widest">pieces wont last long babe</p>
+	<p className="mt-1 text-xs text-zinc-400">🚚 shipping with turbo · 3/5 working days</p>          <div className="mt-4 flex gap-2">
+  	<Link to="/shop" className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border border-zinc-700 text-zinc-300 		hover:border-primary hover:text-primary transition-colors" style={{ borderRadius: "2px" }}>all products</Link>
+ 	 <Link to="/about" className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border border-zinc-700 text-zinc-300 	hover:border-primary hover:text-primary transition-colors" style={{ borderRadius: "2px" }}>about</Link>
+	</div>
         </div>
         <div>
           <h4 className="text-xs font-black tracking-widest text-zinc-400 mb-3 uppercase">come visit</h4>

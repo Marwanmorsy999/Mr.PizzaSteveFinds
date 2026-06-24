@@ -636,7 +636,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     </select>
                     <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))}
                       className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-zinc-200 text-sm">
-                      {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
+                      {["Deadstock", "Perfect", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
                     </select>
                     <textarea placeholder="Description (optional)" value={form.description}
                       onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -712,7 +712,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                         </select>
                          <select value={item.condition} onChange={e => updateBulkItem(item.id, { condition: e.target.value })}
                            className="w-full md:w-24 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-zinc-200 text-xs">
-                           {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
+                           {["Deadstock", "Perfect", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
                          </select>
                          <textarea placeholder="Description (optional)" value={item.description || ""}
                            onChange={e => updateBulkItem(item.id, { description: e.target.value })}
@@ -918,7 +918,7 @@ function AdminRow({ product: p, uploading, bulkMode, bulkSelected, onBulkToggle,
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-zinc-200 placeholder-zinc-600" />
             <select value={condition} onChange={e => setCondition(e.target.value)}
               className="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm outline-none focus:border-zinc-200">
-              {["Deadstock", "Excellent", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
+              {["Deadstock", "Perfect", "Good", "Fair"].map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
           <textarea placeholder="Description" value={desc} onChange={e => setDesc(e.target.value)}

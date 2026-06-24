@@ -11,9 +11,9 @@ interface Product {
   images?: string[]; condition?: string; description?: string;
 }
 
-// ── Condition badge colors ───────────────────────────────────────────────────
 const CONDITION_COLORS: Record<string, string> = {
   "Deadstock": "text-emerald-400 bg-emerald-900/40 border-emerald-700",
+  "Perfect": "text-sky-400 bg-sky-900/40 border-sky-700",
   "Excellent": "text-sky-400 bg-sky-900/40 border-sky-700",
   "Great":     "text-cyan-400 bg-cyan-900/40 border-cyan-700",
   "Good":      "text-zinc-300 bg-zinc-800 border-zinc-600",
@@ -61,7 +61,6 @@ function ProductPage() {
       .then(d => {
         setProduct(d);
         setLoading(false);
-        // Fetch related (same tag, exclude current)
         fetch(`${API}/api/products`)
           .then(r => r.json())
           .then((all: Product[]) => {
@@ -94,7 +93,6 @@ function ProductPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Zoom overlay */}
       {zoom && allImages.length > 0 && (
         <div className="fixed inset-0 z-50 bg-black flex items-center justify-center cursor-zoom-out" onClick={() => setZoom(false)}>
           <img src={cloudImg(allImages[activeImg], 800)} alt={product.name} className="max-h-screen max-w-full object-contain" />
@@ -103,10 +101,11 @@ function ProductPage() {
 
       <div className="max-w-3xl mx-auto md:px-4 md:py-8">
         <div className="grid md:grid-cols-2 md:gap-6">
-          {/* ── Image — swipeable carousel on mobile, thumbnails at md+ ── */}
+
+          {/* Image */}
           <div>
             <div
-              className="relative aspect-[4/5] md:aspect-[3/4] bg-zinc-900 overflow-hidden"
+              className="relative aspect-square md:aspect-[3/4] bg-zinc-900 overflow-hidden"
               onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
               onTouchMove={(e) => { if (touchStart !== null) e.preventDefault(); }}
               onTouchEnd={(e) => {
@@ -123,7 +122,6 @@ function ProductPage() {
                 ? <img src={cloudImg(allImages[activeImg], 800)} alt={product.name} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>}
 
-              {/* back button */}
               <Link
                 to="/shop"
                 onClick={(e) => e.stopPropagation()}
@@ -134,7 +132,6 @@ function ProductPage() {
                 </svg>
               </Link>
 
-              {/* zoom icon */}
               <button onClick={() => allImages.length > 0 && setZoom(true)} className="absolute bottom-3 right-3 z-10 bg-black/50 hover:bg-black/70 rounded-full p-1.5 transition-colors">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="10.5" cy="10.5" r="7.5" />
@@ -143,7 +140,6 @@ function ProductPage() {
               </button>
             </div>
 
-            {/* Dot indicators */}
             {allImages.length > 1 && (
               <div className="flex justify-center gap-1.5 pt-3">
                 {allImages.map((_, i) => (
@@ -154,7 +150,6 @@ function ProductPage() {
               </div>
             )}
 
-            {/* Thumbnails — hidden on mobile */}
             {allImages.length > 1 && (
               <div className="hidden md:flex gap-2 overflow-x-auto px-0 pt-3 pb-1">
                 {allImages.map((img, i) => (
@@ -167,7 +162,7 @@ function ProductPage() {
             )}
           </div>
 
-          {/* ── Info ── */}
+          {/* Info */}
           <div className="flex flex-col px-3 pt-4 md:px-0 md:pt-0">
             {product.condition && (
               <span className={`inline-block self-start text-xs font-bold px-2 py-0.5 border mb-3 ${condColorClass}`}>
@@ -177,7 +172,6 @@ function ProductPage() {
 
             <h1 className="text-2xl md:text-3xl font-black leading-[1.05] mb-2">{product.name}</h1>
 
-            {/* Price */}
             <div className="flex items-baseline gap-2 mb-1">
               <span className={`text-3xl font-black ${product.status === "sold" ? "text-zinc-600" : "text-primary"}`}>
                 {product.status === "sold"
@@ -191,7 +185,6 @@ function ProductPage() {
               ) : null}
             </div>
 
-            {/* Size */}
             {product.size && (
               <div className="flex items-center gap-3 mb-5">
                 <span className="bg-zinc-800 border border-zinc-700 text-white text-sm font-black px-4 py-1.5 tracking-widest">{product.size}</span>
@@ -204,11 +197,9 @@ function ProductPage() {
               </p>
             )}
 
-            {/* CTA */}
             {product.status === "available" ? (
               isInCart ? (
                 <Link to="/cart"
-                  onClick={() => {}}
                   className="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-black text-center py-3 tracking-widest transition-colors text-xs mb-2 block">
                   ADDED! VIEW CART →
                 </Link>
@@ -223,7 +214,7 @@ function ProductPage() {
                 GONE 💀 (someone was faster than u)
               </div>
             )}
-            {/* Keep browsing button */}
+
             <Link to="/shop"
               className="block w-full text-center border border-primary text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 font-black py-3 tracking-widest transition-colors text-xs mt-2">
               ← KEEP BROWSING THE DROP
@@ -231,7 +222,7 @@ function ProductPage() {
           </div>
         </div>
 
-        {/* ── Related products ── */}
+        {/* Related */}
         {related.length > 0 && (
           <div className="px-4 md:px-0 mt-16">
             <div className="flex items-baseline justify-between mb-6">
@@ -242,24 +233,27 @@ function ProductPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {related.map(p => (
-                <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
-                  <div className="aspect-square bg-zinc-900 border border-zinc-850 rounded-xl overflow-hidden mb-2 hover:border-zinc-650 transition-colors">
-                    {p.imageUrl
-                      ? <img src={cloudImg(p.imageUrl ?? '')} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
-                      : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
-                  </div>
-                  <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
-                  <p className="text-zinc-100 text-xs font-black">
-                    {p.price ? (
-                      <>
-                        {p.price}{" "}
-                        <span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span>
-                      </>
-                    ) : (
-                      "DM"
-                    )}
-                  </p>
-                </Link>
+                <div key={p.id} className="flex flex-col">
+                  <Link to="/product/$id" params={{ id: p.id }} className="group active:scale-95 transition-transform duration-100">
+                    <div className="aspect-square bg-zinc-900 border border-zinc-800 overflow-hidden mb-2 hover:border-zinc-600 transition-colors">
+                      {p.imageUrl
+                        ? <img src={cloudImg(p.imageUrl ?? '')} alt={p.name} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" loading="lazy" />
+                        : <div className="w-full h-full flex items-center justify-center text-5xl">{p.emoji}</div>}
+                    </div>
+                    <p className="text-white text-xs font-bold line-clamp-2 group-hover:underline mb-1">{p.name}</p>
+                    <p className="text-zinc-100 text-xs font-black mb-2">
+                      {p.price ? (
+                        <>{p.price}{" "}<span className="text-[0.65em] font-sans font-bold tracking-wider text-muted-foreground ml-0.5">EGP</span></>
+                      ) : "DM"}
+                    </p>
+                  </Link>
+                  <button
+                    onClick={() => cart.add({ id: p.id, name: p.name, price: p.price, priceLabel: p.priceLabel, imageUrl: p.imageUrl, size: p.size, emoji: p.emoji })}
+                    className="w-full bg-primary hover:bg-secondary active:scale-95 text-primary-foreground font-black text-center py-1.5 tracking-widest transition-colors text-[9px] uppercase mt-auto"
+                  >
+                    + ADD
+                  </button>
+                </div>
               ))}
             </div>
           </div>

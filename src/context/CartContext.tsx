@@ -13,7 +13,7 @@ export interface CartItem {
 
 interface CartCtx {
   items: CartItem[];
-  add: (item: CartItem, qty?: number) => void;
+  add: (item: CartItem) => void;
   remove: (id: string) => void;
   clear: () => void;
   count: number;
@@ -33,29 +33,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("ps_cart", JSON.stringify(items));
   }, [items]);
 
-  function add(item: CartItem, qty: number = 1) {
-    const itemQty = item.quantity ?? qty;
+  function add(item: CartItem) {
     setItems(prev => {
-      const existing = prev.find(i => i.id === item.id);
-      if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: (i.quantity || 1) + itemQty } : i);
-      }
-      return [...prev, { ...item, quantity: itemQty }];
+      // Each piece is 1 of 1 — block duplicates
+      if (prev.find(i => i.id === item.id)) return prev;
+      return [...prev, { ...item, quantity: 1 }];
     });
   }
   function remove(id: string) {
-    setItems(prev => {
-      const existing = prev.find(i => i.id === id);
-      if (existing && (existing.quantity || 1) > 1) {
-        return prev.map(i => i.id === existing.id ? { ...i, quantity: (i.quantity || 1) - 1 } : i);
-      }
-      return prev.filter(i => i.id !== id);
-    });
+    // Always remove the whole item — no quantity decrement
+    setItems(prev => prev.filter(i => i.id !== id));
   }
   function clear() { setItems([]); }
 
-  const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
-  const total = items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+  const count = items.length;
+  const total = items.reduce((sum, i) => sum + (i.price || 0), 0);
 
   return <Ctx.Provider value={{ items, add, remove, clear, count, total }}>{children}</Ctx.Provider>;
 }

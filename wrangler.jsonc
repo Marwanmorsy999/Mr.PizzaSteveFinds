@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mr-pizzasteve-finds",
+  "name": "pizzasteve-api",
   "compatibility_date": "2026-06-15",
   "main": "worker/index.ts",
   "observability": {
